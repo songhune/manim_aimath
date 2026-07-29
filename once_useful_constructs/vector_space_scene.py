@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 
 from manimlib.animation.animation import Animation
@@ -20,8 +22,6 @@ from manimlib.mobject.geometry import Line
 from manimlib.mobject.geometry import Rectangle
 from manimlib.mobject.geometry import Vector
 from manimlib.mobject.matrix import Matrix
-from manimlib.mobject.matrix import VECTOR_LABEL_SCALE_FACTOR
-from manimlib.mobject.matrix import vector_coordinate_label
 from manimlib.mobject.mobject import Mobject
 from manimlib.mobject.svg.tex_mobject import Tex
 from manimlib.mobject.svg.tex_mobject import TexText
@@ -38,6 +38,21 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from manimlib.typing import ManimColor
     from typing import List
+
+try:
+    from manimlib.mobject.matrix import VECTOR_LABEL_SCALE_FACTOR
+except ImportError:
+    VECTOR_LABEL_SCALE_FACTOR = 0.8
+
+try:
+    from manimlib.mobject.matrix import vector_coordinate_label
+except ImportError:
+    def vector_coordinate_label(vector_mobject, integer_labels=True, n_dim=2, **kwargs):
+        values = np.array(vector_mobject.get_end()[:n_dim], dtype=float)
+        if integer_labels:
+            values = np.round(values).astype(int)
+        # Match the old helper shape: a column vector with bracketed entries.
+        return Matrix([[values[0]], [values[1]]])
 
 X_COLOR = GREEN_C
 Y_COLOR = RED_C
@@ -132,7 +147,7 @@ class VectorScene(Scene):
         if not isinstance(label, Tex):
             if len(label) == 1:
                 label = "\\vec{\\textbf{%s}}" % label
-            label = OldTex(label)
+            label = Tex(label)
             if color is None:
                 color = vector.get_color()
             label.set_color(color)

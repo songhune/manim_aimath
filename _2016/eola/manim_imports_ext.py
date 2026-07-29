@@ -12,13 +12,19 @@ from custom.end_screen import *
 from custom.filler import *
 from custom.logo import *
 from custom.opening_quote import *
-from once_useful_constructs.vector_space_scene import *
-from once_useful_constructs.matrix_multiplication import *
 
-# Legacy compatibility shims for older 3b1b scene files.
+# -----------------------------------------------------------------------------
+# Legacy EOLA compatibility layer (2016 scenes -> current manimlib)
+# -----------------------------------------------------------------------------
+
+# OldTex* can fail on newer manimlib's legacy SVG path; modern Tex classes are
+# much more stable for these scenes.
 OldTex = Tex
 OldTexText = TexText
 
+
+# Older videos frequently do VMobject(*mobjects). Restore that constructor
+# behavior while preserving modern VMobject defaults.
 _vmobject_init = VMobject.__init__
 
 
@@ -30,6 +36,9 @@ def _legacy_vmobject_init(self, *submobjects, **kwargs):
 
 VMobject.__init__ = _legacy_vmobject_init
 
+
+# Newer PiCreature.get_bubble requires explicit content. Legacy scenes often
+# call get_bubble() with no args.
 _pi_get_bubble = PiCreature.get_bubble
 
 
@@ -39,6 +48,8 @@ def _legacy_get_bubble(self, content="", bubble_type=ThoughtBubble, **bubble_con
 
 PiCreature.get_bubble = _legacy_get_bubble
 
+
+# Small geometry helpers expected by older code.
 if "DoubleArrow" not in globals():
 	def DoubleArrow(start, end, **kwargs):
 		arrow = Arrow(start, end, **kwargs)

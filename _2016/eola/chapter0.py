@@ -1,5 +1,24 @@
+import sys
+from pathlib import Path
+
+# Ensure shared project modules (e.g. manim_imports_ext.py) are importable.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
 from manim_imports_ext import *
-from once_useful_constructs import *
+from once_useful_constructs.vector_space_scene import *
+from once_useful_constructs.matrix_multiplication import NumericalMatrixMultiplication
+
+# OldTex* in newer manimlib can fail during SVG initialization; use modern tex mobjects.
+OldTex = Tex
+OldTexText = TexText
+
+if "DoubleArrow" not in globals():
+    def DoubleArrow(start, end, **kwargs):
+        arrow = Arrow(start, end, **kwargs)
+        arrow.add_tip(at_start=True)
+        return arrow
 
 EXAMPLE_TRANFORM = [[0, 1], [-1, 1]]
 TRANFORMED_VECTOR = [[1], [2]]
@@ -67,7 +86,7 @@ class UpcomingSeriesOfVidoes(Scene):
         colors = Color(BLUE_A).range_to(BLUE_D, len(icons))
         for icon, color in zip(icons, colors):
             icon.set_fill(color, opacity = 1)
-        icons = VMobject(*icons)
+        icons = VGroup(*icons)
         icons.arrange(RIGHT)
         icons.to_edge(LEFT)
         icons.shift(UP)
@@ -105,10 +124,10 @@ class AboutLinearAlgebra(Scene):
         for subject in subjects[1:]:
             subject.next_to(prev, DOWN, aligned_edge = LEFT)
             prev = subject
-        all_subs = VMobject(*subjects)
+        all_subs = VGroup(*subjects)
         linalg.to_edge(LEFT)
         all_subs.next_to(linalg, RIGHT, buff = 2)
-        arrows = VMobject(*[
+        arrows = VGroup(*[
             Arrow(linalg, sub)
             for sub in subjects
         ])
@@ -129,7 +148,8 @@ class AboutLinearAlgebra(Scene):
         all_else.remove(linalg)
         randy = Randolph()
         randy.to_corner()
-        bubble = randy.get_bubble(width = 10)
+        bubble = randy.get_bubble("")
+        bubble.set_width(10)
         new_linalg = bubble.position_mobject_inside(linalg.copy())
         q_marks = OldTexText("???").next_to(randy, UP)
 
@@ -205,14 +225,14 @@ class AboutLinearAlgebra(Scene):
 
     def get_eigenvalue(self):
         result = OldTex("\\text{Det}\\left(A - \\lambda I \\right) = 0")
-        result.submobjects[0][-5].set_color(YELLOW)
+        result.set_color_by_tex("\\lambda", YELLOW)
         return result
 
     def get_matrix_multiplication_question(self):
         why = OldTexText("Why?").set_color(BLUE) 
         mult = self.get_matrix_multiplication()
         why.next_to(mult, UP)
-        result = VMobject(why, mult)
+        result = VGroup(why, mult)
         result.get_center = lambda : mult.get_center()
         return result
 
@@ -224,7 +244,7 @@ class AboutLinearAlgebra(Scene):
         left_right_arrow.next_to(cross)
         det.next_to(left_right_arrow)
         q_mark.next_to(left_right_arrow, UP)
-        cross_question = VMobject(cross, left_right_arrow, q_mark, det)
+        cross_question = VGroup(cross, left_right_arrow, q_mark, det)
         cross_question.get_center = lambda : left_right_arrow.get_center()
         return cross_question
 
@@ -258,7 +278,7 @@ class NumericVsGeometric(Scene):
         for mob in hline, vline:
             mob.set_color(GREEN)
 
-        self.play(ShowCreation(VMobject(hline, vline)))
+        self.play(ShowCreation(VGroup(hline, vline)))
         digest_locals(self)
 
     def specifics_concepts(self):
@@ -452,7 +472,7 @@ class IntimidatingProf(Scene):
         thought_bubble.make_green_screen()
         q_marks = OldTexText("???")
         q_marks.next_to(randy, UP)
-        randy_bubble = randy.get_bubble()
+        randy_bubble = randy.get_bubble("")
         randy_bubble.add_content(matrix_multiplication())
 
         self.add(randy, morty)
@@ -473,7 +493,7 @@ class IntimidatingProf(Scene):
             ApplyMethod(randy.change_mode, "confused"),
             Write(q_marks, run_time = 1)
         )
-        self.play(FadeOut(VMobject(speech_bubble, thought_bubble)))
+        self.play(FadeOut(VGroup(speech_bubble, thought_bubble)))
         self.play(FadeIn(randy_bubble))
         self.wait()
 
@@ -773,7 +793,9 @@ class ProfessorsTry(Scene):
         morty = Mortimer()
         morty.to_corner(DOWN+RIGHT)
         morty.shift(3*LEFT)
-        speech_bubble = morty.get_bubble(SpeechBubble, height = 4, width = 8)
+        speech_bubble = morty.get_bubble("", bubble_type=SpeechBubble)
+        speech_bubble.set_width(8)
+        speech_bubble.set_height(4)
         speech_bubble.shift(RIGHT)
         words = OldTexText(
             "It really is beautiful!  I want you to \\\\" + \
@@ -813,7 +835,7 @@ class TableOfContents(Scene):
         h_line = Line(FRAME_X_RADIUS*LEFT, FRAME_X_RADIUS*RIGHT)
         h_line.next_to(title, DOWN)
         h_line.to_edge(LEFT, buff = 0)
-        chapters = VMobject(*list(map(TexText, [
+        chapters = VGroup(*list(map(TexText, [
             "Chapter 1: Vectors, what even are they?",
             "Chapter 2: Linear combinations, span and bases",
             "Chapter 3: Matrices as linear transformations",
@@ -853,7 +875,7 @@ class TableOfContents(Scene):
             run_time = 1
         )
         self.wait()
-        removeable = VMobject(added_words, arrow, h_line, title)
+        removeable = VGroup(added_words, arrow, h_line, title)
         self.play(FadeOut(removeable))
         self.remove(removeable)
 
@@ -868,14 +890,14 @@ class TableOfContents(Scene):
         colors = Color(BLUE_A).range_to(BLUE_D, len(icons))
         for icon, color in zip(icons, colors):
             icon.set_fill(color, opacity = 1)
-        icons = VMobject(*icons)
+        icons = VGroup(*icons)
         icons.arrange(RIGHT)
         icons.to_edge(LEFT)
         icons.shift(UP)
 
         randy = Randolph()
         randy.to_corner()
-        bubble = randy.get_bubble()
+        bubble = randy.get_bubble("")
         new_icons = icons.copy().scale(0.2)
         bubble.position_mobject_inside(new_icons)
 
@@ -901,11 +923,11 @@ class ResourceForTeachers(Scene):
     def construct(self):
         morty = Mortimer(mode = "speaking")
         morty.to_corner(DOWN + RIGHT)
-        bubble = morty.get_bubble(SpeechBubble)
+        bubble = morty.get_bubble("", bubble_type=SpeechBubble)
         bubble.write("I'm assuming you \\\\ know linear algebra\\dots")
         words = bubble.content
         bubble.clear()
-        randys = VMobject(*[
+        randys = VGroup(*[
             Randolph(color = c)
             for c in (BLUE_D, BLUE_C, BLUE_E)
         ])
@@ -925,7 +947,7 @@ class AboutPacing(Scene):
         dots = words.split()[-3:]
         words.remove(*dots)
         self.play(FadeIn(words))
-        self.play(Write(VMobject(*dots)))
+        self.play(Write(VGroup(*dots)))
         self.wait()
 
 class DifferingBackgrounds(Scene):
@@ -935,7 +957,7 @@ class DifferingBackgrounds(Scene):
             "Has yet to take the course",
             "Supplementing course concurrently",
         ]))
-        students = VMobject(*[
+        students = VGroup(*[
             Randolph(color = c)
             for c in (BLUE_D, BLUE_C, BLUE_E)
         ])
