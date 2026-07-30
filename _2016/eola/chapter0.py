@@ -10,16 +10,6 @@ from manim_imports_ext import *
 from once_useful_constructs.vector_space_scene import *
 from once_useful_constructs.matrix_multiplication import NumericalMatrixMultiplication
 
-# OldTex* in newer manimlib can fail during SVG initialization; use modern tex mobjects.
-OldTex = Tex
-OldTexText = TexText
-
-if "DoubleArrow" not in globals():
-    def DoubleArrow(start, end, **kwargs):
-        arrow = Arrow(start, end, **kwargs)
-        arrow.add_tip(at_start=True)
-        return arrow
-
 EXAMPLE_TRANFORM = [[0, 1], [-1, 1]]
 TRANFORMED_VECTOR = [[1], [2]]
 

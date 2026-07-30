@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import logging
+from pathlib import Path
 
 import numpy as np
 
@@ -80,8 +81,18 @@ class PiCreature(SVGMobject):
         # This smooths out interpolation between modes
         self.body.insert_n_curves(100)
 
+    def _get_pi_creature_folder(self) -> str:
+        directories = get_directories()
+        folder = directories.get("pi_creature_images")
+        if isinstance(folder, str) and folder:
+            return folder
+
+        # Fallback for runs where custom_config.yml wasn't loaded from cwd.
+        repo_root = Path(__file__).resolve().parents[2]
+        return str(repo_root / "images" / "pi_creature" / "svg")
+
     def get_svg_file_path(self, mode):
-        folder = get_directories()["pi_creature_images"]
+        folder = self._get_pi_creature_folder()
         path = os.path.join(folder, f"{mode}.svg")
         if os.path.exists(path):
             return path
@@ -90,7 +101,7 @@ class PiCreature(SVGMobject):
                 logging.WARNING,
                 f"No design with mode {mode}",
             )
-            folder = get_directories()["pi_creature_images"]
+            folder = self._get_pi_creature_folder()
             return os.path.join(folder, "plain.svg")
 
     def init_structure(self):

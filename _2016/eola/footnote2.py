@@ -7,7 +7,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from manim_imports_ext import *
 
-from ka_playgrounds.circuits import Resistor, Source, LongResistor
+from _2015.ka_playgrounds.circuits import Resistor, Source, LongResistor
 
 class OpeningQuote(Scene):
     def construct(self):
@@ -629,7 +629,6 @@ class DotProductPreview(VectorScene):
             Transform(start_brace, final_brace)
         )
         self.wait()
-
 
 
 

@@ -1,15 +1,14 @@
 directories:
   mirror_module_path: True
   removed_mirror_prefix: "/Users/grant/cs/videos/"
-  base: "."
-  cache: ".manim_cache"
+  base: "../.."
+  cache: "../../.manim_cache"
   subdirs:
     raster_images: "images/raster"
     vector_images: "images/vector"
     three_d_models: "images/models"
     pi_creature_images: "images/pi_creature/svg"
     downloads: "manim_downloads"
-    # Use the default value for the rest
 universal_import_line: "from manim_imports_ext import *"
 window:
   position_string: UR

@@ -7,6 +7,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from manim_imports_ext import *
 from _2016.eola.chapter3 import MatrixVectorMultiplicationAbstract
+from once_useful_constructs.linear_algebra import get_det_text
 
 
 class Blob(Circle):
@@ -1124,7 +1125,6 @@ class NextVideo(Scene):
         self.add(title)
         self.play(ShowCreation(rect))
         self.wait()  
-
 
 
 
