@@ -1,0 +1,184 @@
+[
+ {
+  "scene": "SampleSpace",
+  "title": "Sample Space",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/SampleSpace.html",
+  "slides": 4,
+  "kb": 1759
+ },
+ {
+  "scene": "EventsAndSetOps",
+  "title": "Events and Set Operations",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/EventsAndSetOps.html",
+  "slides": 6,
+  "kb": 1811
+ },
+ {
+  "scene": "MultiplicationRule",
+  "title": "The Multiplication Rule",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/MultiplicationRule.html",
+  "slides": 4,
+  "kb": 1839
+ },
+ {
+  "scene": "Example213Dice",
+  "title": "Example 2.13",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example213Dice.html",
+  "slides": 2,
+  "kb": 1286
+ },
+ {
+  "scene": "Example215Club",
+  "title": "Example 2.15",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example215Club.html",
+  "slides": 4,
+  "kb": 2419
+ },
+ {
+  "scene": "Example217EvenNumbers",
+  "title": "Example 2.17",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example217EvenNumbers.html",
+  "slides": 6,
+  "kb": 1920
+ },
+ {
+  "scene": "Permutations",
+  "title": "Permutations",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Permutations.html",
+  "slides": 4,
+  "kb": 1323
+ },
+ {
+  "scene": "Combinations",
+  "title": "Combinations",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Combinations.html",
+  "slides": 5,
+  "kb": 1857
+ },
+ {
+  "scene": "Example218Awards",
+  "title": "Example 2.18",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example218Awards.html",
+  "slides": 4,
+  "kb": 1881
+ },
+ {
+  "scene": "Example222Cartridges",
+  "title": "Example 2.22",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example222Cartridges.html",
+  "slides": 3,
+  "kb": 1409
+ },
+ {
+  "scene": "ProbabilityOfEvent",
+  "title": "Probability of an Event",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/ProbabilityOfEvent.html",
+  "slides": 4,
+  "kb": 1416
+ },
+ {
+  "scene": "Example225LoadedDie",
+  "title": "Example 2.25",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example225LoadedDie.html",
+  "slides": 3,
+  "kb": 1231
+ },
+ {
+  "scene": "Example228Poker",
+  "title": "Example 2.28",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example228Poker.html",
+  "slides": 4,
+  "kb": 1338
+ },
+ {
+  "scene": "AdditionRule",
+  "title": "Additive Rules",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/AdditionRule.html",
+  "slides": 5,
+  "kb": 1615
+ },
+ {
+  "scene": "Example229Jobs",
+  "title": "Example 2.29",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example229Jobs.html",
+  "slides": 4,
+  "kb": 1345
+ },
+ {
+  "scene": "Example233Cable",
+  "title": "Example 2.33",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example233Cable.html",
+  "slides": 4,
+  "kb": 1147
+ },
+ {
+  "scene": "ConditionalProbability",
+  "title": "Conditional Probability",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/ConditionalProbability.html",
+  "slides": 6,
+  "kb": 1401
+ },
+ {
+  "scene": "Example234Flights",
+  "title": "Example 2.34",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example234Flights.html",
+  "slides": 4,
+  "kb": 1350
+ },
+ {
+  "scene": "Independence",
+  "title": "Independent Events",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Independence.html",
+  "slides": 4,
+  "kb": 1834
+ },
+ {
+  "scene": "ProductRule",
+  "title": "The Product Rule",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/ProductRule.html",
+  "slides": 4,
+  "kb": 1546
+ },
+ {
+  "scene": "Example236Fuses",
+  "title": "Example 2.36",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example236Fuses.html",
+  "slides": 4,
+  "kb": 1206
+ },
+ {
+  "scene": "Example238Emergency",
+  "title": "Example 2.38",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example238Emergency.html",
+  "slides": 2,
+  "kb": 1017
+ },
+ {
+  "scene": "TotalProbability",
+  "title": "Total Probability",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/TotalProbability.html",
+  "slides": 4,
+  "kb": 1267
+ },
+ {
+  "scene": "Example241Machines",
+  "title": "Example 2.41",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example241Machines.html",
+  "slides": 3,
+  "kb": 1394
+ },
+ {
+  "scene": "BayesRule",
+  "title": "Bayes' Rule",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/BayesRule.html",
+  "slides": 3,
+  "kb": 1246
+ },
+ {
+  "scene": "Example242Bayes",
+  "title": "Example 2.42",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/Example242Bayes.html",
+  "slides": 3,
+  "kb": 1272
+ }
+]

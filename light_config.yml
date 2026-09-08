@@ -1,0 +1,99 @@
+# 밝은(흰 배경) 테마.
+#
+#   manimgl <파일.py> <Scene> --config_file light_config.yml
+#   ./render.sh white <파일.py> <Scene>      # 이 파일을 자동으로 물린다
+#
+# manimgl은 설정을 default_config.yml -> custom_config.yml -> --config_file
+# 순서로 재귀 병합하므로, 여기에는 어두운 테마와 달라지는 값만 적는다.
+#
+# 색 이름(GREY_A, BLUE_B, ...)은 manimlib/constants.py가 이 설정에서 읽어
+# 만들기 때문에, 여기서 값을 바꾸면 씬 코드를 한 줄도 고치지 않고 팔레트가
+# 통째로 바뀐다. 밝기 순서를 뒤집어 두었다: 어두운 테마에서 "가장 밝아서
+# 가장 잘 보이던" A 슬롯이, 여기서는 "가장 어두워서 가장 잘 보이는" 값이 된다.
+# 즉 INK = GREY_A, ACCENT = BLUE_B 같은 기존 별칭이 그대로 의미를 유지한다.
+
+camera:
+  # PPT 슬라이드가 흰 바탕이므로 순백으로 맞춘다. 영상 가장자리에 경계선이
+  # 생기지 않는다. 눈이 부시면 "#FAFAF7" 정도의 미색으로 낮춰도 된다.
+  background_color: "#FFFFFF"
+
+file_writer:
+  # 어두운 배경용으로 올려 둔 채도(1.5)를 그대로 쓰면 밝은 바탕에서 색이 뜬다.
+  saturation: 1.0
+  gamma: 1.0
+
+vmobject:
+  default_stroke_color: "#2E2E2E"
+  default_fill_color: "#757575"
+
+mobject:
+  default_mobject_color: "#111111"
+  default_light_color: "#4F4F4F"
+
+colors:
+  # 무채색 램프 (A가 가장 진하다)
+  grey_a: "#2E2E2E"   # 본문 잉크
+  grey_b: "#4F4F4F"   # 보조 텍스트
+  grey_c: "#757575"   # 흐린 텍스트·축 라벨
+  grey_d: "#A6A6A6"   # 구조선
+  grey_e: "#D4D4D4"   # 그리드·아주 옅은 면
+  # 씬 코드에 남아 있는 WHITE/BLACK도 그대로 보이도록 뒤집는다.
+  white: "#111111"
+  black: "#FFFFFF"
+
+  blue_a: "#0B4F63"
+  blue_b: "#12657F"
+  blue_c: "#1C758A"
+  blue_d: "#3E9CB4"
+  blue_e: "#8FC9D8"
+
+  teal_a: "#0F5A4A"
+  teal_b: "#177A64"
+  teal_c: "#1E8F76"
+  teal_d: "#49A88F"
+  teal_e: "#9BD3C4"
+
+  green_a: "#2F5D22"
+  green_b: "#3F7A2E"
+  green_c: "#4F8F3A"
+  green_d: "#699C52"
+  green_e: "#AECF97"
+
+  # 순수 노랑은 흰 바탕에서 읽히지 않는다. 앰버 계열로 내린다.
+  yellow_a: "#7A5300"
+  yellow_b: "#946600"
+  yellow_c: "#A87700"
+  yellow_d: "#C79A22"
+  yellow_e: "#E8C11C"
+
+  gold_a: "#7A4A12"
+  gold_b: "#95601C"
+  gold_c: "#AE7327"
+  gold_d: "#C78D46"
+  gold_e: "#E7BB8C"
+
+  red_a: "#8E1F16"
+  red_b: "#A82A20"
+  red_c: "#C0392B"
+  red_d: "#D75A4B"
+  red_e: "#EFA096"
+
+  maroon_a: "#6B2434"
+  maroon_b: "#823041"
+  maroon_c: "#94424F"
+  maroon_d: "#B25E70"
+  maroon_e: "#D79AA8"
+
+  purple_a: "#40274F"
+  purple_b: "#523362"
+  purple_c: "#644172"
+  purple_d: "#8A6299"
+  purple_e: "#B79BC4"
+
+  orange: "#C25400"
+  pink: "#A8237F"
+  light_pink: "#C0509B"
+  grey_brown: "#5B4E44"
+  dark_brown: "#6B3410"
+  light_brown: "#8A5A2B"
+  # PURE_* 와 GREEN_SCREEN은 디버깅/합성용이라 손대지 않는다.

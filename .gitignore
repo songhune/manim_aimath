@@ -152,6 +152,13 @@ latex_cache/
 
 # Playground
 playground.py
-_2022/wordle/data/pattern_matrix.npy
-_2022/piano/data/
+legacy/_2022/wordle/data/pattern_matrix.npy
+legacy/_2022/wordle/data/wordle_words_freqs_full.txt
+legacy/_2022/piano/data/
 manim
+
+# 렌더링 결과물 (./render.sh 출력)
+videos/
+
+# manim-slides 중간물 (tools/build_slides_site.py 는 $TMPDIR 에 두지만 손으로 돌리면 여기 생긴다)
+slides/

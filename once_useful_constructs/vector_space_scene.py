@@ -299,15 +299,12 @@ class LinearTransformationScene(VectorScene):
     include_background_plane: bool = True
     include_foreground_plane: bool = True
     foreground_plane_kwargs: dict = dict(
-        x_max=FRAME_WIDTH / 2,
-        x_min=-FRAME_WIDTH / 2,
-        y_max=FRAME_WIDTH / 2,
-        y_min=-FRAME_WIDTH / 2,
+        x_range=(-FRAME_WIDTH / 2, FRAME_WIDTH / 2, 1.0),
+        y_range=(-FRAME_WIDTH / 2, FRAME_WIDTH / 2, 1.0),
         faded_line_ratio=0
     )
     background_plane_kwargs: dict = dict(
-        color=GREY,
-        axis_config=dict(color=GREY),
+        axis_config=dict(stroke_color=GREY),
         background_line_style=dict(
             stroke_color=GREY,
             stroke_width=1,
@@ -339,7 +336,7 @@ class LinearTransformationScene(VectorScene):
         )
 
         if self.show_coordinates:
-            self.background_plane.add_coordinates()
+            self.background_plane.add_coordinate_labels()
         if self.include_background_plane:
             self.add_background_mobject(self.background_plane)
         if self.include_foreground_plane:
@@ -433,7 +430,7 @@ class LinearTransformationScene(VectorScene):
 
     def add_title(self, title, scale_factor=1.5, animate=False):
         if not isinstance(title, Mobject):
-            title = OldTexText(title).scale(scale_factor)
+            title = TexText(title).scale(scale_factor)
         title.to_edge(UP)
         title.add_background_rectangle()
         if animate:
@@ -455,35 +452,35 @@ class LinearTransformationScene(VectorScene):
             raise Exception("Matrix has bad dimensions")
         return lambda point: np.dot(point, transposed_matrix)
 
-    def get_piece_movement(self, pieces):
+    def get_piece_movement(self, pieces, **anim_kwargs):
         start = VGroup(*pieces)
         target = VGroup(*[mob.target for mob in pieces])
         if self.leave_ghost_vectors:
             self.add(start.copy().fade(0.7))
-        return Transform(start, target, lag_ratio=0)
+        return Transform(start, target, lag_ratio=0, **anim_kwargs)
 
-    def get_moving_mobject_movement(self, func):
+    def get_moving_mobject_movement(self, func, **anim_kwargs):
         for m in self.moving_mobjects:
             if m.target is None:
                 m.target = m.copy()
             target_point = func(m.get_center())
             m.target.move_to(target_point)
-        return self.get_piece_movement(self.moving_mobjects)
+        return self.get_piece_movement(self.moving_mobjects, **anim_kwargs)
 
-    def get_vector_movement(self, func):
+    def get_vector_movement(self, func, **anim_kwargs):
         for v in self.moving_vectors:
             v.target = Vector(func(v.get_end()), color=v.get_color())
             norm = get_norm(v.target.get_end())
             if norm < 0.1:
                 v.target.get_tip().scale(norm)
-        return self.get_piece_movement(self.moving_vectors)
+        return self.get_piece_movement(self.moving_vectors, **anim_kwargs)
 
-    def get_transformable_label_movement(self):
+    def get_transformable_label_movement(self, **anim_kwargs):
         for l in self.transformable_labels:
             l.target = self.get_vector_label(
                 l.vector.target, l.target_text, **l.kwargs
             )
-        return self.get_piece_movement(self.transformable_labels)
+        return self.get_piece_movement(self.transformable_labels, **anim_kwargs)
 
     def apply_matrix(self, matrix, **kwargs):
         self.apply_transposed_matrix(np.array(matrix).T, **kwargs)
@@ -512,13 +509,18 @@ class LinearTransformationScene(VectorScene):
     def apply_function(self, function, added_anims=[], **kwargs):
         if "run_time" not in kwargs:
             kwargs["run_time"] = 3
+        # Newer manimlib takes path_arc on the animations themselves,
+        # rather than on Scene.play
+        anim_kwargs = dict()
+        if "path_arc" in kwargs:
+            anim_kwargs["path_arc"] = kwargs.pop("path_arc")
         anims = [
-            ApplyPointwiseFunction(function, t_mob)
+            ApplyPointwiseFunction(function, t_mob, **anim_kwargs)
             for t_mob in self.transformable_mobjects
         ] + [
-            self.get_vector_movement(function),
-            self.get_transformable_label_movement(),
-            self.get_moving_mobject_movement(function),
+            self.get_vector_movement(function, **anim_kwargs),
+            self.get_transformable_label_movement(**anim_kwargs),
+            self.get_moving_mobject_movement(function, **anim_kwargs),
         ] + [
             Animation(f_mob)
             for f_mob in self.foreground_mobjects
