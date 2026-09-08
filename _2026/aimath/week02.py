@@ -1440,11 +1440,21 @@ class VectorOuterProduct(InteractiveScene):
 class CrossProduct(InteractiveScene):
     """한국어 '외적'은 벡터곱을 가리키기도 한다. 이쪽은 3차원에서만 정의된다.
 
-    값은 내적 편과 같은 (1, 3, 2) 와 (1, -1, 2) 를 쓴다. 이 두 벡터에서는
-    내적은 수 2 가, 벡터곱은 두 벡터와 수직인 벡터 (8, 0, -4) 가 나온다.
+    성분 공식 u_2v_3 - u_3v_2, u_3v_1 - u_1v_3, u_1v_2 - u_2v_1 을 그대로 적으면
+    첨자가 왜 저렇게 도는지 알 수 없다. 그래서 계산을 눈에 보이는 규칙으로 바꾼다.
+    u 와 v 를 두 열로 세우고, 구하려는 자리의 **행 하나를 지우면** 네 수가 남는다.
+    그 넷을 어긋나게 곱해 빼면 그 성분이다. 가운데 성분만 곱하는 방향이 뒤집힌다.
+
+    값은 교재 예제 2-1 계수행렬의 1행 (1, 3, 2) 와 3행 (-3, 1, 1) 이다. 내적 편의
+    첫 벡터와 같은 것을 써서, 같은 자리에서 내적은 수 2 가, 벡터곱은 두 벡터와
+    수직인 벡터 (1, -7, 10) 이 나오는 것을 견준다. 세 성분이 모두 0 이 아니라
+    가운데의 부호 뒤집힘이 값으로도 드러난다.
     """
     u = [1, 3, 2]
-    v = [1, -1, 2]
+    v = [-3, 1, 1]
+
+    # 성분 k = u[a]v[b] - u[b]v[a]. 지우는 행이 k 이고, 남는 두 행이 (a, b) 다.
+    PAIRS = {0: (1, 2), 1: (2, 0), 2: (0, 1)}
 
     def construct(self):
         head = slide_title("벡터곱")
@@ -1455,51 +1465,77 @@ class CrossProduct(InteractiveScene):
         naming.align_to(head[0], LEFT)
         self.play(FadeIn(naming))
 
-        u1, u2, u3 = self.u
-        v1, v2, v3 = self.v
-        cross = [u2 * v3 - u3 * v2, u3 * v1 - u1 * v3, u1 * v2 - u2 * v1]
+        cross = []
+        for k in range(3):
+            a, b = self.PAIRS[k]
+            cross.append(self.u[a] * self.v[b] - self.u[b] * self.v[a])
 
-        uc = vec_col(self.u, ACCENT, v_buff=0.5)
+        uc = vec_col(self.u, ACCENT, v_buff=0.62)
         times = Tex(R"\times").set_color(GREY_B)
-        vc = vec_col(self.v, CALM, v_buff=0.5)
+        vc = vec_col(self.v, CALM, v_buff=0.62)
         eq = Tex("=").set_color(GREY_B)
-        out = vec_col(cross, WHITE, v_buff=0.5)
+        out = vec_col(cross, WHITE, v_buff=0.62)
 
-        line = VGroup(uc, times, vc, eq, out).arrange(RIGHT, buff=0.45)
-        line.move_to(0.8 * UP)
+        line = VGroup(uc, times, vc, eq, out).arrange(RIGHT, buff=0.5)
+        line.move_to(1.15 * UP)
         out.get_entries().set_opacity(0)
         self.play(FadeIn(uc), FadeIn(vc), Write(times))
         self.play(Write(eq), ShowCreation(out.get_brackets()))
 
-        steps = [
-            (R"u_2 v_3 - u_3 v_2 = %s \cdot %s - %s \cdot %s = %d"
-             % (signed(u2), signed(v3), signed(u3), signed(v2), cross[0]), 0),
-            (R"u_3 v_1 - u_1 v_3 = %s \cdot %s - %s \cdot %s = %d"
-             % (signed(u3), signed(v1), signed(u1), signed(v3), cross[1]), 1),
-            (R"u_1 v_2 - u_2 v_1 = %s \cdot %s - %s \cdot %s = %d"
-             % (signed(u1), signed(v2), signed(u2), signed(v1), cross[2]), 2),
-        ]
+        rule = caption("구하려는 자리의 행을 지우고, 남은 네 수를 어긋나게 곱해 뺌",
+                       26, DONE)
+        rule.move_to([0, line.get_bottom()[1] - 0.55, 0])
+        self.play(FadeIn(rule, UP))
+        self.wait(1.0)
+
         work = VGroup()
         self.add(work)
-        for tex, k in steps:
-            step = Tex(tex).set_color(WHITE).scale(0.9)
-            step.next_to(line, DOWN, buff=0.75)
-            self.play(FadeTransform(work, step), run_time=0.6)
-            work = step
+        for k in range(3):
+            a, b = self.PAIRS[k]
+            gone = VGroup(uc.get_entries()[k], vc.get_entries()[k])
+            plus = Line(uc.get_entries()[a].get_center(),
+                        vc.get_entries()[b].get_center())
+            plus.set_stroke(DONE, 3)
+            minus = Line(uc.get_entries()[b].get_center(),
+                         vc.get_entries()[a].get_center())
+            minus.set_stroke(WARN, 3)
+
+            terms = Tex(R"%s \cdot %s - %s \cdot %s = %d"
+                        % (signed(self.u[a]), signed(self.v[b]),
+                           signed(self.u[b]), signed(self.v[a]), cross[k]))
+            terms.set_color(WHITE).scale(0.95)
+            terms.move_to([0, line.get_bottom()[1] - 1.35, 0])
+
+            self.play(gone.animate.set_opacity(0.18), run_time=0.35)
+            self.play(ShowCreation(plus), ShowCreation(minus), run_time=0.5)
+            self.play(FadeTransform(work, terms), run_time=0.5)
+            work = terms
             self.play(out.get_entries()[k].animate.set_opacity(1), run_time=0.4)
-            self.wait(0.4)
-        self.play(FadeOut(work))
+            self.wait(0.45)
+            self.play(FadeOut(plus), FadeOut(minus),
+                      gone.animate.set_opacity(1), run_time=0.35)
+        self.play(FadeOut(work), FadeOut(rule))
+
+        flip = caption("가운데 성분만 곱하는 방향이 뒤집힘", 26, WARN)
+        flip.move_to([0, line.get_bottom()[1] - 0.55, 0])
+        self.play(FadeIn(flip, UP))
+        self.wait(1.1)
+        self.play(FadeOut(flip))
 
         check = Tex(R"\mathbf{u} \cdot (\mathbf{u} \times \mathbf{v}) = 0,"
                     R"\quad \mathbf{v} \cdot (\mathbf{u} \times \mathbf{v}) = 0")
-        check.set_color(CALM).scale(0.95).next_to(line, DOWN, buff=0.75)
+        check.set_color(CALM).scale(0.95)
+        check.move_to([0, line.get_bottom()[1] - 0.75, 0])
         self.play(Write(check))
         self.play(FadeIn(caption("결과는 두 벡터 모두와 수직", 26, CALM)
                          .next_to(check, DOWN, buff=0.35), UP))
         self.wait(1.2)
 
-        warn = caption("3차원에서만 정의됨 — 텐서곱과 이름이 겹치는 자리", 27, WARN)
-        warn.to_edge(DOWN, buff=0.5)
+        warn = VGroup(
+            caption("3차원에서만 정의됨", 27, WARN),
+            caption("한국어 '외적'은 텐서곱과 벡터곱을 함께 가리킴", 27, WARN),
+        ).arrange(DOWN, buff=0.22)
+        warn.to_edge(DOWN, buff=0.45)
         self.play(FadeIn(warn, UP))
         self.wait(2)
 
