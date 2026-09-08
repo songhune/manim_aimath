@@ -1,0 +1,142 @@
+[
+ {
+  "scene": "EntryNotation",
+  "title": "행렬의 성분 표기",
+  "url": "https://songhune.github.io/manim_aimath/am_01/EntryNotation.html",
+  "slides": 9,
+  "kb": 1328
+ },
+ {
+  "scene": "ArrayDimensions",
+  "title": "3차원 이상의 배열",
+  "url": "https://songhune.github.io/manim_aimath/am_01/ArrayDimensions.html",
+  "slides": 13,
+  "kb": 1831
+ },
+ {
+  "scene": "SquareMatrixDiagonal",
+  "title": "정방행렬과 주대각선",
+  "url": "https://songhune.github.io/manim_aimath/am_01/SquareMatrixDiagonal.html",
+  "slides": 11,
+  "kb": 1500
+ },
+ {
+  "scene": "Transpose",
+  "title": "전치행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_01/Transpose.html",
+  "slides": 10,
+  "kb": 1420
+ },
+ {
+  "scene": "SymmetricMatrix",
+  "title": "대칭행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_01/SymmetricMatrix.html",
+  "slides": 13,
+  "kb": 1541
+ },
+ {
+  "scene": "MatrixAddition",
+  "title": "행렬의 합과 차",
+  "url": "https://songhune.github.io/manim_aimath/am_01/MatrixAddition.html",
+  "slides": 9,
+  "kb": 1414
+ },
+ {
+  "scene": "ScalarMultiple",
+  "title": "스칼라곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/ScalarMultiple.html",
+  "slides": 9,
+  "kb": 1251
+ },
+ {
+  "scene": "MatrixProduct",
+  "title": "행렬의 곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/MatrixProduct.html",
+  "slides": 14,
+  "kb": 1570
+ },
+ {
+  "scene": "ProductOrder",
+  "title": "곱의 순서",
+  "url": "https://songhune.github.io/manim_aimath/am_01/ProductOrder.html",
+  "slides": 10,
+  "kb": 1402
+ },
+ {
+  "scene": "ProductShapeRule",
+  "title": "곱이 정의되는 크기",
+  "url": "https://songhune.github.io/manim_aimath/am_01/ProductShapeRule.html",
+  "slides": 15,
+  "kb": 1280
+ },
+ {
+  "scene": "MatrixPower",
+  "title": "행렬의 거듭제곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/MatrixPower.html",
+  "slides": 8,
+  "kb": 1145
+ },
+ {
+  "scene": "RowOperations",
+  "title": "기본 행 연산",
+  "url": "https://songhune.github.io/manim_aimath/am_01/RowOperations.html",
+  "slides": 10,
+  "kb": 1572
+ },
+ {
+  "scene": "EchelonForms",
+  "title": "행 사다리꼴과 기약 행 사다리꼴",
+  "url": "https://songhune.github.io/manim_aimath/am_01/EchelonForms.html",
+  "slides": 18,
+  "kb": 1685
+ },
+ {
+  "scene": "VectorInnerProduct",
+  "title": "벡터의 내적",
+  "url": "https://songhune.github.io/manim_aimath/am_01/VectorInnerProduct.html",
+  "slides": 11,
+  "kb": 1253
+ },
+ {
+  "scene": "MatrixVectorProduct",
+  "title": "행렬과 벡터의 곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/MatrixVectorProduct.html",
+  "slides": 11,
+  "kb": 1321
+ },
+ {
+  "scene": "VectorOuterProduct",
+  "title": "벡터의 외적",
+  "url": "https://songhune.github.io/manim_aimath/am_01/VectorOuterProduct.html",
+  "slides": 12,
+  "kb": 1344
+ },
+ {
+  "scene": "CrossProduct",
+  "title": "벡터곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/CrossProduct.html",
+  "slides": 11,
+  "kb": 1355
+ },
+ {
+  "scene": "FrobeniusInner",
+  "title": "행렬의 내적",
+  "url": "https://songhune.github.io/manim_aimath/am_01/FrobeniusInner.html",
+  "slides": 13,
+  "kb": 1621
+ },
+ {
+  "scene": "KroneckerProduct",
+  "title": "크로네커 곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/KroneckerProduct.html",
+  "slides": 8,
+  "kb": 1436
+ },
+ {
+  "scene": "ProductSizeMap",
+  "title": "곱의 크기 규칙",
+  "url": "https://songhune.github.io/manim_aimath/am_01/ProductSizeMap.html",
+  "slides": 9,
+  "kb": 1575
+ }
+]

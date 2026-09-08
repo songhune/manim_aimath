@@ -63,7 +63,14 @@ SLIDES_DIR = Path(os.environ.get("SLIDES_DIR", "slides"))
 
 
 class _StepSlide(Slide):
-    """긴 wait 마다 슬라이드를 끊는다. 짧은 wait(호흡)는 그대로 둔다."""
+    """긴 wait 마다 슬라이드를 끊는다. 짧은 wait(호흡)는 그대로 둔다.
+
+    `wait()` 도 한 동작으로 세어 준다. manimgl 은 `wait()` 에도 부분 영상 파일을 하나
+    만드는데(`num_plays` 로 번호를 매긴다), manim-slides 의 `_current_animation` 은
+    `play()` 에서만 올라간다. 그대로 두면 첫 `wait()` 뒤부터 슬라이드마다 한 칸씩 밀린
+    영상이 붙고, 슬라이드 길이의 합이 씬 길이보다 짧아진다. 같은 장치가
+    `_2026/aimath/slides_common.py` 에도 있다.
+    """
     step_at = STEP_DEFAULT
     skip_reversing = True                    # RevealJS 는 역재생 파일을 쓰지 않는다
 
@@ -72,6 +79,7 @@ class _StepSlide(Slide):
 
     def wait(self, duration=1.0, *args, **kwargs):
         super().wait(duration, *args, **kwargs)
+        self._current_animation += 1
         if duration >= self.step_at:
             self.next_slide()
 

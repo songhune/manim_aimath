@@ -1,0 +1,30 @@
+[
+ {
+  "scene": "CourseRoadmap",
+  "title": "학기 수강계획",
+  "url": "https://songhune.github.io/manim_aimath/am_00/CourseRoadmap.html",
+  "slides": 6,
+  "kb": 1171
+ },
+ {
+  "scene": "PixelsAreDiscrete",
+  "title": "연속 화면과 이산 픽셀",
+  "url": "https://songhune.github.io/manim_aimath/am_00/PixelsAreDiscrete.html",
+  "slides": 6,
+  "kb": 1122
+ },
+ {
+  "scene": "ImageAsMatrix",
+  "title": "이미지의 행렬 표현",
+  "url": "https://songhune.github.io/manim_aimath/am_00/ImageAsMatrix.html",
+  "slides": 9,
+  "kb": 1483
+ },
+ {
+  "scene": "GradientDescentGlimpse",
+  "title": "경사 하강법 개요",
+  "url": "https://songhune.github.io/manim_aimath/am_00/GradientDescentGlimpse.html",
+  "slides": 13,
+  "kb": 1737
+ }
+]

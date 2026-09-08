@@ -1,0 +1,16 @@
+[
+ {
+  "scene": "GaussJordan",
+  "title": "가우스-조르당 소거법",
+  "url": "https://songhune.github.io/manim_aimath/am_02/GaussJordan.html",
+  "slides": 18,
+  "kb": 1890
+ },
+ {
+  "scene": "InverseByRowOps",
+  "title": "행 연산으로 구하는 역행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_02/InverseByRowOps.html",
+  "slides": 11,
+  "kb": 1446
+ }
+]
