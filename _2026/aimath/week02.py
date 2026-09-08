@@ -1417,8 +1417,9 @@ class VectorOuterProduct(InteractiveScene):
         self.play(LaggedStart(*reveal, lag_ratio=0.15, run_time=1.8))
         self.wait(0.5)
 
-        # 같은 두 벡터로 내적을 잡을 수는 없다. 2차원과 3차원이기 때문이다.
-        gap = caption("같은 두 벡터의 내적은 2차원과 3차원이라 정의되지 않음",
+        # 화면에 놓인 이 두 벡터로는 내적을 잡을 수 없다. u 가 2차원, v 가 3차원이라
+        # 짝지어 곱할 성분이 모자란다. 외적은 되는데 내적은 안 되는 대조가 요점이다.
+        gap = caption("u는 2차원, v는 3차원 — 둘의 내적은 정의되지 않음",
                       26, WARN)
         gap.move_to([0, tags.get_bottom()[1] - 0.55, 0])
         self.play(FadeIn(gap, UP))
@@ -1439,7 +1440,7 @@ class VectorOuterProduct(InteractiveScene):
 class CrossProduct(InteractiveScene):
     """한국어 '외적'은 벡터곱을 가리키기도 한다. 이쪽은 3차원에서만 정의된다.
 
-    값은 내적 편과 같은 (1, 3, 2) 와 (1, -1, 2) 를 쓴다. 같은 두 벡터에서
+    값은 내적 편과 같은 (1, 3, 2) 와 (1, -1, 2) 를 쓴다. 이 두 벡터에서는
     내적은 수 2 가, 벡터곱은 두 벡터와 수직인 벡터 (8, 0, -4) 가 나온다.
     """
     u = [1, 3, 2]
