@@ -11,6 +11,8 @@
     ./render.sh ppt   _2026/aimath/week03.py GaussJordan
     ./render.sh all   _2026/aimath/week03.py
 """
+import re
+
 from manim_imports_ext import *
 
 
@@ -24,15 +26,61 @@ WARN = RED_C
 DONE = YELLOW
 
 
+MAX_WORDS = 6          # 하네스 3.6 — 화면에 남는 문구는 여섯 낱말까지
+_PUNCT_ONLY = re.compile(r"^[·・,.:;=+\-—~/()\[\]{}<>|]+$")
+
+
+def screen_words(text):
+    """세는 낱말. 숫자가 든 낱말과 기호만 있는 토막은 빼고 센다."""
+    out = []
+    for word in text.replace("—", " ").split():
+        if not word or _PUNCT_ONLY.match(word):
+            continue
+        if any(c.isdigit() for c in word):
+            continue
+        out.append(word)
+    return out
+
+
+def check_words(text):
+    """화면 문구 길이를 막는다(하네스 3.6).
+
+    길이를 넘기면 렌더가 여기서 멈춘다. 설명이 길어졌다는 것은 그 설명이 화면이
+    아니라 수업운영 메모로 갈 것이라는 뜻이다. 확률과통계의 `ps_common.label()`
+    과 같은 장치이며, 판정의 원본은 `_harness/harness_rules.py` 다.
+    """
+    words = screen_words(text)
+    if len(words) > MAX_WORDS:
+        raise ValueError(
+            "화면 문구가 %d낱말이다 (최대 %d): %r\n"
+            "설명은 수업운영 메모로 옮기고 화면에는 이름만 남길 것."
+            % (len(words), MAX_WORDS, text))
+    return text
+
+
 def title(text, size=42):
     return Text(text, font=TITLE_FONT, font_size=size).set_color(WHITE)
 
 
 def body(text, size=28, color=INK):
+    check_words(text)
     return Text(text, font=BODY_FONT, font_size=size).set_color(color)
 
 
 def caption(text, size=26, color=GREY_B):
+    """화면 문구. 명사구나 짧은 구절만 받는다(하네스 3.6).
+
+    길이를 넘기면 렌더가 여기서 멈춘다. 설명이 길어졌다는 것은 그 설명이 화면이
+    아니라 수업운영 메모로 갈 것이라는 뜻이다. 확률과통계의 `ps_common.label()`
+    과 같은 장치이며, 판정의 원본은 `_harness/harness_rules.py` 다.
+    """
+    words = screen_words(text)
+    if len(words) > MAX_WORDS:
+        raise ValueError(
+            "화면 문구가 %d낱말이다 (최대 %d): %r\n"
+            "설명은 수업운영 메모로 옮기고 화면에는 이름만 남길 것."
+            % (len(words), MAX_WORDS, text))
+    check_words(text)
     return Text(text, font=BODY_FONT, font_size=size).set_color(color)
 
 

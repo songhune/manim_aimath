@@ -10,6 +10,8 @@
     ./render.sh ppt   _2026/aimath/week02.py MatrixProduct
     ./render.sh all   _2026/aimath/week02.py
 """
+import re
+
 from manim_imports_ext import *
 
 
@@ -26,15 +28,61 @@ WARN = RED_C
 DONE = YELLOW
 
 
+MAX_WORDS = 6          # 하네스 3.6 — 화면에 남는 문구는 여섯 낱말까지
+_PUNCT_ONLY = re.compile(r"^[·・,.:;=+\-—~/()\[\]{}<>|]+$")
+
+
+def screen_words(text):
+    """세는 낱말. 숫자가 든 낱말과 기호만 있는 토막은 빼고 센다."""
+    out = []
+    for word in text.replace("—", " ").split():
+        if not word or _PUNCT_ONLY.match(word):
+            continue
+        if any(c.isdigit() for c in word):
+            continue
+        out.append(word)
+    return out
+
+
+def check_words(text):
+    """화면 문구 길이를 막는다(하네스 3.6).
+
+    길이를 넘기면 렌더가 여기서 멈춘다. 설명이 길어졌다는 것은 그 설명이 화면이
+    아니라 수업운영 메모로 갈 것이라는 뜻이다. 확률과통계의 `ps_common.label()`
+    과 같은 장치이며, 판정의 원본은 `_harness/harness_rules.py` 다.
+    """
+    words = screen_words(text)
+    if len(words) > MAX_WORDS:
+        raise ValueError(
+            "화면 문구가 %d낱말이다 (최대 %d): %r\n"
+            "설명은 수업운영 메모로 옮기고 화면에는 이름만 남길 것."
+            % (len(words), MAX_WORDS, text))
+    return text
+
+
 def title(text, size=42):
     return Text(text, font=TITLE_FONT, font_size=size).set_color(WHITE)
 
 
 def body(text, size=28, color=INK):
+    check_words(text)
     return Text(text, font=BODY_FONT, font_size=size).set_color(color)
 
 
 def caption(text, size=26, color=GREY_B):
+    """화면 문구. 명사구나 짧은 구절만 받는다(하네스 3.6).
+
+    길이를 넘기면 렌더가 여기서 멈춘다. 설명이 길어졌다는 것은 그 설명이 화면이
+    아니라 수업운영 메모로 갈 것이라는 뜻이다. 확률과통계의 `ps_common.label()`
+    과 같은 장치이며, 판정의 원본은 `_harness/harness_rules.py` 다.
+    """
+    words = screen_words(text)
+    if len(words) > MAX_WORDS:
+        raise ValueError(
+            "화면 문구가 %d낱말이다 (최대 %d): %r\n"
+            "설명은 수업운영 메모로 옮기고 화면에는 이름만 남길 것."
+            % (len(words), MAX_WORDS, text))
+    check_words(text)
     return Text(text, font=BODY_FONT, font_size=size).set_color(color)
 
 
@@ -263,7 +311,7 @@ class MatrixProduct(InteractiveScene):
         rule.next_to(row, DOWN, buff=0.9)
         self.play(Write(rule))
 
-        cond = caption("A의 열 개수와 B의 행 개수가 같아야 정의됨", 26, DONE)
+        cond = caption("A의 열과 B의 행이 같아야 함", 26, DONE)
         cond.next_to(rule, DOWN, buff=0.4)
         inner = VGroup(box(rule[3], WARN, 0.06), box(rule[6], WARN, 0.06))
         self.play(ShowCreation(inner), FadeIn(cond, UP))
@@ -297,7 +345,7 @@ class MatrixProduct(InteractiveScene):
                           FadeOut(row_box), FadeOut(col_box), run_time=0.5)
         self.wait()
 
-        note = caption("i행의 길이와 j열의 길이가 같아 짝을 지어 곱함")
+        note = caption("i행과 j열의 길이가 같음")
         note.next_to(entry_rule, UP, buff=0.45)
         self.play(FadeOut(work), FadeIn(note, UP))
         self.wait(2)
@@ -374,7 +422,7 @@ class ProductOrder(InteractiveScene):
         verdict.next_to(pair, DOWN, buff=0.75)
         self.play(Write(verdict))
 
-        note = caption("A의 행과 B의 열을 짝짓느냐, B의 행과 A의 열을 짝짓느냐의 차이")
+        note = caption("짝짓는 행과 열이 서로 바뀜")
         note.to_edge(DOWN, buff=0.4)
         self.play(FadeIn(note, UP))
         self.wait(2)
@@ -574,7 +622,7 @@ class Transpose(InteractiveScene):
         rule = formula(R"(A^{T})_{ij} = a_{ji}", DONE, 1.15)
         rule.next_to(board, DOWN, buff=0.75)
         self.play(Write(rule))
-        note = caption("i행 j열 성분이 j행 i열 자리로 이동", 26)
+        note = caption("첨자 두 개가 자리를 바꿈", 26)
         note.next_to(rule, DOWN, buff=0.4)
         self.play(FadeIn(note, UP))
         self.wait(1.6)
@@ -738,7 +786,7 @@ class EchelonForms(InteractiveScene):
             self.play(FadeOut(VGroup(board, circles, stair, block)),
                       run_time=0.5)
 
-        note = caption("선행 성분의 자리가 오른쪽 아래로 내려가는 것이 판별 기준")
+        note = caption("선행 성분이 오른쪽 아래로 내려감")
         note.move_to(0.2 * DOWN)
         self.play(FadeIn(note, UP))
         self.wait(2)
@@ -850,12 +898,12 @@ class ArrayDimensions(InteractiveScene):
                   run_time=0.7)
         self.play(FadeIn(tags[2]))
 
-        note = caption("컬러 이미지 한 장 = 같은 크기 행렬 3장", 25)
+        note = caption("컬러 이미지 = 행렬 3장", 25)
         note.next_to(VGroup(front, sheets), DOWN, buff=0.5)
         self.play(FadeIn(note, UP))
         self.wait(1.0)
 
-        closing = caption("축이 하나 늘 때마다 배열의 차원이 하나 증가")
+        closing = caption("축이 늘면 차원도 늚")
         closing.to_edge(DOWN, buff=0.4)
         self.play(FadeIn(closing, UP))
         self.wait(2)
@@ -916,7 +964,7 @@ class EntryNotation(InteractiveScene):
             marker, readout = new_marker, line
             self.wait(0.9)
 
-        note = caption("앞 첨자가 행 번호, 뒤 첨자가 열 번호")
+        note = caption("앞 첨자는 행, 뒤 첨자는 열")
         note.to_edge(DOWN, buff=0.45)
         self.play(FadeIn(note, UP))
         self.wait(2)
@@ -1327,7 +1375,7 @@ class VectorInnerProduct(InteractiveScene):
                        line.get_bottom()[1] - 0.45)
         self.play(FadeIn(tags))
 
-        cond = caption("행렬의 곱과 같은 규칙 — 안쪽 두 수가 같아야 정의됨", 26, DONE)
+        cond = caption("안쪽 두 수가 같아야 함", 26, DONE)
         cond.move_to([0, tags.get_bottom()[1] - 0.5, 0])
         self.play(FadeIn(cond, UP))
         self.wait(1.0)
@@ -1402,7 +1450,7 @@ class VectorOuterProduct(InteractiveScene):
                        line.get_bottom()[1] - 0.45)
         self.play(FadeIn(tags[0]), FadeIn(tags[1]))
 
-        cond = caption("안쪽 두 수가 모두 1 — 차원이 달라도 정의됨", 26, DONE)
+        cond = caption("차원이 달라도 정의됨", 26, DONE)
         cond.move_to([0, tags.get_bottom()[1] - 0.5, 0])
         self.play(FadeIn(cond, UP))
         self.wait(1.2)
@@ -1481,7 +1529,7 @@ class OneExampleThreeProducts(InteractiveScene):
         group.arrange(RIGHT, buff=1.5).move_to(0.55 * UP)
         self.play(FadeIn(group, UP))
 
-        note = caption("재료는 이 둘뿐 — 예제 2-1 의 계수행렬과 그 해", 27)
+        note = caption("예제 2-1 의 계수행렬과 해", 27)
         note.next_to(group, DOWN, buff=0.6)
         self.play(FadeIn(note, UP))
         self.wait(1.4)
@@ -1520,7 +1568,7 @@ class OneExampleThreeProducts(InteractiveScene):
         self.play(Write(terms))
         self.wait(0.6)
 
-        why = caption("안쪽 3이 만나 사라지고 바깥 1×1만 남음 — 결과는 스칼라", 26, DONE)
+        why = caption("결과는 스칼라", 26, DONE)
         why.next_to(terms, DOWN, buff=0.5)
         self.play(FadeIn(why, UP))
         self.wait(1.6)
@@ -1558,7 +1606,7 @@ class OneExampleThreeProducts(InteractiveScene):
         self.play(LaggedStart(*reveal, lag_ratio=0.09, run_time=1.6))
         self.wait(0.5)
 
-        why = caption("안쪽 1은 조건이 걸릴 자리가 없음 — 차원이 달라도 정의됨", 26, DONE)
+        why = caption("차원이 달라도 정의됨", 26, DONE)
         why.next_to(size, DOWN, buff=0.55)
         self.play(FadeIn(why, UP))
         self.wait(1.5)
@@ -1605,14 +1653,14 @@ class OneExampleThreeProducts(InteractiveScene):
             self.play(out.get_entries()[i].animate.set_opacity(1),
                       FadeOut(mark), run_time=0.45)
             if i == 0:
-                tie = caption("첫 성분은 앞에서 구한 내적 그 값", 26, WARN)
+                tie = caption("첫 성분은 앞의 내적", 26, WARN)
                 tie.next_to(terms, DOWN, buff=0.45)
                 self.play(FadeIn(tie, UP))
                 self.wait(1.3)
                 self.play(FadeOut(tie))
         self.play(FadeOut(work))
 
-        why = caption("행마다 내적 한 번 — 행렬곱은 내적을 되풀이한 것", 26, DONE)
+        why = caption("행마다 내적 한 번", 26, DONE)
         why.next_to(size, DOWN, buff=0.6)
         self.play(FadeIn(why, UP))
         self.wait(1.6)
@@ -1637,7 +1685,7 @@ class OneExampleThreeProducts(InteractiveScene):
                                 for k in range(3)], lag_ratio=0.3, run_time=1.5))
         self.wait(0.8)
 
-        note = caption("세 가지 모두 같은 규칙 — 안쪽이 만나 사라지고 바깥이 남음",
+        note = caption("안쪽은 사라지고 바깥이 남음",
                        27, DONE)
         note.next_to(cells, DOWN, buff=0.75)
         self.play(FadeIn(note, UP))
@@ -1690,7 +1738,7 @@ class CrossProduct(InteractiveScene):
         self.play(FadeIn(uc), FadeIn(vc), Write(times))
         self.play(Write(eq), ShowCreation(out.get_brackets()))
 
-        rule = caption("구하려는 자리의 행을 지우고, 남은 네 수를 어긋나게 곱해 뺌",
+        rule = caption("그 행을 지우고 어긋나게 곱해 뺌",
                        26, DONE)
         rule.move_to([0, line.get_bottom()[1] - 0.55, 0])
         self.play(FadeIn(rule, UP))
@@ -1888,7 +1936,7 @@ class KroneckerProduct(InteractiveScene):
         rule.next_to(line, DOWN, buff=0.7)
         self.play(Write(rule))
 
-        note = caption("크기 조건 없음 — 2 × 2 두 개가 4 × 4 하나로", 27, DONE)
+        note = caption("크기 조건 없음", 27, DONE)
         note.to_edge(DOWN, buff=0.5)
         self.play(FadeIn(note, UP))
         self.wait(2)
@@ -1955,7 +2003,7 @@ class MatrixVectorProduct(InteractiveScene):
         rule.to_edge(DOWN, buff=0.55)
         self.play(Write(rule))
 
-        note = caption("성분마다 내적 한 번 — 행렬방정식 Ax = b 의 좌변")
+        note = caption("행렬방정식 Ax = b 의 좌변")
         note.next_to(rule, UP, buff=0.4)
         self.play(FadeIn(note, UP))
         self.wait(2)

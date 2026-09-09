@@ -120,6 +120,24 @@ run_manim() {
     return $rc
 }
 
+# 렌더 전에 화면 문구를 하네스로 본다 (PRD 3.1·3.6·3.7).
+# 만들고 나서 잡으면 영상·덱·PDF·웹페이지를 전부 다시 만들어야 한다. 그래서 앞에서 막는다.
+# HARNESS=skip 을 붙이면 건너뛴다(급할 때만).
+HARNESS_DIR="$(cd "$REPO_ROOT/.." && pwd)/_harness"
+
+harness_gate() {
+    local src="$1"
+    [ "${HARNESS:-}" = "skip" ] && return 0
+    [ -f "$HARNESS_DIR/check_harness.py" ] || return 0
+    "$MANIM_PY" "$HARNESS_DIR/check_harness.py" "$src" --include-baseline --quiet || {
+        echo "" >&2
+        echo "화면 문구가 하네스를 통과하지 못했다. 고치고 다시 렌더한다." >&2
+        echo "  규칙 본문: 2026-2/콘텐츠제작_하네스_PRD.md 3.1 · 3.6 · 3.7" >&2
+        echo "  건너뛰려면: HARNESS=skip ./render.sh ..." >&2
+        return 1
+    }
+}
+
 CMD="${1:-}"
 [ -n "$CMD" ] || { usage; exit 1; }
 shift || true
@@ -141,24 +159,29 @@ case "$CMD" in
         ;;
     draft)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$@" -w -l
         ;;
     video)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$@" -w --hd
         ;;
     4k)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$@" -w --uhd
         ;;
     white)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         # 배경만 흰색으로 바꾸면 밝은 회색 글씨가 사라진다.
         # light_config.yml이 팔레트까지 통째로 밝은 테마로 바꿔 준다.
         run_manim "$@" -w --hd --config_file light_config.yml
         ;;
     png)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$@" -s -w --hd
         ;;
     gif)
@@ -166,6 +189,7 @@ case "$CMD" in
         # 1080p mp4 로 렌더한 뒤 ffmpeg 팔레트 방식으로 줄인다 (같은 길이에 0.7MB).
         # Notability 는 mp4 를 필기 위에 못 얹지만 GIF 는 그림처럼 붙는다.
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         FILE="$1"; shift
         [ -n "${1:-}" ] || die "Scene 이름이 필요합니다."
         OUT="$(out_dir_of "$FILE")"
@@ -203,10 +227,12 @@ case "$CMD" in
         ;;
     alpha)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$@" -w --hd -t
         ;;
     all)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         run_manim "$1" -a -w --hd "${@:2}"
         ;;
     dev)
@@ -216,6 +242,7 @@ case "$CMD" in
         ;;
     check)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         FILE="$1"
         REPORT_DIR="$VIDEO_DIR/_scratch/_check"
         mkdir -p "$REPORT_DIR"
@@ -238,6 +265,7 @@ case "$CMD" in
         ;;
     ppt)
         require_file "${1:-}"
+        harness_gate "$1" || exit 1
         FILE="$1"; shift
         [ -n "${1:-}" ] || die "Scene 이름이 필요합니다."
         OUT="$(out_dir_of "$FILE")"

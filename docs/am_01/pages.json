@@ -4,14 +4,14 @@
   "title": "행렬의 성분 표기",
   "url": "https://songhune.github.io/manim_aimath/am_01/EntryNotation.html",
   "slides": 9,
-  "kb": 1328
+  "kb": 1323
  },
  {
   "scene": "ArrayDimensions",
   "title": "3차원 이상의 배열",
   "url": "https://songhune.github.io/manim_aimath/am_01/ArrayDimensions.html",
   "slides": 13,
-  "kb": 1831
+  "kb": 1805
  },
  {
   "scene": "SquareMatrixDiagonal",
@@ -25,7 +25,7 @@
   "title": "전치행렬",
   "url": "https://songhune.github.io/manim_aimath/am_01/Transpose.html",
   "slides": 10,
-  "kb": 1420
+  "kb": 1410
  },
  {
   "scene": "SymmetricMatrix",
@@ -53,14 +53,14 @@
   "title": "행렬의 곱",
   "url": "https://songhune.github.io/manim_aimath/am_01/MatrixProduct.html",
   "slides": 14,
-  "kb": 1570
+  "kb": 1530
  },
  {
   "scene": "ProductOrder",
   "title": "곱의 순서",
   "url": "https://songhune.github.io/manim_aimath/am_01/ProductOrder.html",
   "slides": 10,
-  "kb": 1402
+  "kb": 1384
  },
  {
   "scene": "ProductShapeRule",
@@ -88,21 +88,21 @@
   "title": "행 사다리꼴과 기약 행 사다리꼴",
   "url": "https://songhune.github.io/manim_aimath/am_01/EchelonForms.html",
   "slides": 18,
-  "kb": 1685
+  "kb": 1669
  },
  {
   "scene": "OneExampleThreeProducts",
   "title": "한 예로 보는 내적 · 외적 · 행렬곱",
   "url": "https://songhune.github.io/manim_aimath/am_01/OneExampleThreeProducts.html",
   "slides": 31,
-  "kb": 3216
+  "kb": 2969
  },
  {
   "scene": "CrossProduct",
   "title": "벡터곱",
   "url": "https://songhune.github.io/manim_aimath/am_01/CrossProduct.html",
   "slides": 17,
-  "kb": 1987
+  "kb": 1831
  },
  {
   "scene": "FrobeniusInner",
@@ -116,7 +116,7 @@
   "title": "크로네커 곱",
   "url": "https://songhune.github.io/manim_aimath/am_01/KroneckerProduct.html",
   "slides": 8,
-  "kb": 1436
+  "kb": 1412
  },
  {
   "scene": "ProductSizeMap",
