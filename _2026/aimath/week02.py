@@ -1436,6 +1436,214 @@ class VectorOuterProduct(InteractiveScene):
         self.wait(2)
 
 
+# 보-2b. 한 예로 보는 세 가지 곱 (내적 · 외적 · 행렬곱)
+class OneExampleThreeProducts(InteractiveScene):
+    """내적 · 외적 · 행렬곱을 한 예에서 잇달아 본다.
+
+    셋을 따로 떼어 각기 다른 수로 보여 주면, 학생이 영상마다 재료를 새로 읽어야 해서
+    정작 셋이 어떻게 다른지가 남지 않는다. 그래서 재료를 하나로 고정한다.
+    교재 예제 2-1 의 계수행렬 A 와 그 해 x, 그리고 A 의 1행 u 뿐이다.
+
+        내적   u^T x = (1×3)(3×1) = 1×1  →  2
+        외적   u x^T = (3×1)(1×3) = 3×3  →  랭크 1 인 행렬
+        행렬곱 A x   = (3×3)(3×1) = 3×1  →  (2, 0, -2) = b
+
+    셋 다 같은 규칙 (m×n)(n×p) = m×p 의 서로 다른 경우다. 안쪽 두 수가 만나 사라지고
+    바깥 두 수가 결과의 크기로 남는다. 내적과 외적은 같은 두 벡터를 순서만 바꾼 것이라
+    수 하나와 3×3 행렬로 갈린다. 행렬곱의 첫 성분은 앞서 구한 내적 그 값이다.
+    """
+    A = [[1, 3, 2], [2, 2, 0], [-3, 1, 1]]
+    x = [1, -1, 2]
+
+    def construct(self):
+        self.head = slide_title("한 예로 보는 내적 · 외적 · 행렬곱")
+        self.play(FadeIn(self.head[0]), ShowCreation(self.head[1]))
+
+        self.rule = Tex(R"(m \times n)(n \times p) = m \times p")
+        self.rule.set_color(GREY_B).scale(0.8)
+        self.rule.next_to(self.head[1], DOWN, buff=0.22).align_to(self.head[0], LEFT)
+        self.play(FadeIn(self.rule))
+
+        self.u = self.A[0]
+        self.materials()
+        self.inner()
+        self.outer()
+        self.matrix_vector()
+        self.closing()
+
+    # 1. 재료 — A 와 x, 그리고 A 의 1행
+    def materials(self):
+        a = mat(self.A, ACCENT, h_buff=0.8, v_buff=0.5)
+        xc = vec_col(self.x, CALM, v_buff=0.5)
+        group = VGroup(VGroup(Tex("A =").set_color(ACCENT), a).arrange(RIGHT, buff=0.25),
+                       VGroup(Tex(R"\mathbf{x} =").set_color(CALM), xc)
+                       .arrange(RIGHT, buff=0.25))
+        group.arrange(RIGHT, buff=1.5).move_to(0.55 * UP)
+        self.play(FadeIn(group, UP))
+
+        note = caption("재료는 이 둘뿐 — 예제 2-1 의 계수행렬과 그 해", 27)
+        note.next_to(group, DOWN, buff=0.6)
+        self.play(FadeIn(note, UP))
+        self.wait(1.4)
+
+        row = box(a.get_rows()[0], DONE, 0.12)
+        pick = caption("A의 1행을 u로 두고 시작", 26, DONE)
+        pick.move_to(note)
+        self.play(ShowCreation(row), FadeTransform(note, pick))
+        self.wait(1.2)
+        self.play(FadeOut(VGroup(group, row, pick)))
+
+    def size_line(self, text, target):
+        line = Tex(text).set_color(GREY_A).scale(0.9)
+        line.next_to(target, DOWN, buff=0.5)
+        return line
+
+    # 2. 내적 — 행 하나 곱하기 열 하나
+    def inner(self):
+        head = caption("내적", 30, DONE).to_edge(LEFT, buff=1.0).shift(1.15 * UP)
+        ut = vec_row(self.u, DONE)
+        xc = vec_col(self.x, CALM, v_buff=0.5)
+        eq = Tex("=").set_color(GREY_B)
+        total = 0
+        for a, b in zip(self.u, self.x):
+            total += a * b
+        out = Tex(str(total)).set_color(WHITE).scale(1.3)
+
+        line = VGroup(ut, xc, eq, out).arrange(RIGHT, buff=0.45).move_to(1.15 * UP)
+        self.play(FadeIn(head), FadeIn(ut), FadeIn(xc), Write(eq), FadeIn(out))
+
+        size = self.size_line(R"(1 \times 3)(3 \times 1) = 1 \times 1", line)
+        self.play(Write(size))
+        terms = Tex(" + ".join(R"%s \cdot %s" % (signed(a), signed(b))
+                               for a, b in zip(self.u, self.x)) + " = %d" % total)
+        terms.set_color(WHITE).next_to(size, DOWN, buff=0.45)
+        self.play(Write(terms))
+        self.wait(0.6)
+
+        why = caption("안쪽 3이 만나 사라지고 바깥 1×1만 남음 — 결과는 스칼라", 26, DONE)
+        why.next_to(terms, DOWN, buff=0.5)
+        self.play(FadeIn(why, UP))
+        self.wait(1.6)
+        self.play(FadeOut(VGroup(head, line, size, terms, why)))
+        self.inner_value = total
+
+    # 3. 외적 — 순서만 바꾼다
+    def outer(self):
+        head = caption("외적", 30, DONE).to_edge(LEFT, buff=1.0).shift(1.15 * UP)
+        product = []
+        for a in self.u:
+            product.append([a * b for b in self.x])
+
+        uc = vec_col(self.u, DONE, v_buff=0.5)
+        xt = vec_row(self.x, CALM)
+        eq = Tex("=").set_color(GREY_B)
+        out = mat(product, WHITE, h_buff=0.85, v_buff=0.5)
+
+        line = VGroup(uc, xt, eq, out).arrange(RIGHT, buff=0.45).move_to(1.15 * UP)
+        out.get_entries().set_opacity(0)
+        self.play(FadeIn(head), FadeIn(uc), FadeIn(xt), Write(eq),
+                  ShowCreation(out.get_brackets()))
+
+        swap = caption("같은 두 벡터, 순서만 바꿈", 26, WARN)
+        swap.next_to(line, DOWN, buff=0.45)
+        self.play(FadeIn(swap, UP))
+        self.wait(1.0)
+
+        size = self.size_line(R"(3 \times 1)(1 \times 3) = 3 \times 3", line)
+        self.play(FadeTransform(swap, size))
+        reveal = []
+        for i in range(3):
+            for j in range(3):
+                reveal.append(entry_at(out, i, j, 3).animate.set_opacity(1))
+        self.play(LaggedStart(*reveal, lag_ratio=0.09, run_time=1.6))
+        self.wait(0.5)
+
+        why = caption("안쪽 1은 조건이 걸릴 자리가 없음 — 차원이 달라도 정의됨", 26, DONE)
+        why.next_to(size, DOWN, buff=0.55)
+        self.play(FadeIn(why, UP))
+        self.wait(1.5)
+        rank = caption("모든 행이 x의 상수배 — 랭크가 1인 행렬", 26)
+        rank.move_to(why)
+        self.play(FadeTransform(why, rank))
+        self.wait(1.4)
+        self.play(FadeOut(VGroup(head, line, size, rank)))
+
+    # 4. 행렬곱 — 내적을 행마다 되풀이한다
+    def matrix_vector(self):
+        head = caption("행렬곱", 30, DONE).to_edge(LEFT, buff=1.0).shift(1.15 * UP)
+        result = []
+        for i in range(3):
+            value = 0
+            for k in range(3):
+                value += self.A[i][k] * self.x[k]
+            result.append(value)
+
+        a = mat(self.A, ACCENT, h_buff=0.8, v_buff=0.5)
+        xc = vec_col(self.x, CALM, v_buff=0.5)
+        eq = Tex("=").set_color(GREY_B)
+        out = vec_col(result, WHITE, v_buff=0.5)
+
+        line = VGroup(a, xc, eq, out).arrange(RIGHT, buff=0.45).move_to(1.15 * UP)
+        out.get_entries().set_opacity(0)
+        self.play(FadeIn(head), FadeIn(a), FadeIn(xc), Write(eq),
+                  ShowCreation(out.get_brackets()))
+        size = self.size_line(R"(3 \times 3)(3 \times 1) = 3 \times 1", line)
+        self.play(Write(size))
+
+        work = VGroup()
+        self.add(work)
+        for i in range(3):
+            mark = box(a.get_rows()[i], DONE, 0.12)
+            terms = Tex(" + ".join(R"%s \cdot %s" % (signed(self.A[i][k]),
+                                                     signed(self.x[k]))
+                                   for k in range(3)) + " = %d" % result[i])
+            terms.set_color(WHITE).scale(0.95)
+            terms.next_to(size, DOWN, buff=0.45)
+            self.play(ShowCreation(mark), run_time=0.35)
+            self.play(FadeTransform(work, terms), run_time=0.5)
+            work = terms
+            self.play(out.get_entries()[i].animate.set_opacity(1),
+                      FadeOut(mark), run_time=0.45)
+            if i == 0:
+                tie = caption("첫 성분은 앞에서 구한 내적 그 값", 26, WARN)
+                tie.next_to(terms, DOWN, buff=0.45)
+                self.play(FadeIn(tie, UP))
+                self.wait(1.3)
+                self.play(FadeOut(tie))
+        self.play(FadeOut(work))
+
+        why = caption("행마다 내적 한 번 — 행렬곱은 내적을 되풀이한 것", 26, DONE)
+        why.next_to(size, DOWN, buff=0.6)
+        self.play(FadeIn(why, UP))
+        self.wait(1.6)
+        self.play(FadeOut(VGroup(head, line, size, why)))
+
+    # 5. 정리
+    def closing(self):
+        rows = [
+            ("내적", R"\mathbf{u}^{T}\mathbf{x}", R"(1 \times 3)(3 \times 1)", "1 × 1"),
+            ("외적", R"\mathbf{u}\mathbf{x}^{T}", R"(3 \times 1)(1 \times 3)", "3 × 3"),
+            ("행렬곱", R"A\mathbf{x}", R"(3 \times 3)(3 \times 1)", "3 × 1"),
+        ]
+        cells = VGroup()
+        for name, mark, size, out in rows:
+            cells.add(caption(name, 27, WHITE))
+            cells.add(Tex(mark).set_color(DONE).scale(0.85))
+            cells.add(Tex(size).set_color(GREY_A).scale(0.8))
+            cells.add(caption(out, 26, CALM))
+        cells.arrange_in_grid(3, 4, h_buff=1.1, v_buff=0.5, aligned_edge=LEFT)
+        cells.move_to(0.75 * UP)
+        self.play(LaggedStart(*[FadeIn(cells[4 * k:4 * k + 4], RIGHT)
+                                for k in range(3)], lag_ratio=0.3, run_time=1.5))
+        self.wait(0.8)
+
+        note = caption("세 가지 모두 같은 규칙 — 안쪽이 만나 사라지고 바깥이 남음",
+                       27, DONE)
+        note.next_to(cells, DOWN, buff=0.75)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
 # 보-3. 벡터곱
 class CrossProduct(InteractiveScene):
     """한국어 '외적'은 벡터곱을 가리키기도 한다. 이쪽은 3차원에서만 정의된다.

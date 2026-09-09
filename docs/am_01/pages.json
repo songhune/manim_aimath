@@ -91,25 +91,11 @@
   "kb": 1685
  },
  {
-  "scene": "VectorInnerProduct",
-  "title": "벡터의 내적",
-  "url": "https://songhune.github.io/manim_aimath/am_01/VectorInnerProduct.html",
-  "slides": 11,
-  "kb": 1253
- },
- {
-  "scene": "MatrixVectorProduct",
-  "title": "행렬과 벡터의 곱",
-  "url": "https://songhune.github.io/manim_aimath/am_01/MatrixVectorProduct.html",
-  "slides": 11,
-  "kb": 1321
- },
- {
-  "scene": "VectorOuterProduct",
-  "title": "벡터의 외적",
-  "url": "https://songhune.github.io/manim_aimath/am_01/VectorOuterProduct.html",
-  "slides": 12,
-  "kb": 1332
+  "scene": "OneExampleThreeProducts",
+  "title": "한 예로 보는 내적 · 외적 · 행렬곱",
+  "url": "https://songhune.github.io/manim_aimath/am_01/OneExampleThreeProducts.html",
+  "slides": 31,
+  "kb": 3216
  },
  {
   "scene": "CrossProduct",

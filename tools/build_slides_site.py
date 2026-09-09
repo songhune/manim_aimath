@@ -138,9 +138,9 @@ SECTIONS = {
         ("1.3 행렬의 연산", ["MatrixAddition", "ScalarMultiple", "MatrixProduct",
                           "ProductOrder", "ProductShapeRule", "MatrixPower"]),
         ("1.4 행렬과 연립선형방정식의 관계", ["RowOperations", "EchelonForms"]),
-        ("보충 · 곱이라 부르는 연산들", ["VectorInnerProduct", "MatrixVectorProduct",
-                                "VectorOuterProduct", "CrossProduct", "FrobeniusInner",
-                                "KroneckerProduct", "ProductSizeMap"]),
+        ("보충 · 곱이라 부르는 연산들", ["OneExampleThreeProducts", "CrossProduct",
+                                "FrobeniusInner", "KroneckerProduct",
+                                "ProductSizeMap"]),
     ],
     "am_02": [
         ("2.1 가우스-조르당 소거법", ["GaussJordan"]),

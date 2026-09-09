@@ -4,8 +4,9 @@
     python tools/build_slides_site.py --chapter am_01 --module _2026/aimath/slides_am_01.py
 
 차례는 강의 덱(`AI기초수학/week02_자료/_build_ch01_deck.py` 의 VIDEOS)과 같다.
-`InnerOuterTensor` 는 덱에 넣지 않은 씬이라 여기서도 뺐다. 보충 일곱 편이 같은 내용을
-크기 규칙으로 나누어 다룬다. 규칙은 `slides_common.py` 참고.
+덱에 넣지 않은 씬(`InnerOuterTensor`, 그리고 `OneExampleThreeProducts` 로 묶기 전의
+`VectorInnerProduct` · `MatrixVectorProduct` · `VectorOuterProduct`)은 여기서도 뺐다.
+씬 정의는 남겨 두었으니 되돌리려면 이 목록에 다시 적으면 된다. 규칙은 `slides_common.py` 참고.
 """
 # manim_slides 를 먼저 들여온다. manimlib 은 들여올 때 sys.argv 를 읽는데,
 # manim_slides 쪽 어댑터가 그 사이 argv 를 잠시 비워 준다. week 모듈을 먼저
@@ -31,9 +32,8 @@ PAGES = build(globals(), [
     ("RowOperations", "기본 행 연산"),
     ("EchelonForms", "행 사다리꼴과 기약 행 사다리꼴"),
     # 보충 — 곱이라 부르는 연산들
-    ("VectorInnerProduct", "벡터의 내적"),
-    ("MatrixVectorProduct", "행렬과 벡터의 곱"),
-    ("VectorOuterProduct", "벡터의 외적"),
+    # 내적·외적·행렬곱은 한 편으로 묶었다. 재료를 하나로 고정해야 셋의 차이가 남는다.
+    ("OneExampleThreeProducts", "한 예로 보는 내적 · 외적 · 행렬곱"),
     ("CrossProduct", "벡터곱"),
     ("FrobeniusInner", "행렬의 내적"),
     ("KroneckerProduct", "크로네커 곱"),
