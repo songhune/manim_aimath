@@ -45,11 +45,12 @@ def screen_words(text):
 
 
 def check_words(text):
-    """화면 문구 길이를 막는다(하네스 3.6).
+    """화면 문구 길이만 빠르게 막는다(하네스 3.6의 뒷받침 규칙).
 
-    길이를 넘기면 렌더가 여기서 멈춘다. 설명이 길어졌다는 것은 그 설명이 화면이
-    아니라 수업운영 메모로 갈 것이라는 뜻이다. 확률과통계의 `ps_common.label()`
-    과 같은 장치이며, 판정의 원본은 `_harness/harness_rules.py` 다.
+    **이것이 3.6 전부가 아니다.** 평가하는 수식어(`아주` `쉬운`)와 표어투
+    (`…만 하면 끝`)는 짧아서 길이로는 걸리지 않으므로 여기서 보지 않는다.
+    그 판정은 `_harness/harness_rules.py` 가 하고, `./render.sh` 가 렌더 전에
+    불러 막는다. 여기는 손으로 씬을 돌릴 때 긴 문장을 바로 알아채라고 두는 것이다.
     """
     words = screen_words(text)
     if len(words) > MAX_WORDS:
