@@ -1739,7 +1739,7 @@ class CrossProduct(InteractiveScene):
         self.play(FadeIn(uc), FadeIn(vc), Write(times))
         self.play(Write(eq), ShowCreation(out.get_brackets()))
 
-        rule = caption("그 행을 지우고 어긋나게 곱해 뺌",
+        rule = caption("그 행을 지우고 대각선 곱의 차",
                        26, DONE)
         rule.move_to([0, line.get_bottom()[1] - 0.55, 0])
         self.play(FadeIn(rule, UP))

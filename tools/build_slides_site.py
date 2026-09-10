@@ -146,10 +146,14 @@ SECTIONS = {
                                 "ProductSizeMap"]),
     ],
     "am_02": [
-        ("2.1 가우스-조르당 소거법", ["AugmentedMatrix", "GaussJordan", "ReadRREF"]),
+        ("2.1 가우스-조르당 소거법", ["AugmentedMatrix", "GaussJordan"]),
+        ("2.1 파이썬 코드 뜯어보기", ["PartialPivot", "EliminateColumn"]),
         ("2.2 역행렬", ["InverseByRowOps", "SocksShoes", "InverseSolve"]),
-        ("보충 · 행렬식", ["Determinant2x2", "DeterminantZero", "Determinant3x3",
-                       "DeterminantRules"]),
+        ("보충 · 행렬식 (수)", ["Determinant2x2", "DeterminantZero",
+                           "Determinant3x3", "DeterminantRules"]),
+        ("보충 · 행렬식과 역행렬이 하는 일", ["DeterminantGeometry",
+                                   "DeterminantCollapse", "InverseAsUndo",
+                                   "InverseDenominator"]),
         ("2.3 여러 가지 행렬", ["TransposeRules", "MatrixZoo"]),
     ],
     "ps1_02": [

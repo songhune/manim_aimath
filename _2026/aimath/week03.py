@@ -85,6 +85,16 @@ def caption(text, size=26, color=GREY_B):
     return Text(text, font=BODY_FONT, font_size=size).set_color(color)
 
 
+def code(text, size=24, color=CALM):
+    """화면에 놓는 코드 한 줄.
+
+    코드는 자막이 아니다. 하네스 3.6 은 `caption()`·`body()` 만 문구로 보는데,
+    여기는 학생이 그대로 받아 칠 줄이므로 낱말 수로 재면 안 된다. 대신 강의자료
+    파이썬 코드와 **글자 하나까지 같아야** 한다.
+    """
+    return Text(text, font="D2Coding", font_size=size).set_color(color)
+
+
 def slide_title(text):
     t = title(text).to_corner(UL, buff=0.5)
     rule = Line(LEFT, RIGHT)
@@ -311,48 +321,6 @@ class AugmentedMatrix(InteractiveScene):
 
 
 # ─────────────────────────────────────────────────────────────
-# 4. 기약 행 사다리꼴에서 해 읽기 — 교재 2.1 절 도입
-# ─────────────────────────────────────────────────────────────
-class ReadRREF(InteractiveScene):
-    """왼쪽이 단위행렬이 되면 마지막 열이 그대로 해다."""
-
-    def construct(self):
-        head = slide_title("기약 행 사다리꼴에서 해 읽기")
-        self.play(FadeIn(head[0]), ShowCreation(head[1]))
-
-        group = augmented([[1, 0, 0, 1], [0, 1, 0, -1], [0, 0, 1, 2]], 3)
-        group.move_to(2.6 * LEFT + 0.3 * DOWN)
-        m = group.matrix
-        self.play(FadeIn(group))
-        self.wait(0.5)
-
-        left = box(VGroup(*m.get_columns()[:3]), ACCENT, 0.16)
-        left_tag = caption("단위행렬", 26, ACCENT)
-        left_tag.next_to(left, UP, buff=0.3)
-        self.play(ShowCreation(left), FadeIn(left_tag))
-        self.wait(0.6)
-
-        rows = [Tex(t) for t in (R"x_1 = 1", R"x_2 = -1", R"x_3 = 2")]
-        lines = VGroup(*rows).arrange(DOWN, buff=0.55)
-        lines.next_to(group, RIGHT, buff=1.9).set_color(DONE)
-
-        arrows = VGroup()
-        for i, line in enumerate(rows):
-            entry = m.get_rows()[i][3]
-            arrow = Arrow(entry.get_right(), line.get_left(), buff=0.25)
-            arrow.set_stroke(GREY_C, 3)
-            arrows.add(arrow)
-
-        for arrow, line in zip(arrows, rows):
-            self.play(ShowCreation(arrow), FadeIn(line, RIGHT), run_time=0.7)
-
-        note = caption("마지막 열이 그대로 해", 26, GREY_B)
-        note.next_to(group, DOWN, buff=0.8)
-        self.play(FadeIn(note, UP))
-        self.wait(2)
-
-
-# ─────────────────────────────────────────────────────────────
 # 5. 양말-신발 성질 — 교재 정리 2-4 (2)
 # ─────────────────────────────────────────────────────────────
 class SocksShoes(InteractiveScene):
@@ -467,6 +435,10 @@ class Determinant2x2(InteractiveScene):
     교재는 이 수에 이름을 붙이지 않고 공식 안에만 둔다. 이름이 없으면
     2.2 절의 '역행렬이 존재하지 않는 경우'와 이어지지 않는다.
     수는 예제 2-3 의 행렬을 그대로 쓴다.
+
+    **여기서는 이름과 계산까지만 한다.** 이 수가 무엇을 재는 수인지는
+    `DeterminantGeometry` 가 맡는다. 공식을 외우는 것으로 끝나면 CH04 선형변환에서
+    다시 만났을 때 같은 것인 줄 모른다.
     """
     values = [[2, 3], [5, 7]]
 
@@ -491,7 +463,7 @@ class Determinant2x2(InteractiveScene):
         formula.set_width(5.2).next_to(symbol, RIGHT, buff=1.5)
         self.play(Write(formula), run_time=1.2)
 
-        note = caption("어긋나게 곱해 뺀 수", 26, GREY_B)
+        note = caption("두 대각선 곱의 차", 26, GREY_B)
         note.next_to(symbol, DOWN, buff=0.9).align_to(symbol, LEFT)
         self.play(FadeIn(note, UP))
         self.wait(1.2)
@@ -521,7 +493,12 @@ class Determinant2x2(InteractiveScene):
         last = caption("정리 2-3 의 분모", 26, DONE)
         last.next_to(inverse, RIGHT, buff=0.9)
         self.play(FadeIn(last, LEFT))
-        self.wait(2)
+        self.wait(1.4)
+
+        bridge = caption("이 수가 무엇을 재는지는 다음 편", 24, GREY_B)
+        bridge.to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(bridge, UP))
+        self.wait(1.6)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -813,4 +790,332 @@ class MatrixZoo(InteractiveScene):
         ortho = Tex(R"Q^{T}Q = I").set_color(DONE)
         ortho.next_to(blocks[3], RIGHT, buff=0.5).shift(0.2 * UP)
         self.play(FadeIn(ortho, LEFT))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 13~14. 행렬식과 역행렬이 하는 일 — 선형변환으로 보기
+#
+# 참고: legacy/_2016/eola/chapter6.py (3blue1brown, Essence of Linear Algebra)
+#   DescribeInverse · MultiplyToIdentity · InvertNonInvertable · SquishExmapleDet
+#
+# 원본의 Pi creature 와 말풍선 장면(TeacherStudentsScene)은 가져오지 않는다.
+# 사람 아이콘은 치토를 쓰기로 되어 있고(하네스 3.6), 여기는 사람이 나올 자리가 아니다.
+# 격자·기저벡터·단위정사각형만 `LinearTransformationScene` 에서 물려받는다.
+#
+# **이 두 편은 맛보기다.** 기저와 선형변환의 정의는 CH04 에서 한다. 여기서는
+# 행렬식이라는 수가 무엇을 재는 수인지, 역행렬이 무엇을 되돌리는지까지만 본다.
+# ─────────────────────────────────────────────────────────────
+def overlay(mob, scene, edge=DOWN, buff=0.4):
+    """격자 위에 얹는 문구. 격자가 비쳐 읽히지 않으므로 뒷판을 깐다."""
+    mob.to_edge(edge, buff=buff)
+    mob.add_background_rectangle(opacity=0.85, buff=0.12)
+    scene.add_foreground_mobject(mob)
+    return mob
+
+
+class DeterminantGeometry(LinearTransformationScene):
+    """행렬식은 그 행렬이 넓이를 몇 배로 바꾸는지를 재는 수다.
+
+    공식만 외우면 CH04 선형변환에서 같은 것을 다시 만났을 때 알아보지 못한다.
+    """
+    include_background_plane = True
+    include_foreground_plane = True
+    show_coordinates = True
+    show_basis_vectors = True
+    matrix = [[2, 1], [1, 3]]      # det = 5
+
+    def construct(self):
+        head = title("행렬식이 재는 것", 34)
+        head.to_corner(UL, buff=0.5)
+        head.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.add_foreground_mobject(head)
+
+        # add_unit_square(animate=True) 은 DrawBorderThenFill 을 쓰는데
+        # 지금 manimlib 에는 그 애니메이션이 없다. 직접 띄운다.
+        self.add_unit_square()
+        self.play(FadeIn(self.square))
+        before = caption("넓이 1", 30, DONE)
+        overlay(before, self, DOWN, 0.4)
+        self.play(FadeIn(before))
+        self.wait(0.8)
+
+        label = Matrix([["2", "1"], ["1", "3"]], h_buff=0.8)
+        label.set_color(ACCENT).set_height(1.15).to_corner(UR, buff=0.6)
+        label.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(label)
+        self.play(FadeIn(label, DOWN))
+        self.wait(0.5)
+
+        self.apply_matrix(self.matrix, run_time=2.2)
+        self.wait(0.5)
+
+        after = caption("넓이 5", 30, DONE)
+        overlay(after, self, DOWN, 0.4)
+        self.play(FadeOut(before), FadeIn(after))
+        self.wait(0.8)
+
+        rule = Tex(R"\det \begin{bmatrix} 2 & 1 \\ 1 & 3 \end{bmatrix} = 5")
+        rule.set_color(DONE).set_width(4.0)
+        rule.next_to(label, DOWN, buff=0.4).align_to(label, RIGHT)
+        rule.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(rule)
+        self.play(Write(rule), run_time=1.2)
+        self.wait(0.8)
+
+        note = caption("행렬식은 넓이의 배율", 30, DONE)
+        overlay(note, self, DOWN, 0.4)
+        self.play(FadeOut(after), FadeIn(note, UP))
+        self.wait(2)
+
+
+class DeterminantCollapse(LinearTransformationScene):
+    """행렬식이 0 이면 평면 전체가 직선 하나로 눌린다.
+
+    행렬은 `DeterminantZero` 와 같다. 그 편은 행 연산에서 영행이 나오는 것을
+    보였고, 이 편은 같은 사실을 그림으로 본다.
+    """
+    include_background_plane = True
+    show_coordinates = True
+    show_basis_vectors = True
+    matrix = [[1, 2], [2, 4]]      # det = 0
+
+    def construct(self):
+        head = title("행렬식이 0 인 경우", 34)
+        head.to_corner(UL, buff=0.5)
+        head.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.add_foreground_mobject(head)
+
+        # add_unit_square(animate=True) 은 DrawBorderThenFill 을 쓰는데
+        # 지금 manimlib 에는 그 애니메이션이 없다. 직접 띄운다.
+        self.add_unit_square()
+        self.play(FadeIn(self.square))
+        label = Tex(R"\det \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix} = 0")
+        label.set_color(WARN).set_width(4.4).to_corner(UR, buff=0.6)
+        label.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(label)
+        self.play(Write(label), run_time=1.2)
+        self.wait(0.5)
+
+        self.apply_matrix(self.matrix, run_time=2.4)
+        self.wait(0.8)
+
+        note = caption("평면 전체가 직선 하나로", 28, WARN)
+        overlay(note, self, DOWN, 1.0)
+        self.play(FadeIn(note, UP))
+        self.wait(1.0)
+
+        last = caption("눌린 평면은 되돌릴 수 없음", 30, WARN)
+        overlay(last, self, DOWN, 0.35)
+        self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class InverseAsUndo(LinearTransformationScene):
+    """A 로 움직인 평면을 A^{-1} 이 제자리로 돌려놓는다.
+
+    분모가 det A 라는 것을 그림 뒤에 한 번 더 만난다. 예제 2-4 의 분모 12 와 같은 자리다.
+    """
+    include_background_plane = True
+    show_coordinates = True
+    show_basis_vectors = True
+    matrix = [[2, 1], [1, 3]]      # DeterminantGeometry 와 같은 행렬
+
+    def construct(self):
+        head = title("역행렬이 하는 일", 34)
+        head.to_corner(UL, buff=0.5)
+        head.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.add_foreground_mobject(head)
+
+        # add_unit_square(animate=True) 은 DrawBorderThenFill 을 쓰는데
+        # 지금 manimlib 에는 그 애니메이션이 없다. 직접 띄운다.
+        self.add_unit_square()
+        self.play(FadeIn(self.square))
+
+        label = Tex("A").set_color(ACCENT).scale(1.6).to_corner(UR, buff=0.8)
+        label.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.add_foreground_mobject(label)
+        self.play(FadeIn(label, DOWN))
+
+        self.apply_matrix(self.matrix, run_time=2.0)
+        self.wait(0.8)
+
+        # label 은 이미 foreground 라 FadeTransform 으로 지워도 다시 그려진다.
+        # 새 것을 따로 올리지 말고 있던 것의 모양만 바꾼다.
+        back = Tex("A^{-1}").set_color(DONE).scale(1.6).move_to(label)
+        back.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.play(Transform(label, back), run_time=0.7)
+
+        self.apply_inverse(self.matrix, run_time=2.0)
+        self.wait(0.5)
+
+        note = caption("역행렬은 되돌리는 사상", 30, DONE)
+        overlay(note, self, DOWN, 0.4)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+class InverseDenominator(InteractiveScene):
+    """역행렬의 분모가 행렬식이다. 앞 편의 그림에 수를 붙인다."""
+
+    def construct(self):
+        head = slide_title("역행렬의 분모")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        formula = VGroup(
+            Tex(R"\det A = 5").set_color(ACCENT),
+            Tex(R"A^{-1} = \frac{1}{5}"
+                R"\begin{bmatrix} 3 & -1 \\ -1 & 2 \end{bmatrix}"),
+        ).arrange(RIGHT, buff=1.4)
+        formula.set_width(9.6).move_to(0.6 * UP)
+        self.play(Write(formula), run_time=1.6)
+
+        mark = box(formula[1][R"\frac{1}{5}"], DONE, 0.1)
+        self.play(ShowCreation(mark))
+        note = caption("분모가 행렬식", 30, DONE)
+        note.next_to(formula, DOWN, buff=1.0)
+        self.play(FadeIn(note, UP))
+        self.wait(1.2)
+
+        tail = caption("행렬식이 0 이면 나눌 수 없음", 28, WARN)
+        tail.next_to(note, DOWN, buff=0.55)
+        self.play(FadeIn(tail, UP))
+        self.wait(1.2)
+
+        same = caption("예제 2-4 의 분모 12 와 같은 자리", 26, GREY_B)
+        same.to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(same, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 15. 부분 피벗 — np.argmax 와 np.abs 가 하는 일
+# ─────────────────────────────────────────────────────────────
+class PartialPivot(InteractiveScene):
+    """강의자료 rref 함수의 한 줄을 뜯어 본다.
+
+        p = r + int(np.argmax(np.abs(R[r:, c])))
+
+    수는 예제 2-1 의 계수행렬이다. 손으로 풀 때는 1행을 그대로 썼는데 코드는
+    3행을 먼저 올린다. 그 차이가 어디서 오는지가 이 편의 내용이다.
+    """
+    values = [[1, 3, 2], [2, 2, 0], [-3, 1, 1]]
+    swapped = [[-3, 1, 1], [2, 2, 0], [1, 3, 2]]
+
+    def construct(self):
+        head = slide_title("부분 피벗")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        line = code("p = r + int(np.argmax(np.abs(R[r:, c])))", 26)
+        line.move_to(2.5 * UP)
+        self.play(FadeIn(line, DOWN), run_time=0.8)
+        self.wait(0.8)
+
+        m = mat(self.values, WHITE, h_buff=0.9)
+        m.move_to(3.3 * LEFT + 0.5 * DOWN)
+        self.play(FadeIn(m))
+
+        column = box(m.get_columns()[0], ACCENT, 0.14)
+        self.play(ShowCreation(column))
+        self.wait(0.5)
+
+        # np.abs — 부호를 뗀다.
+        abs_step = VGroup(code("np.abs", 26, DONE),
+                          Tex("1,\; 2,\; 3").set_color(DONE))
+        abs_step.arrange(RIGHT, buff=0.6)
+        abs_step.next_to(m, RIGHT, buff=1.5).shift(0.7 * UP)
+        self.play(FadeIn(abs_step, RIGHT), run_time=0.8)
+        self.wait(0.8)
+
+        # np.argmax — 가장 큰 것의 자리를 돌려준다.
+        arg_step = VGroup(code("np.argmax", 26, WARN),
+                          Tex("2").set_color(WARN))
+        arg_step.arrange(RIGHT, buff=0.6)
+        arg_step.next_to(abs_step, DOWN, buff=0.75).align_to(abs_step, LEFT)
+        self.play(FadeIn(arg_step, RIGHT), run_time=0.8)
+
+        pick = box(m.get_rows()[2], WARN, 0.13)
+        self.play(ShowCreation(pick))
+        note = caption("절댓값이 가장 큰 행", 26, WARN)
+        note.next_to(arg_step, DOWN, buff=0.6).align_to(arg_step, LEFT)
+        self.play(FadeIn(note, UP))
+        self.wait(1.2)
+
+        # 그 행을 위로 올린다.
+        target = mat(self.swapped, WHITE, h_buff=0.9).move_to(m)
+        self.play(FadeOut(column), FadeOut(pick),
+                  FadeTransform(m, target), run_time=1.2)
+        swap_line = code("R[[r, p]] = R[[p, r]]", 26)
+        swap_line.move_to(line).shift(0.85 * DOWN)
+        self.play(FadeIn(swap_line, DOWN), run_time=0.7)
+        self.wait(1.0)
+
+        why = caption("작은 수로 나누면 오차가 커짐", 26, GREY_B)
+        why.to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(why, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 16. 한 열 소거 — rref 안쪽 반복문
+# ─────────────────────────────────────────────────────────────
+class EliminateColumn(InteractiveScene):
+    """선행 성분을 1 로 만든 뒤 그 열의 나머지를 모두 0 으로 만든다.
+
+        R[r] = R[r] / R[r, c]
+        R[i] = R[i] - R[i, c] * R[r]
+
+    앞 편에서 3행을 올려 둔 상태에서 이어진다.
+    """
+    start = [[-3, 1, 1], [2, 2, 0], [1, 3, 2]]
+    scaled = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}"], ["2", "2", "0"],
+              ["1", "3", "2"]]
+    cleared = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}"],
+               ["0", "\\frac{8}{3}", "\\frac{2}{3}"],
+               ["0", "\\frac{10}{3}", "\\frac{7}{3}"]]
+
+    def construct(self):
+        head = slide_title("한 열 소거")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        m = mat(self.start, WHITE, h_buff=0.95)
+        m.move_to(3.2 * LEFT + 0.3 * DOWN)
+        self.play(FadeIn(m))
+        self.wait(0.5)
+
+        first = code("R[r] = R[r] / R[r, c]", 25)
+        first.move_to(2.6 * UP)
+        self.play(FadeIn(first, DOWN), run_time=0.7)
+
+        pivot = box(m.get_rows()[0], ACCENT, 0.13)
+        self.play(ShowCreation(pivot))
+        target = mat(self.scaled, WHITE, h_buff=0.95).move_to(m)
+        self.play(FadeTransform(m, target), run_time=1.1)
+        m = target
+        lead = box(m.get_rows()[0][0], DONE, 0.11)
+        self.play(FadeOut(pivot), ShowCreation(lead))
+        self.wait(0.9)
+
+        second = code("R[i] = R[i] - R[i, c] * R[r]", 25)
+        second.next_to(first, DOWN, buff=0.45)
+        self.play(FadeIn(second, DOWN), run_time=0.7)
+
+        rest = VGroup(box(m.get_rows()[1], WARN, 0.13),
+                      box(m.get_rows()[2], WARN, 0.13))
+        self.play(ShowCreation(rest))
+        target = mat(self.cleared, WHITE, h_buff=0.95).move_to(m)
+        self.play(FadeOut(lead), FadeTransform(m, target), run_time=1.2)
+        m = target
+        self.play(FadeOut(rest))
+
+        column = box(m.get_columns()[0], DONE, 0.14)
+        self.play(ShowCreation(column))
+        note = caption("피벗 열의 나머지가 0", 26, DONE)
+        note.next_to(m, RIGHT, buff=1.5)
+        self.play(FadeIn(note, LEFT))
+        self.wait(1.2)
+
+        last = caption("다음 열에서 같은 것을 되풀이", 26, GREY_B)
+        last.to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(last, UP))
         self.wait(2)

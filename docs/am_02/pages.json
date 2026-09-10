@@ -14,18 +14,25 @@
   "kb": 1890
  },
  {
-  "scene": "ReadRREF",
-  "title": "기약 행 사다리꼴에서 해 읽기",
-  "url": "https://songhune.github.io/manim_aimath/am_02/ReadRREF.html",
-  "slides": 5,
-  "kb": 1071
+  "scene": "PartialPivot",
+  "title": "부분 피벗",
+  "url": "https://songhune.github.io/manim_aimath/am_02/PartialPivot.html",
+  "slides": 11,
+  "kb": 1351
+ },
+ {
+  "scene": "EliminateColumn",
+  "title": "한 열 소거",
+  "url": "https://songhune.github.io/manim_aimath/am_02/EliminateColumn.html",
+  "slides": 11,
+  "kb": 1313
  },
  {
   "scene": "Determinant2x2",
   "title": "행렬식",
   "url": "https://songhune.github.io/manim_aimath/am_02/Determinant2x2.html",
-  "slides": 12,
-  "kb": 1267
+  "slides": 13,
+  "kb": 1342
  },
  {
   "scene": "InverseByRowOps",
@@ -68,6 +75,34 @@
   "url": "https://songhune.github.io/manim_aimath/am_02/InverseSolve.html",
   "slides": 7,
   "kb": 1231
+ },
+ {
+  "scene": "DeterminantGeometry",
+  "title": "행렬식이 재는 것",
+  "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantGeometry.html",
+  "slides": 7,
+  "kb": 4835
+ },
+ {
+  "scene": "DeterminantCollapse",
+  "title": "행렬식이 0 인 경우",
+  "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantCollapse.html",
+  "slides": 5,
+  "kb": 4417
+ },
+ {
+  "scene": "InverseAsUndo",
+  "title": "역행렬이 하는 일",
+  "url": "https://songhune.github.io/manim_aimath/am_02/InverseAsUndo.html",
+  "slides": 5,
+  "kb": 5497
+ },
+ {
+  "scene": "InverseDenominator",
+  "title": "역행렬의 분모",
+  "url": "https://songhune.github.io/manim_aimath/am_02/InverseDenominator.html",
+  "slides": 6,
+  "kb": 1097
  },
  {
   "scene": "TransposeRules",
