@@ -147,7 +147,7 @@ SECTIONS = {
     ],
     "am_02": [
         ("2.1 가우스-조르당 소거법", ["AugmentedMatrix", "GaussJordan"]),
-        ("2.1 파이썬 코드 읽기", ["RrefCodeReview"]),
+        ("2.1 파이썬 코드 리뷰", ["RrefCodeReview"]),
         ("2.2 역행렬", ["InverseByRowOps", "SocksShoes", "InverseSolve"]),
         ("보충 · 행렬식 (수)", ["Determinant2x2", "DeterminantZero",
                            "Determinant3x3", "DeterminantRules"]),

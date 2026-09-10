@@ -15,10 +15,10 @@
  },
  {
   "scene": "RrefCodeReview",
-  "title": "rref 함수 읽기",
+  "title": "rref 함수 리뷰",
   "url": "https://songhune.github.io/manim_aimath/am_02/RrefCodeReview.html",
-  "slides": 32,
-  "kb": 3270
+  "slides": 51,
+  "kb": 5289
  },
  {
   "scene": "Determinant2x2",

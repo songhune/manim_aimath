@@ -1007,7 +1007,7 @@ class InverseDenominator(InteractiveScene):
 
 
 # ─────────────────────────────────────────────────────────────
-# 15. rref 함수 읽기 — 강의자료 p.12 코드 리뷰
+# 15. rref 함수 리뷰 — 강의자료 p.12
 #
 # 앞서 `PartialPivot` 과 `EliminateColumn` 두 편으로 잘라 두었는데, 변수 설명 없이
 # p 와 r 부터 꺼내는 바람에 코딩이 처음인 학생이 따라올 수 없었다. 한 편으로 합치고
@@ -1034,7 +1034,7 @@ class RrefCodeReview(InteractiveScene):
         return m
 
     def construct(self):
-        head = slide_title("rref 함수 읽기")
+        head = slide_title("rref 함수 리뷰")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
         # ── 1. 변수가 무엇인지부터 ────────────────────────────
@@ -1081,7 +1081,7 @@ class RrefCodeReview(InteractiveScene):
         self.play(FadeOut(row_mark), FadeOut(col_mark),
                   FadeOut(row_tag), FadeOut(col_tag), FadeOut(lines))
 
-        # ── 2. 한 열을 처리하는 네 줄 ─────────────────────────
+        # ── 2. 한 열을 처리하는 여덟 줄 — 변수를 디버거처럼 찍으며 간다 ──
         body = code_block((
             "for c in range(cols):",
             "    p = r + int(np.argmax(np.abs(R[r:, c])))",
@@ -1092,75 +1092,131 @@ class RrefCodeReview(InteractiveScene):
             "            R[i] = R[i] - R[i, c] * R[r]",
             "    r += 1",
         ), 20)
-        body.set_width(6.6).to_edge(LEFT, buff=0.5).shift(0.3 * UP)
+        body.set_width(6.6).to_edge(LEFT, buff=0.5).shift(0.45 * UP)
         self.play(LaggedStartMap(FadeIn, body, lag_ratio=0.18), run_time=1.8)
-        self.wait(0.6)
+
+        # 행렬을 위로 올려 아래에 변수 창과 계산 줄이 들어갈 자리를 만든다.
+        # Transform 은 옛 객체를 화면에 남긴다. 뒤에서 group 을 갈아 끼우므로 FadeTransform 으로 바꾼다.
+        top = self.board(self.start); top.set_width(4.8).move_to(3.6 * RIGHT + 1.45 * UP)
+        self.play(FadeTransform(group, top), run_time=0.8)
+        group = top; m = group.matrix
 
         def spotlight(index):
             return box(body[index], CALM, 0.09)
 
+        # 변수 창 — 디버거의 watch 처럼 지금 값을 보여 준다.
+        watch = code("c = 0    r = 0", 18, WARN)
+        watch.move_to(3.6 * RIGHT + 1.15 * DOWN)
+        self.play(FadeIn(watch, UP))
+
+        def set_watch(text):
+            nonlocal watch
+            new = code(text, 18, WARN)
+            if new.get_width() > 6.2:
+                new.set_width(6.2)
+            new.move_to(watch)
+            self.play(Transform(watch, new), run_time=0.4)
+
+        light = spotlight(0)
+        self.play(ShowCreation(light)); self.wait(0.5)
+
         # p — 절댓값이 가장 큰 행
-        light = spotlight(1)
-        self.play(ShowCreation(light))
+        self.play(Transform(light, spotlight(1)))
         picks = VGroup(*[caption(t, 22, WARN) for t in ("1", "2", "3")])
         for tag, row in zip(picks, m.get_rows()):
-            tag.next_to(row[0], LEFT, buff=0.35)
+            tag.next_to(row[0], LEFT, buff=0.3)
         self.play(LaggedStartMap(FadeIn, picks, lag_ratio=0.3), run_time=0.9)
         chosen = box(m.get_rows()[2], WARN, 0.13)
         self.play(ShowCreation(chosen))
-        note = caption("절댓값이 가장 큰 행", 24, WARN)
-        note.next_to(group, DOWN, buff=0.5)
-        self.play(FadeIn(note, UP))
-        self.wait(1.3)
+        set_watch("c = 0    r = 0    p = 2")
+        note = caption("절댓값이 가장 큰 행", 22, WARN)
+        note.next_to(watch, DOWN, buff=0.35)
+        self.play(FadeIn(note, UP)); self.wait(1.2)
         self.play(FadeOut(picks), FadeOut(chosen), FadeOut(note))
 
         # 행 교환
         self.play(Transform(light, spotlight(2)))
-        target = self.board(self.swapped)
+        target = self.board(self.swapped); target.set_width(4.8).move_to(group)
         self.play(FadeTransform(group, target), run_time=1.0)
-        group, m = target, target.matrix
-        self.wait(0.7)
+        group, m = target, target.matrix; self.wait(0.6)
 
         # 선행 성분을 1 로
         self.play(Transform(light, spotlight(3)))
-        target = self.board(self.scaled, h_buff=1.15)
+        target = self.board(self.scaled, h_buff=1.15); target.set_width(4.8).move_to(group)
         self.play(FadeTransform(group, target), run_time=1.0)
         group, m = target, target.matrix
         lead = box(m.get_rows()[0][0], DONE, 0.1)
-        self.play(ShowCreation(lead))
-        self.wait(0.8)
-        self.play(FadeOut(lead))
+        self.play(ShowCreation(lead)); self.wait(0.7); self.play(FadeOut(lead))
 
-        # 소거
+        # 안쪽 반복문 — i 마다 조건과 계산을 그대로 찍는다.
+        self.play(Transform(light, spotlight(4)))
+        calc_pos = 3.6 * RIGHT + 2.55 * DOWN
+
+        def show_calc(lines):
+            g = VGroup(*[Tex(t) for t in lines]).set_color(GREY_A)
+            g.arrange(DOWN, buff=0.22, aligned_edge=LEFT)
+            g.set_width(6.0).move_to(calc_pos)
+            return g
+
+        # i = 0 : 피벗 행 자신은 건너뛴다
+        set_watch("i = 0    r = 0    i != r  False")
+        self.play(Transform(light, spotlight(5)))
+        skip = caption("피벗 행은 건너뜀", 22, GREY_B).move_to(calc_pos)
+        self.play(FadeIn(skip)); self.wait(0.9); self.play(FadeOut(skip))
+
+        # i = 1
+        set_watch("i = 1    r = 0    i != r  True    R[i, c] = 2")
         self.play(Transform(light, spotlight(6)))
-        target = self.board(self.cleared, h_buff=1.15)
-        self.play(FadeTransform(group, target), run_time=1.1)
+        mark = box(m.get_rows()[1], WARN, 0.12); self.play(ShowCreation(mark))
+        calc = show_calc((
+            R"R[1] = R[1] - 2 \cdot R[0]",
+            R"= [\,2,\ 2,\ 0,\ 0\,] - 2\,[\,1,\ -\tfrac{1}{3},\ -\tfrac{1}{3},\ \tfrac{2}{3}\,]",
+            R"= [\,0,\ \tfrac{8}{3},\ \tfrac{2}{3},\ -\tfrac{4}{3}\,]",
+        ))
+        for line in calc:
+            self.play(FadeIn(line, RIGHT), run_time=0.7); self.wait(0.5)
+        mid = [self.scaled[0], ["0", "\\frac{8}{3}", "\\frac{2}{3}", "-\\frac{4}{3}"], self.scaled[2]]
+        target = self.board(mid, h_buff=1.15); target.set_width(4.8).move_to(group)
+        self.play(FadeTransform(group, target), FadeOut(mark), run_time=1.0)
+        group, m = target, target.matrix; self.wait(0.6)
+        self.play(FadeOut(calc))
+
+        # i = 2
+        set_watch("i = 2    r = 0    i != r  True    R[i, c] = 1")
+        mark = box(m.get_rows()[2], WARN, 0.12); self.play(ShowCreation(mark))
+        calc = show_calc((
+            R"R[2] = R[2] - 1 \cdot R[0]",
+            R"= [\,1,\ 3,\ 2,\ 2\,] - [\,1,\ -\tfrac{1}{3},\ -\tfrac{1}{3},\ \tfrac{2}{3}\,]",
+            R"= [\,0,\ \tfrac{10}{3},\ \tfrac{7}{3},\ \tfrac{4}{3}\,]",
+        ))
+        for line in calc:
+            self.play(FadeIn(line, RIGHT), run_time=0.7); self.wait(0.5)
+        target = self.board(self.cleared, h_buff=1.15); target.set_width(4.8).move_to(group)
+        self.play(FadeTransform(group, target), FadeOut(mark), run_time=1.0)
         group, m = target, target.matrix
         column = box(m.get_columns()[0], DONE, 0.13)
-        self.play(ShowCreation(column))
-        self.wait(1.0)
-        self.play(FadeOut(column))
+        self.play(ShowCreation(column)); self.wait(0.8)
+        self.play(FadeOut(column), FadeOut(calc))
 
         # 다음 행으로
         self.play(Transform(light, spotlight(7)))
-        self.wait(0.8)
-        self.play(FadeOut(light))
+        set_watch("c = 0    r = 1"); self.wait(0.8)
+        self.play(FadeOut(light), FadeOut(watch))
 
         # ── 3. 열마다 되풀이 ──────────────────────────────────
-        again = caption("열마다 되풀이", 26, GREY_B)
-        again.next_to(group, DOWN, buff=0.5)
-        self.play(FadeIn(again, UP))
-        self.wait(0.8)
-
-        target = self.board(self.final)
+        again = caption("열마다 되풀이", 26, GREY_B).move_to(calc_pos)
+        self.play(FadeIn(again, UP)); self.wait(0.8)
+        target = self.board(self.final); target.set_width(4.8).move_to(group)
         self.play(FadeTransform(group, target), FadeOut(again), run_time=1.2)
         group, m = target, target.matrix
         answer = Tex("x_1 = 1,\\; x_2 = -1,\\; x_3 = 2").set_color(DONE)
-        answer.set_width(5.0).next_to(group, DOWN, buff=0.6)
-        self.play(Write(answer), run_time=1.0)
-        self.wait(1.0)
+        answer.set_width(4.6).next_to(group, DOWN, buff=0.5)
+        self.play(Write(answer), run_time=1.0); self.wait(0.8)
 
-        last = caption("교재 풀이와 중간값이 다름", 24, GREY_B)
-        last.to_edge(DOWN, buff=0.4)
-        self.play(FadeIn(last, UP))
-        self.wait(2)
+        # 교재 풀이는 1행을 그대로 피벗으로 썼고, 코드는 3행을 올렸다. 중간 행렬은
+        # 다르지만 기약 행 사다리꼴은 하나라 답이 같다. 학생이 반드시 묻는 자리다.
+        why1 = caption("교재는 1행, 코드는 3행부터", 24, GREY_B)
+        why2 = caption("결과는 같은 기약 행 사다리꼴", 24, DONE)
+        VGroup(why1, why2).arrange(DOWN, buff=0.25).next_to(answer, DOWN, buff=0.5)
+        self.play(FadeIn(why1, UP)); self.wait(0.9)
+        self.play(FadeIn(why2, UP)); self.wait(2)

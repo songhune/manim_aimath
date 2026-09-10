@@ -14,7 +14,7 @@ from _2026.aimath import week03
 PAGES = build(globals(), [
     ("AugmentedMatrix", "첨가행렬"),
     ("GaussJordan", "가우스-조르당 소거법"),
-    ("RrefCodeReview", "rref 함수 읽기"),
+    ("RrefCodeReview", "rref 함수 리뷰"),
     ("Determinant2x2", "행렬식"),
     ("InverseByRowOps", "행 연산으로 구하는 역행렬"),
     ("DeterminantZero", "행렬식이 0 인 행렬"),
