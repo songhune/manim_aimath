@@ -44,6 +44,7 @@ PAGES = [
     ("Example233Cable", "Example 2.33"),
     ("ConditionalProbability", "Conditional Probability"),
     ("Example234Flights", "Example 2.34"),
+    ("SuneungConditional", "CSAT 2026 · Problem 28"),
     ("Independence", "Independent Events"),
     ("ProductRule", "The Product Rule"),
     ("Example236Fuses", "Example 2.36"),

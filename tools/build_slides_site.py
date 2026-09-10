@@ -107,11 +107,14 @@ def convert(scene, title, out_html):
     return r.returncode == 0 and out_html.exists(), log
 
 
-def n_slides(scene):
+def n_slides(scene, html=None):
+    """단계 수. slides/ 의 json 이 있으면 그것을, 없으면(임시 폴더가 비워진 뒤) html 의 <section> 을 센다."""
     p = SLIDES_DIR / f"{scene}Slides.json"
-    if not p.exists():
-        return None
-    return len(json.loads(p.read_text())["slides"])
+    if p.exists():
+        return len(json.loads(p.read_text())["slides"])
+    if html and html.exists():
+        return html.read_text(encoding="utf-8", errors="ignore").count("<section")
+    return None
 
 
 STYLE = """
@@ -154,7 +157,7 @@ SECTIONS = {
         ("2.4 Probability of an Event", ["ProbabilityOfEvent", "Example225LoadedDie", "Example228Poker"]),
         ("2.5 Additive Rules", ["AdditionRule", "Example229Jobs", "Example233Cable"]),
         ("2.6 Conditional Probability, Independence, and the Product Rule",
-         ["ConditionalProbability", "Example234Flights", "Independence", "ProductRule", "Example236Fuses", "Example238Emergency"]),
+         ["ConditionalProbability", "Example234Flights", "SuneungConditional", "Independence", "ProductRule", "Example236Fuses", "Example238Emergency"]),
         ("2.7 Bayes' Rule", ["TotalProbability", "Example241Machines", "BayesRule", "Example242Bayes"]),
     ]
 }
@@ -240,7 +243,7 @@ def main():
     rows = []
     for scene, title in pages:
         html = out_dir / f"{scene}.html"
-        n = n_slides(scene)
+        n = n_slides(scene, html)
         if html.exists() and n:
             rows.append({"scene": scene, "title": title, "url": f"{SITE}/{args.chapter}/{scene}.html",
                          "slides": n, "kb": html.stat().st_size // 1024})

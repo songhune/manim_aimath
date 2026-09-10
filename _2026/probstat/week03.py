@@ -6,9 +6,10 @@
 예제(2.34, 2.36, 2.38, 2.41, 2.42)로 한정한다.
 
 덱 삽입 자리 (원본 PS1_02_restyled.pptx 기준):
-    ConditionalProbability   42 앞   Definition 2.10 (Table 2.1 로 보인다)
-    Example234Flights        44 뒤   Ex 2.34
-    Independence             46 앞   Definition 2.11 (찌그러진 주사위 → 종속, 복원 카드 → 독립)
+    ConditionalProbability   42 앞   Definition 2.10 (Table 2.1 의 900 명을 단위 정사각형에. 넓이 = 확률, 조건 = 조각을 남기고 늘리기)
+    Example234Flights        44 뒤   Ex 2.34 (넓이 모형, 두 방향으로 늘린다)
+    SuneungConditional       45 뒤   2026학년도 수능 확통 28번 슬라이드(insert_videos 가 끼운다) 다음
+    Independence             46 앞   Definition 2.11 (Table 2.1 → 종속, 복원 카드 → 독립. 가르는 선이 수평이면 독립)
     ProductRule              48 앞   Theorem 2.10–2.12 (Table 2.1 의 나무)
     Example236Fuses          49 뒤   Ex 2.36
     Example238Emergency      51 뒤   Ex 2.38
@@ -24,7 +25,7 @@ from manim_imports_ext import *
 
 from _2026.probstat.ps_common import (
     ACCENT, CALM, INK, MEAN_COLOR, MED_COLOR, MUTED, WARN, BODY_FONT,
-    label, note, panel, ring, slide_title, swap, counter, freeze, bar,
+    chito, crowd, label, note, panel, ring, slide_title, swap, counter, freeze, bar,
 )
 from _2026.probstat.week02 import die_face, letter_chip, branch
 
@@ -86,55 +87,128 @@ def tree3(priors, likes, names, colors, x0=-4.6, x1=-1.4, x2=1.6, ys=(2.0, 0.2, 
 
 
 # ─────────────────────────────────────────────────────────────
+# 넓이 모형 — 확률공간을 단위 정사각형으로 그린다. 넓이가 확률이다.
+# 조건은 "정사각형의 한 조각만 남기고 그 조각을 다시 정사각형으로 늘리는 일"(재정규화)이다.
+# 참고: legacy/_2019/bayes/part1.py 의 BayesDiagram (같은 넓이 모형).
+# ─────────────────────────────────────────────────────────────
+def region(x0, y0, w, h, color, opacity=0.18, stroke=2):
+    """왼쪽 아래 (x0, y0) 에서 폭 w, 높이 h 인 조각."""
+    r = Rectangle(width=w, height=h).set_stroke(color, stroke).set_fill(color, opacity)
+    r.move_to([x0 + w / 2, y0 + h / 2, 0])
+    return r
+
+
+def people_in(rect, n, cols, pose="front", tint=None, height=0.34, seed=0):
+    """조각 안에 치토 n 마리를 격자로 채운다. 조각보다 크면 줄인다."""
+    g = crowd(n, -(-n // cols), cols, pose=pose, tint=tint, height=height, buff=0.05, jitter=0.0, seed=seed)
+    if g.get_width() > rect.get_width() * 0.94:
+        g.set_width(rect.get_width() * 0.94)
+    if g.get_height() > rect.get_height() * 0.94:
+        g.set_height(rect.get_height() * 0.94)
+    g.move_to(rect)
+    return g
+
+
+def city_pin(color=WARN, size=0.32):
+    """지도 핀. 동네 하나를 가리키는 표시."""
+    head = Circle(radius=size / 2).set_stroke(color, 2).set_fill(color, 0.9)
+    tip = Triangle().set_stroke(width=0).set_fill(color, 0.9)
+    tip.set_width(size * 0.8).set_height(size * 0.55, stretch=True).rotate(PI)
+    tip.next_to(head, DOWN, buff=-size * 0.12)
+    hole = Circle(radius=size / 6).set_stroke(width=0).set_fill(BLACK, 1).move_to(head)
+    return VGroup(head, tip, hole)
+
+
+# ─────────────────────────────────────────────────────────────
 # 1. 조건부확률 (2.6) — 슬라이드 42 (Definition 2.10) 앞
 # ─────────────────────────────────────────────────────────────
 class ConditionalProbability(InteractiveScene):
-    """Table 2.1 의 900 명. '고용된 사람이 뽑혔다' 는 조건이 붙으면 표본공간이 900 에서 600 으로
-    갈아 끼워진다. 그 안에서 남자 460 을 세면 P(M | E) = 460/600. 분모가 P(E) 인 이유가
-    표에서 바로 보인다."""
+    """Table 2.1 의 900 명을 단위 정사각형에 넣는다(치토 한 마리 = 10 명). 넓이가 확률이다.
+    세로로 E·U, 그 안을 M·W 로 가르면 아홉 숫자가 네 조각의 넓이가 된다.
+    'E 가 일어났다' 는 U 조각을 지우고 남은 E 조각을 다시 정사각형으로 늘리는 일이다.
+    늘어난 정사각형에서 M 조각의 넓이 460/600 이 P(M | E). 분모 P(E) 는 늘리는 배율이다."""
+    SIDE = 4.6
 
     def construct(self):
         head = slide_title("Conditional Probability")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
-        table, cells = table21()
-        table.move_to([-2.2, 0.2, 0])
-        self.play(FadeIn(table, lag_ratio=0.02), run_time=1.4)
-        s_tag = Tex("n(S) = 900").set_color(GREY_A).scale(0.9).move_to([4.2, 2.3, 0])
-        self.play(FadeIn(s_tag))
+        W = self.SIDE
+        x0, y0 = -5.6, -2.6
+        S = region(x0, y0, W, W, GREY_B, 0.0, 2.5)
+        pin = city_pin().next_to(S, UP, buff=0.18).align_to(S, LEFT)
+        town = note("Suwon · 900 adults", 26, GREY_A).next_to(pin, RIGHT, buff=0.15)
+        self.play(ShowCreation(S), FadeIn(pin), FadeIn(town))
+        everyone = people_in(S, 90, 9)
+        self.play(LaggedStartMap(FadeIn, everyone, lag_ratio=0.01), run_time=1.4)
+        area1 = Tex(R"\text{area} = P(S) = 1").set_color(GREY_A).scale(0.85).move_to([3.4, 2.5, 0])
+        self.play(FadeIn(area1))
         self.wait(0.6)
 
-        # ── 조건 E: 고용 열만 남는다
-        given = Tex(R"\text{given } E").set_color(CALM).scale(0.95).move_to([4.2, 1.4, 0])
-        col_e = VGroup(cells[("M", "E")], cells[("W", "E")], cells[("Total", "E")])
-        others = VGroup(*[v for k, v in cells.items() if k[1] != "E"])
-        box_e = SurroundingRectangle(col_e, buff=0.05).set_stroke(CALM, 3)
-        self.play(FadeIn(given), others.animate.set_opacity(0.2), ShowCreation(box_e))
-        new_s = Tex("n(E) = 600").set_color(CALM).scale(0.9).next_to(given, DOWN, buff=0.35)
-        self.play(FadeIn(new_s))
-        self.wait(0.6)
-
-        # ── 그 안에서 남자 460
-        me = ring(cells[("M", "E")], ACCENT, buff=0.04)
-        n_me = Tex(R"n(E \cap M) = 460").set_color(ACCENT).scale(0.9).next_to(new_s, DOWN, buff=0.35)
-        self.play(ShowCreation(me), FadeIn(n_me))
-        self.wait(0.5)
-        ratio = Tex(R"P(M \mid E) = \frac{460}{600}").set_color(WHITE).scale(1.0)
-        ratio.next_to(n_me, DOWN, buff=0.6).set_x(4.2)
-        self.play(TransformFromCopy(VGroup(n_me, new_s), ratio), run_time=1.2)
+        # ── 세로로 가른다: E 600 / U 300
+        wE = W * 600 / 900
+        rE = region(x0, y0, wE, W, CALM, 0.14)
+        rU = region(x0 + wE, y0, W - wE, W, MUTED, 0.14)
+        tE = note("E · employed 600", 22, CALM).next_to(rE, DOWN, buff=0.15)
+        tU = note("U · 300", 22, MUTED).next_to(rU, DOWN, buff=0.15)
+        self.play(FadeOut(everyone), FadeIn(rE), FadeIn(rU), FadeIn(tE), FadeIn(tU), run_time=0.8)
+        # 남 46 / 여 14 (E), 남 4 / 여 26 (U). 여자는 gold, 일하지 않는 사람은 등을 돌린다.
+        hEM, hUM = W * 460 / 600, W * 40 / 300
+        rEM = region(x0, y0, wE, hEM, ACCENT, 0.22)
+        rEW = region(x0, y0 + hEM, wE, W - hEM, MEAN_COLOR, 0.16)
+        rUM = region(x0 + wE, y0, W - wE, hUM, ACCENT, 0.22)
+        rUW = region(x0 + wE, y0 + hUM, W - wE, W - hUM, MEAN_COLOR, 0.16)
+        pEM = people_in(rEM, 46, 6, "front", None)
+        pEW = people_in(rEW, 14, 6, "front", "gold")
+        pUM = people_in(rUM, 4, 3, "back", None)
+        pUW = people_in(rUW, 26, 3, "back", "gold")
+        pe = Tex(R"P(E) = \frac{600}{900}").set_color(CALM).scale(0.8).move_to([3.4, 1.75, 0])
+        self.play(LaggedStartMap(FadeIn, Group(pEM, pEW, pUM, pUW), lag_ratio=0.01), Write(pe), run_time=1.4)
+        self.play(FadeIn(rEM), FadeIn(rEW), FadeIn(rUM), FadeIn(rUW), run_time=0.6)
+        nEM = Tex("460").scale(0.8).set_color(WHITE).move_to(rEM.get_corner(UR) + DL * 0.35)
+        nEW = Tex("140").scale(0.8).set_color(WHITE).move_to(rEW.get_corner(UR) + DL * 0.35)
+        nUM = Tex("40").scale(0.7).set_color(WHITE).move_to(rUM.get_corner(UR) + DL * 0.3)
+        nUW = Tex("260").scale(0.8).set_color(WHITE).move_to(rUW.get_corner(UR) + DL * 0.35)
+        pem = Tex(R"P(E \cap M) = \frac{460}{900}").set_color(ACCENT).scale(0.8).move_to([3.4, 1.0, 0]).align_to(pe, LEFT)
+        legend = Group(chito("front", None, 0.34), note("men", 22, ACCENT), chito("front", "gold", 0.34), note("women", 22, MEAN_COLOR))
+        legend.arrange(RIGHT, buff=0.18).move_to([3.4, 0.2, 0]).align_to(pe, LEFT)
+        self.play(FadeIn(nEM), FadeIn(nEW), FadeIn(nUM), FadeIn(nUW), Write(pem), FadeIn(legend))
         self.wait(1.0)
 
-        # ── 900 으로 나눠도 같다: 정의
-        self.play(FadeOut(table), FadeOut(box_e), FadeOut(me), FadeOut(s_tag), run_time=0.5)
-        defn = Tex(R"P(M \mid E) = \frac{460/900}{600/900} = \frac{P(E \cap M)}{P(E)}",
-                   t2c={"P(E)": CALM, R"P(E \cap M)": ACCENT}).scale(1.0)
-        defn.move_to([-2.2, 0.8, 0])
-        self.play(Write(defn))
+        # ── E 가 일어났다: U 조각을 지우고 E 조각을 정사각형으로 늘린다
+        given = Tex(R"\text{given } E").set_color(CALM).scale(1.0).move_to([3.4, -0.7, 0]).align_to(pe, LEFT)
+        self.play(FadeIn(given),
+                  *[FadeOut(m) for m in (rU, rUM, rUW, pUM, pUW, nUM, nUW, tU)], run_time=0.8)
+        k = W / wE                                        # 늘리는 배율 = 1 / P(E)
+        new_rE = region(x0, y0, W, W, CALM, 0.14)
+        new_rEM = region(x0, y0, W, hEM, ACCENT, 0.22)
+        new_rEW = region(x0, y0 + hEM, W, W - hEM, MEAN_COLOR, 0.16)
+        pEM.generate_target(); pEM.target = people_in(new_rEM, 46, 9, "front", None)
+        pEW.generate_target(); pEW.target = people_in(new_rEW, 14, 9, "front", "gold")
+        factor = Tex(R"\times \frac{900}{600}").set_color(CALM).scale(0.8).next_to(S, RIGHT, buff=0.15).set_y(y0 + W * 0.5)
+        self.play(Transform(rE, new_rE), Transform(rEM, new_rEM), Transform(rEW, new_rEW),
+                  MoveToTarget(pEM), MoveToTarget(pEW),
+                  nEM.animate.move_to(new_rEM.get_corner(UR) + DL * 0.35),
+                  nEW.animate.move_to(new_rEW.get_corner(UR) + DL * 0.35),
+                  tE.animate.next_to(new_rE, DOWN, buff=0.15), FadeIn(factor), run_time=1.6)
+        self.wait(0.5)
+        area_now = Tex(R"\text{area} = \frac{460}{600}").set_color(ACCENT).scale(0.9).move_to([3.4, -1.65, 0]).align_to(pe, LEFT)
+        self.play(FlashAround(rEM, color=ACCENT, buff=0.05), Write(area_now), run_time=1.2)
         self.wait(0.8)
-        general = Tex(R"P(B \mid A) = \frac{P(A \cap B)}{P(A)}, \quad P(A) > 0").set_color(WHITE).scale(1.15)
-        general.move_to([-2.2, -1.4, 0])
+
+        # ── 식: 늘린 넓이는 원래 넓이를 P(E) 로 나눈 것
+        self.play(*[FadeOut(m) for m in (area1, pe, pem, legend, given, area_now, factor)], run_time=0.5)
+        defn = Tex(R"P(M \mid E) = \frac{460/900}{600/900} = \frac{P(E \cap M)}{P(E)}",
+                   t2c={"P(E)": CALM, R"P(E \cap M)": ACCENT}).scale(0.9).move_to([3.3, 1.7, 0])
+        if defn.get_right()[0] > 6.9:
+            defn.scale(0.85).move_to([3.1, 1.7, 0])
+        self.play(Write(defn))
+        self.wait(0.6)
+        general = Tex(R"P(B \mid A) = \frac{P(A \cap B)}{P(A)}").set_color(WHITE).scale(1.1).move_to([3.3, -0.4, 0])
         self.play(FadeIn(general, UP))
         self.play(FlashAround(general, color=MEAN_COLOR, buff=0.25), run_time=1.2)
+        renorm = note("divide by P(A): rescale", 24, GREY_B).next_to(general, DOWN, buff=0.35)
+        self.play(FadeIn(renorm))
         self.wait(2)
 
 
@@ -142,134 +216,251 @@ class ConditionalProbability(InteractiveScene):
 # Example 2.34 — 정시 출발·정시 도착. 원본 44 뒤 (풀이 45 앞)
 # ─────────────────────────────────────────────────────────────
 class Example234Flights(InteractiveScene):
-    """벤 다이어그램에 0.05 · 0.78 · 0.04 를 적는다. 조건이 D 면 D 안(0.83)만 세계가 되고,
-    조건이 A 면 A 안(0.82)만 세계가 된다. 같은 0.78 을 다른 것으로 나눈다."""
+    """같은 넓이 모형. 세로로 D(0.83)·D′, 그 안을 A 로 가르면 0.78 · 0.05 · 0.04 · 0.13.
+    (a) D 를 남기고 늘리면 A 조각이 0.78/0.83. (b) 가로로 A(0.82) 를 남기고 늘리면 D 조각이 0.78/0.82.
+    같은 0.78 을 다른 방향으로 늘린다."""
+    SIDE = 4.4
 
     def construct(self):
         head = slide_title("Example 2.34")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
         given = Tex(R"P(D) = 0.83, \quad P(A) = 0.82, \quad P(D \cap A) = 0.78",
                     t2c={"P(D)": ACCENT, "P(A)": CALM, R"P(D \cap A)": MEAN_COLOR}).scale(0.85)
-        given.next_to(head[1], DOWN, buff=0.3)
+        given.next_to(head[1], DOWN, buff=0.25)
         self.play(FadeIn(given, UP))
 
-        cD = Circle(radius=1.6).move_to(LEFT * 3.0 + DOWN * 0.3).set_stroke(ACCENT, 3)
-        cA = Circle(radius=1.6).move_to(LEFT * 1.0 + DOWN * 0.3).set_stroke(CALM, 3)
-        only_d = Difference(cD, cA).set_stroke(width=0).set_fill(ACCENT, 0.3)
-        lens = Intersection(cD, cA).set_stroke(width=0).set_fill(MEAN_COLOR, 0.45)
-        only_a = Difference(cA, cD).set_stroke(width=0).set_fill(CALM, 0.3)
-        tD = Tex("D").set_color(ACCENT).next_to(cD, UP, buff=0.1).shift(LEFT * 0.8)
-        tA = Tex("A").set_color(CALM).next_to(cA, UP, buff=0.1).shift(RIGHT * 0.8)
-        nums = VGroup(Tex("0.05").move_to(cD.get_center() + LEFT * 0.85),
-                      Tex("0.78").move_to((cD.get_center() + cA.get_center()) / 2),
-                      Tex("0.04").move_to(cA.get_center() + RIGHT * 0.85)).set_color(WHITE)
-        for n in nums:
-            n.scale(0.9)
-        self.play(ShowCreation(cD), FadeIn(tD), ShowCreation(cA), FadeIn(tA))
-        self.play(FadeIn(only_d), FadeIn(lens), FadeIn(only_a), FadeIn(nums))
+        W = self.SIDE
+        x0, y0 = -5.9, -3.0
+        S = region(x0, y0, W, W, GREY_B, 0.0, 2.5)
+        wD = W * 0.83
+        rD = region(x0, y0, wD, W, ACCENT, 0.10)
+        rN = region(x0 + wD, y0, W - wD, W, MUTED, 0.10)
+        hDA, hNA = W * 0.78 / 0.83, W * 0.04 / 0.17
+        rDA = region(x0, y0, wD, hDA, MEAN_COLOR, 0.35)
+        rNA = region(x0 + wD, y0, W - wD, hNA, CALM, 0.35)
+        labels = VGroup(
+            Tex("0.78").scale(0.9).move_to(rDA),
+            Tex("0.05").scale(0.8).move_to([x0 + wD / 2, y0 + hDA + (W - hDA) / 2, 0]),
+            Tex("0.04").scale(0.6).move_to(rNA),
+            Tex("0.13").scale(0.7).move_to([x0 + wD + (W - wD) / 2, y0 + hNA + (W - hNA) / 2, 0]),
+        ).set_color(WHITE)
+        tD = Tex("D").set_color(ACCENT).next_to(rD, DOWN, buff=0.12)
+        tN = Tex("D'").set_color(MUTED).next_to(rN, DOWN, buff=0.12)
+        tA = Tex("A").set_color(MEAN_COLOR).next_to(S, LEFT, buff=0.15).set_y(y0 + hDA / 2)
+        self.play(ShowCreation(S), FadeIn(rD), FadeIn(rN), FadeIn(tD), FadeIn(tN))
+        self.play(FadeIn(rDA), FadeIn(rNA), FadeIn(tA), FadeIn(labels))
         self.wait(0.8)
 
-        # (a) D 가 세계
-        qa = Tex(R"\text{(a)}\ P(A \mid D) = \frac{0.78}{0.83} \approx 0.94",
-                 t2c={"0.83": ACCENT, "0.78": MEAN_COLOR}).scale(0.95).move_to([3.6, 0.8, 0])
-        self.play(only_a.animate.set_fill(CALM, 0.06), cA.animate.set_stroke(CALM, 1),
-                  nums[2].animate.set_opacity(0.25), run_time=0.8)
-        self.play(FlashAround(cD, color=ACCENT, buff=0.05), Write(qa), run_time=1.4)
+        # (a) D 를 남기고 옆으로 늘린다
+        qa = Tex(R"\text{(a)}\ \text{given } D").set_color(ACCENT).scale(0.9).move_to([3.3, 2.0, 0])
+        self.play(FadeIn(qa), FadeOut(rN), FadeOut(rNA), FadeOut(tN), FadeOut(labels[2]), FadeOut(labels[3]), run_time=0.6)
+        self.play(Transform(rD, region(x0, y0, W, W, ACCENT, 0.10)),
+                  Transform(rDA, region(x0, y0, W, hDA, MEAN_COLOR, 0.35)),
+                  labels[0].animate.move_to([x0 + W / 2, y0 + hDA / 2, 0]),
+                  labels[1].animate.move_to([x0 + W / 2, y0 + hDA + (W - hDA) / 2, 0]),
+                  tD.animate.next_to(S, DOWN, buff=0.12), run_time=1.2)
+        ra = Tex(R"P(A \mid D) = \frac{0.78}{0.83} \approx 0.94", t2c={"0.83": ACCENT, "0.78": MEAN_COLOR}).scale(0.9)
+        ra.next_to(qa, DOWN, buff=0.3).align_to(qa, LEFT)
+        self.play(Write(ra))
         self.wait(1.2)
 
-        # (b) A 가 세계
-        self.play(only_a.animate.set_fill(CALM, 0.3), cA.animate.set_stroke(CALM, 3), nums[2].animate.set_opacity(1),
-                  only_d.animate.set_fill(ACCENT, 0.06), cD.animate.set_stroke(ACCENT, 1),
-                  nums[0].animate.set_opacity(0.25), run_time=0.8)
-        qb = Tex(R"\text{(b)}\ P(D \mid A) = \frac{0.78}{0.82} \approx 0.95",
-                 t2c={"0.82": CALM, "0.78": MEAN_COLOR}).scale(0.95).next_to(qa, DOWN, buff=0.7).align_to(qa, LEFT)
-        self.play(FlashAround(cA, color=CALM, buff=0.05), Write(qb), run_time=1.4)
-        self.wait(0.6)
-        same = note("same numerator, different world", 24, GREY_B).next_to(qb, DOWN, buff=0.4).align_to(qb, LEFT)
+        # (b) 되돌린 뒤 가로로 A 를 남기고 위로 늘린다
+        self.play(Transform(rD, region(x0, y0, wD, W, ACCENT, 0.10)),
+                  Transform(rDA, region(x0, y0, wD, hDA, MEAN_COLOR, 0.35)),
+                  labels[0].animate.move_to([x0 + wD / 2, y0 + hDA / 2, 0]),
+                  labels[1].animate.move_to([x0 + wD / 2, y0 + hDA + (W - hDA) / 2, 0]),
+                  tD.animate.next_to(region(x0, y0, wD, W, ACCENT), DOWN, buff=0.12),
+                  FadeIn(rN), FadeIn(rNA), FadeIn(tN), FadeIn(labels[2]), FadeIn(labels[3]), run_time=1.0)
+        # 가로 자르기: A 띠(높이 0.82) 안에서 D 의 폭이 0.78/0.82
+        hA = W * 0.82
+        wAD = W * 0.78 / 0.82
+        rA = region(x0, y0, W, hA, MEAN_COLOR, 0.10)
+        rAD = region(x0, y0, wAD, hA, ACCENT, 0.35)
+        qb = Tex(R"\text{(b)}\ \text{given } A").set_color(MEAN_COLOR).scale(0.9).next_to(ra, DOWN, buff=0.7).align_to(qa, LEFT)
+        self.play(FadeOut(rD), FadeOut(rDA), FadeOut(rN), FadeOut(rNA), FadeOut(labels), FadeOut(tD), FadeOut(tN), FadeOut(tA), run_time=0.5)
+        l78 = Tex("0.78").scale(0.9).set_color(WHITE).move_to(rAD)
+        l04 = Tex("0.04").scale(0.6).set_color(WHITE).move_to([x0 + wAD + (W - wAD) / 2, y0 + hA / 2, 0])
+        l18 = Tex("0.18").scale(0.7).set_color(WHITE).move_to([x0 + W / 2, y0 + hA + (W - hA) / 2, 0])
+        self.play(FadeIn(rA), FadeIn(rAD), FadeIn(l78), FadeIn(l04), FadeIn(l18), FadeIn(qb), run_time=0.8)
+        self.play(FadeOut(l18), Transform(rA, region(x0, y0, W, W, MEAN_COLOR, 0.10)),
+                  Transform(rAD, region(x0, y0, wAD, W, ACCENT, 0.35)),
+                  l78.animate.move_to([x0 + wAD / 2, y0 + W / 2, 0]),
+                  l04.animate.move_to([x0 + wAD + (W - wAD) / 2, y0 + W / 2, 0]), run_time=1.2)
+        rb = Tex(R"P(D \mid A) = \frac{0.78}{0.82} \approx 0.95", t2c={"0.82": MEAN_COLOR, "0.78": ACCENT}).scale(0.9)
+        rb.next_to(qb, DOWN, buff=0.3).align_to(qa, LEFT)
+        self.play(Write(rb))
+        same = note("same piece, different stretch", 24, GREY_B).next_to(rb, DOWN, buff=0.35).align_to(qa, LEFT)
         self.play(FadeIn(same))
         self.wait(2)
 
 
 # ─────────────────────────────────────────────────────────────
+# 2026학년도 수능 확률과 통계 28번 — 조건부확률 + 독립시행. 덱에 끼운 문제 슬라이드 뒤 (원본 45 뒤)
+# ─────────────────────────────────────────────────────────────
+class SuneungConditional(InteractiveScene):
+    """주사위 눈 여섯을 상자 규칙으로 돌리면 한 번의 시행은 네 유형뿐이다.
+    홀수 눈(1/2): 공 3, 3번 상자 +1 · 눈 2(1/6): 공 2, 2번 +1 · 눈 4(1/6): 공 3, 2번 +1 · 눈 6(1/6): 공 4, 2번·3번 +1.
+    조건 A(공의 합이 홀수)는 '공이 홀수인 시행(홀 또는 4, 확률 2/3)'이 홀수 번 → P(A) = 40/81.
+    A 안에서 3번 − 2번 = 1 인 패턴은 {홀,6,6,6}(4가지, 1/108)과 {홀,홀,4,6}(12가지, 1/12) → 5/54.
+    넓이 모형: A 조각 40/81 을 남기고 늘리면 5/54 조각이 3/16. 답 ②."""
+
+    def boxes(self, fills, color=GREY_B):
+        """상자 여섯. fills 는 공을 넣는 상자 번호."""
+        g = VGroup()
+        for i in range(1, 7):
+            r = Rectangle(width=0.62, height=0.5).set_stroke(color, 2)
+            if i in fills:
+                r.set_fill(MEAN_COLOR, 0.55)
+            t = Tex(str(i)).scale(0.55).set_color(GREY_A).move_to(r.get_bottom() + UP * 0.14)
+            g.add(VGroup(r, t))
+        return g.arrange(RIGHT, buff=0.08)
+
+    def construct(self):
+        head = slide_title("CSAT 2026 · Problem 28")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        # ── 눈마다 상자에 공을 넣어 보면 유형이 넷뿐이다
+        rule = [(1, {1, 3, 5}), (3, {1, 3, 5}), (5, {1, 3, 5}), (2, {1, 2}), (4, {1, 2, 4}), (6, {1, 2, 3, 6})]
+        rows = VGroup()
+        for k, fills in rule:
+            face = die_face(k, 0.5, GREY_A)
+            bx = self.boxes(fills)
+            n = len(fills)
+            d = (1 if 3 in fills else 0) - (1 if 2 in fills else 0)
+            info = Tex(str(n) + R"\ \text{balls},\ \Delta = " + f"{d:+d}").scale(0.65)
+            info.set_color(CALM if n % 2 else MUTED)
+            row = VGroup(face, bx, info).arrange(RIGHT, buff=0.35)
+            rows.add(row)
+        rows.arrange(DOWN, buff=0.14, aligned_edge=LEFT).move_to([-2.3, 0.2, 0])
+        delta = note("Δ = box 3 − box 2", 22, GREY_B).next_to(rows, UP, buff=0.25).align_to(rows, RIGHT)
+        self.play(FadeIn(delta))
+        for row in rows:
+            self.play(FadeIn(row), run_time=0.45)
+        self.wait(0.6)
+
+        # 네 유형과 확률
+        types = VGroup(
+            VGroup(note("odd face", 22, CALM), Tex(R"\tfrac12").scale(0.7).set_color(CALM), Tex(R"\text{odd},\ \Delta=+1").scale(0.6).set_color(CALM)),
+            VGroup(note("face 2", 22, MUTED), Tex(R"\tfrac16").scale(0.7).set_color(MUTED), Tex(R"\text{even},\ \Delta=-1").scale(0.6).set_color(MUTED)),
+            VGroup(note("face 4", 22, CALM), Tex(R"\tfrac16").scale(0.7).set_color(CALM), Tex(R"\text{odd},\ \Delta=-1").scale(0.6).set_color(CALM)),
+            VGroup(note("face 6", 22, MUTED), Tex(R"\tfrac16").scale(0.7).set_color(MUTED), Tex(R"\text{even},\ \Delta=0").scale(0.6).set_color(MUTED)),
+        )
+        for t in types:
+            t.arrange(RIGHT, buff=0.3)
+        types.arrange(DOWN, buff=0.18, aligned_edge=LEFT).move_to([4.2, 1.6, 0])
+        self.play(LaggedStartMap(FadeIn, types, lag_ratio=0.2), run_time=1.0)
+        self.wait(0.8)
+
+        # ── 조건 A: 공의 합이 홀수 = 홀수 시행(2/3)이 홀수 번
+        self.play(FadeOut(rows), FadeOut(delta), run_time=0.5)
+        pa_txt = Tex(R"A:\ \text{odd total} \Leftrightarrow \text{odd count of odd trials}").scale(0.7).set_color(WHITE)
+        pa_txt.move_to([-2.6, 2.3, 0])
+        pa = Tex(R"P(A) = \frac{1 - (1 - 2\cdot\frac{2}{3})^4}{2} = \frac{1 - \frac{1}{81}}{2} = \frac{40}{81}").scale(0.8).set_color(CALM)
+        pa.next_to(pa_txt, DOWN, buff=0.35).align_to(pa_txt, LEFT)
+        self.play(Write(pa_txt))
+        self.play(Write(pa))
+        self.wait(0.8)
+
+        # ── A ∩ B: Δ 의 합이 +1 이면서 홀수 시행이 홀수 번인 패턴은 둘
+        pat1 = VGroup(note("odd · 6 · 6 · 6", 24, MEAN_COLOR), Tex(R"4 \times \tfrac12 \left(\tfrac16\right)^3 = \tfrac{1}{108}").scale(0.75).set_color(MEAN_COLOR))
+        pat2 = VGroup(note("odd · odd · 4 · 6", 24, MEAN_COLOR), Tex(R"12 \times \left(\tfrac12\right)^2 \tfrac16 \cdot \tfrac16 = \tfrac{1}{12}").scale(0.75).set_color(MEAN_COLOR))
+        for p_ in (pat1, pat2):
+            p_.arrange(RIGHT, buff=0.4)
+        pats = VGroup(pat1, pat2).arrange(DOWN, buff=0.2, aligned_edge=LEFT).move_to([-2.6, -0.3, 0]).align_to(pa_txt, LEFT)
+        pab = Tex(R"P(A \cap B) = \frac{1}{108} + \frac{1}{12} = \frac{5}{54}").scale(0.85).set_color(MEAN_COLOR)
+        pab.next_to(pats, DOWN, buff=0.3).align_to(pa_txt, LEFT)
+        btxt = Tex(R"B:\ \Delta\text{ sum} = +1").scale(0.7).set_color(WHITE).next_to(pats, UP, buff=0.25).align_to(pa_txt, LEFT)
+        self.play(FadeIn(btxt), LaggedStartMap(FadeIn, pats, lag_ratio=0.3), run_time=1.0)
+        self.play(Write(pab))
+        self.wait(0.8)
+
+        # ── 넓이 모형: A 조각을 남기고 늘린다
+        self.play(FadeOut(types), run_time=0.4)
+        W = 2.8
+        x0, y0 = 3.0, -3.3
+        S = region(x0, y0, W, W, GREY_B, 0.0, 2.5)
+        wA = W * 40 / 81
+        rA = region(x0, y0, wA, W, CALM, 0.14)
+        hB = W * (5 / 54) / (40 / 81)
+        rAB = region(x0, y0, wA, hB, MEAN_COLOR, 0.5)
+        tA = Tex(R"A\ \tfrac{40}{81}").scale(0.6).set_color(CALM).next_to(rA, DOWN, buff=0.1)
+        tAB = Tex(R"\tfrac{5}{54}").scale(0.6).set_color(MEAN_COLOR).move_to(rAB)
+        self.play(ShowCreation(S), FadeIn(rA), FadeIn(rAB), FadeIn(tA), FadeIn(tAB))
+        self.wait(0.5)
+        self.play(Transform(rA, region(x0, y0, W, W, CALM, 0.14)), Transform(rAB, region(x0, y0, W, hB, MEAN_COLOR, 0.5)),
+                  tAB.animate.move_to([x0 + W / 2, y0 + hB / 2, 0]), tA.animate.next_to(S, DOWN, buff=0.1), run_time=1.2)
+        ans = Tex(R"P(B \mid A) = \frac{5/54}{40/81} = \frac{3}{16}").scale(0.95).set_color(MEAN_COLOR)
+        ans.next_to(pab, DOWN, buff=0.45).align_to(pa_txt, LEFT)
+        self.play(Write(ans))
+        self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.2), run_time=1.2)
+        pick = note("answer ②", 28, WHITE).next_to(ans, RIGHT, buff=0.6)
+        self.play(FadeIn(pick))
+        self.wait(2)
+
+# ─────────────────────────────────────────────────────────────
 # 2. 독립 (2.6) — 슬라이드 46 (Definition 2.11) 앞
 # ─────────────────────────────────────────────────────────────
 class Independence(InteractiveScene):
-    """정의 2.11 옆의 두 보기. 찌그러진 주사위(Example 2.25 의 w, 2w)에서 A = {4,5,6}, B = {1,4}:
-    P(B | A) = 2/5 인데 P(B) = 1/3 이라 종속. 카드를 뽑아 되돌려 놓고 다시 뽑으면 둘째 뽑기가
-    보는 카드는 언제나 52 장이라 P(B | A) = P(B) = 1/4, 독립."""
+    """같은 넓이 모형 두 개. 왼쪽은 Table 2.1: E 기둥과 U 기둥에서 M 조각의 높이가 다르다
+    (460/600 과 40/300). 어느 기둥을 골라 늘리느냐에 따라 M 의 넓이가 바뀌므로 종속.
+    오른쪽은 복원 카드(정의 2.11 의 보기): 첫 장이 에이스인 기둥과 아닌 기둥에서 둘째 장이 스페이드인
+    조각의 높이가 13/52 로 같다. 가르는 선이 수평이면 조건이 넓이를 바꾸지 않는다. 그것이 독립이다."""
+    SIDE = 2.8
+
+    def square(self, x0, y0, wL, hL, hR, cols, colL, colR, top):
+        W = self.SIDE
+        S = region(x0, y0, W, W, GREY_B, 0.0, 2.5)
+        L = region(x0, y0, wL, W, cols[0], 0.10)
+        Rr = region(x0 + wL, y0, W - wL, W, cols[1], 0.10)
+        aL = region(x0, y0, wL, hL, top, 0.35)
+        aR = region(x0 + wL, y0, W - wL, hR, top, 0.35)
+        tl = note(colL, 22, cols[0]).next_to(L, DOWN, buff=0.12)
+        tr = note(colR, 22, cols[1]).next_to(Rr, DOWN, buff=0.12)
+        return S, L, Rr, aL, aR, tl, tr
 
     def construct(self):
         head = slide_title("Independent Events")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        W = self.SIDE
 
-        # ── 주사위: 종속
-        faces = VGroup(*[die_face(i + 1, 0.55, GREY_A) for i in range(6)]).arrange(RIGHT, buff=0.4)
-        faces.move_to([-3.4, 1.75, 0])
-        wts = VGroup(*[Tex("2w" if (i + 1) % 2 == 0 else "w").scale(0.7).set_color(GREY_B).next_to(f, DOWN, buff=0.12)
-                       for i, f in enumerate(faces)])
-        self.play(LaggedStartMap(FadeIn, faces, lag_ratio=0.08), FadeIn(wts))
-        setup = Tex(R"A = \{4, 5, 6\}, \quad B = \{1, 4\}", t2c={"A": ACCENT, "B": CALM}).scale(0.8)
-        setup.next_to(faces, UP, buff=0.3)
-        self.play(FadeIn(setup))
-        pb = Tex(R"P(B) = \frac{w + 2w}{9w} = \frac{1}{3}").scale(0.85).set_color(CALM).move_to([2.2, 2.3, 0]).align_to([-0.2, 0, 0], LEFT)
-        ringB = VGroup(ring(faces[0], CALM, buff=0.06), ring(faces[3], CALM, buff=0.06))
-        self.play(ShowCreation(ringB), Write(pb))
-        self.wait(0.5)
-        boxA = SurroundingRectangle(VGroup(faces[3], faces[4], faces[5], wts[3], wts[5]), buff=0.12).set_stroke(ACCENT, 3)
-        pba = Tex(R"P(B \mid A) = \frac{2w}{2w + w + 2w} = \frac{2}{5}").scale(0.85).set_color(ACCENT)
-        pba.next_to(pb, DOWN, buff=0.35).align_to(pb, LEFT)
-        self.play(ShowCreation(boxA), *[f.animate.set_opacity(0.25) for f in faces[:3]],
-                  *[w.animate.set_opacity(0.25) for w in wts[:3]], Write(pba))
-        dep = Tex(R"\frac{2}{5} \ne \frac{1}{3}").scale(0.9).set_color(WARN).next_to(pba, DOWN, buff=0.3).align_to(pb, LEFT)
-        dep_tag = note("dependent", 26, WARN).next_to(dep, RIGHT, buff=0.5)
-        self.play(FadeIn(dep), FadeIn(dep_tag))
-        self.wait(1.4)
+        # ── 왼쪽: Table 2.1 — 기둥마다 M 의 높이가 다르다
+        x0, y0 = -6.0, -0.3
+        S1, L1, R1, aL1, aR1, tl1, tr1 = self.square(x0, y0, W * 600 / 900, W * 460 / 600, W * 40 / 300,
+                                                     (CALM, MUTED), "E", "U", ACCENT)
+        cap1 = note("Table 2.1", 24, GREY_A).next_to(S1, UP, buff=0.15)
+        self.play(ShowCreation(S1), FadeIn(L1), FadeIn(R1), FadeIn(tl1), FadeIn(tr1), FadeIn(cap1))
+        self.play(FadeIn(aL1), FadeIn(aR1))
+        mE = Tex(R"P(M \mid E) = \frac{460}{600}").scale(0.65).set_color(ACCENT).move_to([x0 + W / 2, y0 - 0.9, 0])
+        mU = Tex(R"P(M \mid U) = \frac{40}{300}").scale(0.65).set_color(ACCENT).next_to(mE, DOWN, buff=0.12)
+        self.play(FadeIn(mE), FadeIn(mU))
+        step = Line(aL1.get_corner(UR), aR1.get_corner(UL)).set_stroke(WARN, 4)
+        dep = Tex(R"\ne \Rightarrow \text{dependent}").scale(0.7).set_color(WARN).next_to(mU, DOWN, buff=0.14)
+        self.play(ShowCreation(step), FadeIn(dep))
+        self.wait(1.2)
 
-        # ── 카드: 복원하면 독립
-        self.play(*[FadeOut(m) for m in [faces, wts, setup, pb, pba, ringB, boxA, dep, dep_tag]], run_time=0.5)
-        ranks = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
-        suits = [("s", CALM), ("h", MUTED), ("d", MUTED), ("c", MUTED)]          # 스페이드만 색을 준다
-        deck = VGroup()
-        for si, (sn, col) in enumerate(suits):
-            for rk in ranks:
-                c = letter_chip(rk, 0.4, col if rk != "A" else ACCENT)
-                if sn == "s" and rk == "A":
-                    c = letter_chip(rk, 0.4, ACCENT)
-                deck.add(c)
-        deck.arrange_in_grid(4, 13, buff=0.07).move_to([-1.6, 0.9, 0])
-        box = panel(deck, MUTED, buff=0.18)
-        spade_tag = note("spades", 22, CALM).next_to(deck[:13], LEFT, buff=0.3)
-        self.play(LaggedStartMap(FadeIn, deck, lag_ratio=0.01), FadeIn(box), FadeIn(spade_tag), run_time=1.4)
-        setup2 = Tex(R"A = \text{first card ace}, \quad B = \text{second card spade}",
-                     t2c={"A": ACCENT, "B": CALM}).scale(0.75)
-        setup2.next_to(box, DOWN, buff=0.3)
-        self.play(FadeIn(setup2))
+        # ── 오른쪽: 복원 카드 — 가르는 선이 수평이다
+        x1 = 1.2
+        wA = W * 4 / 52
+        S2, L2, R2, aL2, aR2, tl2, tr2 = self.square(x1, y0, wA, W * 13 / 52, W * 13 / 52,
+                                                     (ACCENT, MUTED), "A · ace", "not ace", CALM)
+        cap2 = note("card replaced, then drawn again", 22, GREY_A).next_to(S2, UP, buff=0.15)
+        self.play(ShowCreation(S2), FadeIn(L2), FadeIn(R2), FadeIn(tl2), FadeIn(tr2), FadeIn(cap2))
+        self.play(FadeIn(aL2), FadeIn(aR2))
+        bTag = Tex(R"B \text{ · spade}").scale(0.7).set_color(CALM).next_to(S2, RIGHT, buff=0.15).set_y(y0 + W * 13 / 104)
+        flat = Line([x1, y0 + W * 13 / 52, 0], [x1 + W, y0 + W * 13 / 52, 0]).set_stroke(CALM, 4)
+        self.play(FadeIn(bTag), ShowCreation(flat))
+        eq = Tex(R"P(B \mid A) = \frac{13}{52} = P(B)").scale(0.65).set_color(CALM).move_to([x1 + W / 2, y0 - 0.9, 0])
+        ind = Tex(R"\Rightarrow \text{independent}").scale(0.7).set_color(CALM).next_to(eq, DOWN, buff=0.12)
+        self.play(FadeIn(eq), FadeIn(ind))
+        self.wait(1.0)
 
-        # 첫 장: 에이스 하나를 뽑았다가 되돌린다
-        ace = deck[13]                                   # 하트 에이스
-        pick = ring(ace, ACCENT, buff=0.04)
-        out = ace.copy()
-        self.play(ShowCreation(pick))
-        self.play(out.animate.shift(DOWN * 1.9 + RIGHT * 2.0), run_time=0.8)
-        back = note("replaced", 22, ACCENT).next_to(out, RIGHT, buff=0.25)
-        self.play(FadeIn(back))
-        self.play(out.animate.move_to(ace), run_time=0.8)
-        self.remove(out)
-        self.play(FadeOut(pick), FadeOut(back), run_time=0.3)
-
-        # 둘째 장이 보는 것은 여전히 52 장, 스페이드 13 장
-        sp = SurroundingRectangle(deck[:13], buff=0.05).set_stroke(CALM, 3)
-        pb2 = Tex(R"P(B \mid A) = \frac{13}{52} = P(B)").scale(0.95).set_color(WHITE).move_to([4.3, 0.9, 0])
-        self.play(ShowCreation(sp), Write(pb2))
-        ind = note("independent", 26, CALM).next_to(pb2, DOWN, buff=0.3)
-        self.play(FadeIn(ind))
-        self.wait(0.8)
-        defn = Tex(R"P(B \mid A) = P(B) \iff P(A \cap B) = P(A)\,P(B)").set_color(WHITE).scale(1.0)
-        defn.to_edge(DOWN, buff=0.55)
+        flat_note = note("flat cut: condition changes nothing", 20, GREY_B).next_to(ind, DOWN, buff=0.14)
+        self.play(FadeIn(flat_note))
+        defn = Tex(R"P(B \mid A) = P(B) \iff P(A \cap B) = P(A)\,P(B)").set_color(WHITE).scale(0.9)
+        defn.to_edge(DOWN, buff=0.25)
         self.play(FadeIn(defn, UP))
         self.play(FlashAround(defn, color=MEAN_COLOR, buff=0.2), run_time=1.2)
         self.wait(2)
-
 
 # ─────────────────────────────────────────────────────────────
 # 3. 곱셈법칙 (2.6) — 슬라이드 48 (Theorem 2.10–2.12) 앞

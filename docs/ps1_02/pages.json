@@ -116,21 +116,28 @@
   "title": "Conditional Probability",
   "url": "https://songhune.github.io/manim_aimath/ps1_02/ConditionalProbability.html",
   "slides": 6,
-  "kb": 1401
+  "kb": 4618
  },
  {
   "scene": "Example234Flights",
   "title": "Example 2.34",
   "url": "https://songhune.github.io/manim_aimath/ps1_02/Example234Flights.html",
-  "slides": 4,
-  "kb": 1350
+  "slides": 3,
+  "kb": 1619
+ },
+ {
+  "scene": "SuneungConditional",
+  "title": "CSAT 2026 · Problem 28",
+  "url": "https://songhune.github.io/manim_aimath/ps1_02/SuneungConditional.html",
+  "slides": 6,
+  "kb": 2395
  },
  {
   "scene": "Independence",
   "title": "Independent Events",
   "url": "https://songhune.github.io/manim_aimath/ps1_02/Independence.html",
-  "slides": 4,
-  "kb": 1834
+  "slides": 3,
+  "kb": 1466
  },
  {
   "scene": "ProductRule",

@@ -26,6 +26,7 @@ import sys
 import tempfile
 
 from pptx import Presentation
+from pptx.util import Pt
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "_harness"))
 from fix_deck_fonts import fix as fix_fonts   # 하네스 3.5. 덱을 쓰기 전에 옛 글꼴 이름을 고친다
@@ -104,6 +105,7 @@ JOBS = [
         dst="PS1_02_restyled_영상.pptx",
         place="before",
         drop=[47],                                       # 원본 47 은 글이 없는 빈 슬라이드다. 뺀다 (2026-09-10)
+        extra=[(45, "suneung_cond")],                    # 45 뒤에 수능형 연습 문제 슬라이드 (2026-09-10)
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -122,7 +124,7 @@ JOBS = [
                 # 2.6–2.8 (week03.py). 2026-09-08 추가.
                 (41, ["ConditionalProbability"]),            # 42 = Definition 2.10
                 (44, ["Example234Flights"]),                 # 44 = Ex 2.34·2.35 문제, 45 = 풀이
-                (45, ["Independence"]),                      # 46 = Definition 2.11
+                (45, ["SuneungConditional", "Independence"]),   # 45 뒤: 수능형 문제 슬라이드(extra) → 그 풀이 영상 → 46 = Definition 2.11 앞 개념 영상
                 (47, ["ProductRule"]),                       # 48 = Theorem 2.10–2.12
                 (49, ["Example236Fuses"]),                   # 49 = Ex 2.36·2.37 문제, 50 = 풀이
                 (51, ["Example238Emergency"]),               # 51 = Ex 2.38·2.40 문제, 52 = 풀이
@@ -136,7 +138,7 @@ JOBS = [
                  "Example222Cartridges": 26, "ProbabilityOfEvent": 27, "Example225LoadedDie": 29,
                  "Example228Poker": 33, "AdditionRule": 35, "Example229Jobs": 37,
                  "Example233Cable": 41,
-                 "ConditionalProbability": 42, "Example234Flights": 45, "Independence": 46,
+                 "ConditionalProbability": 42, "Example234Flights": 45, "SuneungConditional": 46, "Independence": 46,
                  "ProductRule": 48, "Example236Fuses": 50, "Example238Emergency": 52,
                  "TotalProbability": 53, "Example241Machines": 55, "BayesRule": 56,
                  "Example242Bayes": 58},
@@ -147,6 +149,7 @@ JOBS = [
         dst="PS1_02_restyled_한글_영상.pptx",
         place="before",
         drop=[47],
+        extra=[(45, "suneung_cond")],
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -165,7 +168,7 @@ JOBS = [
                 # 2.6–2.8 (week03.py). 2026-09-08 추가.
                 (41, ["ConditionalProbability"]),            # 42 = Definition 2.10
                 (44, ["Example234Flights"]),                 # 44 = Ex 2.34·2.35 문제, 45 = 풀이
-                (45, ["Independence"]),                      # 46 = Definition 2.11
+                (45, ["SuneungConditional", "Independence"]),   # 45 뒤: 수능형 문제 슬라이드(extra) → 그 풀이 영상 → 46 = Definition 2.11 앞 개념 영상
                 (47, ["ProductRule"]),                       # 48 = Theorem 2.10–2.12
                 (49, ["Example236Fuses"]),                   # 49 = Ex 2.36·2.37 문제, 50 = 풀이
                 (51, ["Example238Emergency"]),               # 51 = Ex 2.38·2.40 문제, 52 = 풀이
@@ -179,7 +182,7 @@ JOBS = [
                  "Example222Cartridges": 26, "ProbabilityOfEvent": 27, "Example225LoadedDie": 29,
                  "Example228Poker": 33, "AdditionRule": 35, "Example229Jobs": 37,
                  "Example233Cable": 41,
-                 "ConditionalProbability": 42, "Example234Flights": 45, "Independence": 46,
+                 "ConditionalProbability": 42, "Example234Flights": 45, "SuneungConditional": 46, "Independence": 46,
                  "ProductRule": 48, "Example236Fuses": 50, "Example238Emergency": 52,
                  "TotalProbability": 53, "Example241Machines": 55, "BayesRule": 56,
                  "Example242Bayes": 58},
@@ -206,6 +209,56 @@ def poster(name, out_dir):
     return mp4, png
 
 
+# 덱에 끼우는 문제 슬라이드. 원본에 없는 문제(수능 기출)를 제목·본문(·표)으로 만든다. 2026-09-10.
+# 문제 문장은 원문 그대로 옮기고 출처를 적는다. 2026학년도 수능 확률과 통계 28번(조건부확률 + 독립시행).
+EXTRA_SLIDES = {
+    "suneung_cond": dict(
+        title="2.6 Conditional Probability · 2026학년도 수능 확률과 통계 28번",
+        body=[
+            (0, "16개의 공과 1부터 6까지의 자연수가 하나씩 적혀 있는 여섯 개의 빈 상자가 있다. 한 개의 주사위를 사용하여 다음 시행을 한다."),
+            (1, "주사위를 한 번 던져 나온 눈의 수가 k일 때, k가 홀수이면 1, 3, 5가 적힌 상자에 공을 각각 1개씩 넣고, "
+                "k가 짝수이면 k의 약수가 적힌 상자에 공을 각각 1개씩 넣는다."),
+            (0, "이 시행을 4번 반복한 후 여섯 개의 상자에 들어 있는 모든 공의 개수의 합이 홀수일 때, "
+                "3이 적힌 상자에 들어 있는 공의 개수가 2가 적힌 상자에 들어 있는 공의 개수보다 1개 더 많을 확률은?"),
+            (0, "①  1/8        ②  3/16        ③  1/4        ④  5/16        ⑤  3/8"),
+            (1, "출처: 2026학년도 대학수학능력시험 수학 영역 확률과 통계 28번 (한국교육과정평가원)"),
+        ],
+    ),
+}
+
+
+def extra_slide(prs, key):
+    """제목 + 본문 + 표 슬라이드 하나를 덱 끝에 만든다(자리는 build 가 옮긴다)."""
+    spec = EXTRA_SLIDES[key]
+    slide = prs.slides.add_slide(prs.slide_layouts[1])          # 제목 및 내용
+    slide.shapes.title.text = spec["title"]
+    body = slide.placeholders[1]
+    body.width, body.height = int(prs.slide_width * 0.86), int(prs.slide_height * 0.42)
+    tf = body.text_frame
+    tf.text = spec["body"][0][1]
+    for level, text in spec["body"][1:]:
+        para = tf.add_paragraph()
+        para.text = text
+        para.level = level
+    if not spec.get("table"):
+        body.height = int(prs.slide_height * 0.72)
+        return slide
+    rows, cols = len(spec["table"]), len(spec["table"][0])
+    left = int(prs.slide_width * 0.30)
+    top = int(prs.slide_height * 0.66)
+    tbl = slide.shapes.add_table(rows, cols, left, top, int(prs.slide_width * 0.40), int(prs.slide_height * 0.24)).table
+    for r, row in enumerate(spec["table"]):
+        for c, val in enumerate(row):
+            cell = tbl.cell(r, c)
+            cell.text = val
+            for para in cell.text_frame.paragraphs:
+                para.alignment = 2                                  # 가운데
+                for run in para.runs:
+                    run.font.size = Pt(16)
+                    run.font.bold = (r == 0 or c == 0)
+    return slide
+
+
 def video_shapes(slide):
     return [sh for sh in slide.shapes if sh.shape_type == 16]
 
@@ -230,6 +283,11 @@ def build(job, out_dir):
         print(f"  교체  {no:2d}번 슬라이드 ← {name}")
 
     added = []
+    extras = []                                                     # (원본 N번 뒤, 슬라이드 색인, key)
+    for after, key in job.get("extra", []):
+        extra_slide(prs, key)
+        extras.append((after, len(prs.slides) - 1, key))
+        print(f"  문제  {after:2d}번 뒤 ← {key}")
     for after, names in job.get("insert", []):
         for name in names:
             mp4, png = poster(name, out_dir)
@@ -250,6 +308,7 @@ def build(job, out_dir):
         else:
             print(f"  삭제  {i + 1:2d}번 슬라이드")
         order += [a for a, b in moved.items() if b == i]
+        order += [idx for aft, idx, _ in extras if aft == i + 1]     # 문제 슬라이드가 그 영상보다 앞
         order += [idx for aft, idx, _ in added if aft == i + 1]
 
     lst = prs.slides._sldIdLst
@@ -270,7 +329,9 @@ def build(job, out_dir):
 
     # 만들어진 순서를 그대로 적어 둔다: 원본 슬라이드는 번호, 새 영상은 씬 이름.
     by_idx = {idx: name for _, idx, name in added}
-    layout = [("video", by_idx[i]) if i in by_idx else ("slide", i + 1) for i in order]
+    by_extra = {idx: key for _, idx, key in extras}
+    layout = [("video", by_idx[i]) if i in by_idx else (("extra", by_extra[i]) if i in by_extra else ("slide", i + 1))
+              for i in order]
     for no, name in job.get("replace", {}).items():
         layout[order.index(no - 1)] = ("video", name)
     return dst, layout
@@ -315,7 +376,7 @@ def verify(job, dst, layout):
             seen = layout[i][1]
 
     for i, ((kind, val), slide) in enumerate(zip(layout, prs.slides)):
-        if kind == "slide":
+        if kind in ("slide", "extra"):
             continue
         last_slide = prev_of[i]
         pics = video_shapes(slide)
