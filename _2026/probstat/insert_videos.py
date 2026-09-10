@@ -4,7 +4,8 @@
 씬을 다시 렌더한 뒤 이 스크립트를 그대로 돌리면 슬라이드 구성은 유지한 채
 영상만 새것으로 바뀐다. 손으로 한 장씩 넣지 않는다.
 
-    python _2026/probstat/insert_videos.py
+    python _2026/probstat/insert_videos.py                       # 전부
+    python _2026/probstat/insert_videos.py PS1_02_restyled.pptx   # 이 원본의 job 만
 
 만드는 것
     [0901]오리엔테이션.pptx      → [0901]오리엔테이션_영상.pptx
@@ -102,6 +103,7 @@ JOBS = [
         src="PS1_02_restyled.pptx",
         dst="PS1_02_restyled_영상.pptx",
         place="before",
+        drop=[47],                                       # 원본 47 은 글이 없는 빈 슬라이드다. 뺀다 (2026-09-10)
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -144,6 +146,7 @@ JOBS = [
         src="PS1_02_restyled_한글.pptx",
         dst="PS1_02_restyled_한글_영상.pptx",
         place="before",
+        drop=[47],
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -192,12 +195,13 @@ def duration(path):
 
 
 def poster(name, out_dir):
-    """미리보기 이미지. 첫 프레임은 대개 비어 있으므로 중반 지점을 쓴다."""
+    """미리보기 이미지. 마지막 장면을 쓴다 — 모든 씬이 결론 식을 강조한 화면으로 끝나므로 그 장면이
+    영상의 요지다(2026-09-10. 그전에는 중반 55% 지점이었다). 학생 배포본의 링크 슬라이드도 이 그림을 쓴다."""
     mp4 = os.path.join(VIDEOS, name + ".mp4")
     png = os.path.join(out_dir, name + ".png")
     if not os.path.exists(png):
         subprocess.run(
-            ["ffmpeg", "-v", "error", "-ss", f"{duration(mp4) * 0.55:.2f}",
+            ["ffmpeg", "-v", "error", "-ss", f"{max(duration(mp4) - 0.4, 0):.2f}",
              "-i", mp4, "-frames:v", "1", "-y", png], check=True)
     return mp4, png
 
@@ -236,11 +240,15 @@ def build(job, out_dir):
             print(f"  추가  {after:2d}번 뒤 ← {name}")
 
     moved = {a - 1: b - 1 for a, b in job.get("move", [])}
+    dropped = {d - 1 for d in job.get("drop", [])}       # 원본에서 빼는 장. 그 뒤에 붙는 영상은 그대로 붙는다
     order = []
     for i in range(n):
         if i in moved:
             continue
-        order.append(i)
+        if i not in dropped:
+            order.append(i)
+        else:
+            print(f"  삭제  {i + 1:2d}번 슬라이드")
         order += [a for a, b in moved.items() if b == i]
         order += [idx for aft, idx, _ in added if aft == i + 1]
 
@@ -250,6 +258,8 @@ def build(job, out_dir):
         lst.remove(e)
     for i in order:
         lst.append(ids[i])
+    for i in dropped:
+        prs.part.drop_rel(ids[i].rId)                  # 목록에서만 빼면 파일에 남는다
 
     # 동기화 폴더 밖에서 저장하고 글꼴을 고친 뒤 한 번에 들여놓는다. 만든 파일을 제자리에서 다시
     # 고치면 Synology 가 "<이름> 2.pptx" 사본을 만들고 원본이 사라질 수 있다(2026-09-08).
@@ -334,9 +344,13 @@ def verify(job, dst, layout):
 def main():
     if not os.path.isdir(VIDEOS):
         sys.exit(f"영상 폴더가 없다: {VIDEOS}")
+    only = [a for a in sys.argv[1:] if not a.startswith("-")]      # 원본 파일 이름을 주면 그 job 만 돌린다
+    jobs = [j for j in JOBS if not only or j["src"] in only]
+    if not jobs:
+        sys.exit(f"맞는 job 이 없다: {only}. 원본 이름은 {[j['src'] for j in JOBS]}")
     out_dir = tempfile.mkdtemp(prefix="poster_")
     all_ok = True
-    for job in JOBS:
+    for job in jobs:
         print(f"═══ {job['src']} ═══")
         dst, layout = build(job, out_dir)
         rows, ok = verify(job, dst, layout)
