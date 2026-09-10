@@ -92,7 +92,25 @@ def code(text, size=24, color=CALM):
     여기는 학생이 그대로 받아 칠 줄이므로 낱말 수로 재면 안 된다. 대신 강의자료
     파이썬 코드와 **글자 하나까지 같아야** 한다.
     """
-    return Text(text, font="D2Coding", font_size=size).set_color(color)
+    # 앞 공백은 글자가 아니라서 arrange 가 무시한다. 들여쓰기 깊이만 기억해 두고
+    # `code_block()` 이 자리를 잡을 때 그만큼 오른쪽으로 민다.
+    stripped = text.lstrip(" ")
+    mob = Text(stripped, font="D2Coding", font_size=size).set_color(color)
+    mob.indent = len(text) - len(stripped)
+    return mob
+
+
+def code_block(lines, size=20, buff=0.22, step=0.36):
+    """코드 여러 줄. 파이썬에서 들여쓰기는 구조 그 자체이므로 반드시 살린다.
+
+    `arrange(aligned_edge=LEFT)` 는 각 줄의 첫 글자에 맞춰 정렬해 공백을 지운다.
+    정렬한 뒤 줄마다 들여쓰기 깊이(공백 4개 = 한 단계)만큼 오른쪽으로 민다.
+    """
+    group = VGroup(*[code(t, size) for t in lines])
+    group.arrange(DOWN, buff=buff, aligned_edge=LEFT)
+    for line in group:
+        line.shift(RIGHT * step * (line.indent / 4))
+    return group
 
 
 def slide_title(text):
@@ -989,133 +1007,160 @@ class InverseDenominator(InteractiveScene):
 
 
 # ─────────────────────────────────────────────────────────────
-# 15. 부분 피벗 — np.argmax 와 np.abs 가 하는 일
+# 15. rref 함수 읽기 — 강의자료 p.12 코드 리뷰
+#
+# 앞서 `PartialPivot` 과 `EliminateColumn` 두 편으로 잘라 두었는데, 변수 설명 없이
+# p 와 r 부터 꺼내는 바람에 코딩이 처음인 학생이 따라올 수 없었다. 한 편으로 합치고
+# **변수가 무엇인지부터** 시작한다 (2026-09-11).
 # ─────────────────────────────────────────────────────────────
-class PartialPivot(InteractiveScene):
-    """강의자료 rref 함수의 한 줄을 뜯어 본다.
+class RrefCodeReview(InteractiveScene):
+    """강의자료 p.12 의 rref 함수를 처음부터 읽는다.
 
-        p = r + int(np.argmax(np.abs(R[r:, c])))
-
-    수는 예제 2-1 의 계수행렬이다. 손으로 풀 때는 1행을 그대로 썼는데 코드는
-    3행을 먼저 올린다. 그 차이가 어디서 오는지가 이 편의 내용이다.
+    수는 예제 2-1 의 첨가행렬이다. 손으로 풀 때는 1행을 그대로 썼는데 코드는
+    3행을 먼저 올린다. 그 차이가 어디서 오는지도 이 편에서 답한다.
     """
-    values = [[1, 3, 2], [2, 2, 0], [-3, 1, 1]]
-    swapped = [[-3, 1, 1], [2, 2, 0], [1, 3, 2]]
+    start = [["1", "3", "2", "2"], ["2", "2", "0", "0"], ["-3", "1", "1", "-2"]]
+    swapped = [["-3", "1", "1", "-2"], ["2", "2", "0", "0"], ["1", "3", "2", "2"]]
+    scaled = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}", "\\frac{2}{3}"],
+              ["2", "2", "0", "0"], ["1", "3", "2", "2"]]
+    cleared = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}", "\\frac{2}{3}"],
+               ["0", "\\frac{8}{3}", "\\frac{2}{3}", "-\\frac{4}{3}"],
+               ["0", "\\frac{10}{3}", "\\frac{7}{3}", "\\frac{4}{3}"]]
+    final = [["1", "0", "0", "1"], ["0", "1", "0", "-1"], ["0", "0", "1", "2"]]
+
+    def board(self, values, h_buff=0.95):
+        m = augmented(values, 3, WHITE, h_buff=h_buff, v_buff=0.62)
+        m.set_width(5.4).move_to(3.4 * RIGHT + 0.5 * DOWN)
+        return m
 
     def construct(self):
-        head = slide_title("부분 피벗")
+        head = slide_title("rref 함수 읽기")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
-        line = code("p = r + int(np.argmax(np.abs(R[r:, c])))", 26)
-        line.move_to(2.5 * UP)
-        self.play(FadeIn(line, DOWN), run_time=0.8)
-        self.wait(0.8)
+        # ── 1. 변수가 무엇인지부터 ────────────────────────────
+        lines = code_block((
+            "def rref(M, tol=1e-12):",
+            "    R = np.array(M, dtype=float)",
+            "    rows, cols = R.shape",
+            "    r = 0",
+        ), 21, buff=0.24)
+        lines.to_edge(LEFT, buff=0.7).shift(1.6 * UP)
+        self.play(LaggedStartMap(FadeIn, lines, lag_ratio=0.3), run_time=1.6)
 
-        m = mat(self.values, WHITE, h_buff=0.9)
-        m.move_to(3.3 * LEFT + 0.5 * DOWN)
-        self.play(FadeIn(m))
+        group = self.board(self.start)
+        m = group.matrix
+        self.play(FadeIn(group))
+        self.wait(0.6)
 
-        column = box(m.get_columns()[0], ACCENT, 0.14)
-        self.play(ShowCreation(column))
-        self.wait(0.5)
+        frame = box(m, ACCENT, 0.16)
+        tag_R = caption("행렬 R", 24, ACCENT)
+        tag_R.next_to(frame, UP, buff=0.25)
+        self.play(ShowCreation(frame), FadeIn(tag_R))
+        self.wait(0.9)
+        self.play(FadeOut(frame), FadeOut(tag_R))
 
-        # np.abs — 부호를 뗀다.
-        abs_step = VGroup(code("np.abs", 26, DONE),
-                          Tex("1,\; 2,\; 3").set_color(DONE))
-        abs_step.arrange(RIGHT, buff=0.6)
-        abs_step.next_to(m, RIGHT, buff=1.5).shift(0.7 * UP)
-        self.play(FadeIn(abs_step, RIGHT), run_time=0.8)
-        self.wait(0.8)
+        size = caption("rows 3, cols 4", 24, CALM)
+        size.next_to(group, DOWN, buff=0.45)
+        self.play(FadeIn(size, UP))
+        self.wait(0.9)
+        self.play(FadeOut(size))
 
-        # np.argmax — 가장 큰 것의 자리를 돌려준다.
-        arg_step = VGroup(code("np.argmax", 26, WARN),
-                          Tex("2").set_color(WARN))
-        arg_step.arrange(RIGHT, buff=0.6)
-        arg_step.next_to(abs_step, DOWN, buff=0.75).align_to(abs_step, LEFT)
-        self.play(FadeIn(arg_step, RIGHT), run_time=0.8)
+        row_mark = box(m.get_rows()[0], DONE, 0.13)
+        row_tag = VGroup(code("r", 26, DONE), caption("지금 채우는 행", 22, DONE))
+        row_tag.arrange(RIGHT, buff=0.35)
+        row_tag.next_to(group, DOWN, buff=0.45)
+        self.play(ShowCreation(row_mark), FadeIn(row_tag, UP))
+        self.wait(1.1)
 
-        pick = box(m.get_rows()[2], WARN, 0.13)
-        self.play(ShowCreation(pick))
-        note = caption("절댓값이 가장 큰 행", 26, WARN)
-        note.next_to(arg_step, DOWN, buff=0.6).align_to(arg_step, LEFT)
+        col_mark = box(m.get_columns()[0], WARN, 0.13)
+        col_tag = VGroup(code("c", 26, WARN), caption("지금 보는 열", 22, WARN))
+        col_tag.arrange(RIGHT, buff=0.35)
+        col_tag.next_to(row_tag, DOWN, buff=0.35)
+        self.play(ShowCreation(col_mark), FadeIn(col_tag, UP))
+        self.wait(1.1)
+        self.play(FadeOut(row_mark), FadeOut(col_mark),
+                  FadeOut(row_tag), FadeOut(col_tag), FadeOut(lines))
+
+        # ── 2. 한 열을 처리하는 네 줄 ─────────────────────────
+        body = code_block((
+            "for c in range(cols):",
+            "    p = r + int(np.argmax(np.abs(R[r:, c])))",
+            "    R[[r, p]] = R[[p, r]]",
+            "    R[r] = R[r] / R[r, c]",
+            "    for i in range(rows):",
+            "        if i != r:",
+            "            R[i] = R[i] - R[i, c] * R[r]",
+            "    r += 1",
+        ), 20)
+        body.set_width(6.6).to_edge(LEFT, buff=0.5).shift(0.3 * UP)
+        self.play(LaggedStartMap(FadeIn, body, lag_ratio=0.18), run_time=1.8)
+        self.wait(0.6)
+
+        def spotlight(index):
+            return box(body[index], CALM, 0.09)
+
+        # p — 절댓값이 가장 큰 행
+        light = spotlight(1)
+        self.play(ShowCreation(light))
+        picks = VGroup(*[caption(t, 22, WARN) for t in ("1", "2", "3")])
+        for tag, row in zip(picks, m.get_rows()):
+            tag.next_to(row[0], LEFT, buff=0.35)
+        self.play(LaggedStartMap(FadeIn, picks, lag_ratio=0.3), run_time=0.9)
+        chosen = box(m.get_rows()[2], WARN, 0.13)
+        self.play(ShowCreation(chosen))
+        note = caption("절댓값이 가장 큰 행", 24, WARN)
+        note.next_to(group, DOWN, buff=0.5)
         self.play(FadeIn(note, UP))
-        self.wait(1.2)
+        self.wait(1.3)
+        self.play(FadeOut(picks), FadeOut(chosen), FadeOut(note))
 
-        # 그 행을 위로 올린다.
-        target = mat(self.swapped, WHITE, h_buff=0.9).move_to(m)
-        self.play(FadeOut(column), FadeOut(pick),
-                  FadeTransform(m, target), run_time=1.2)
-        swap_line = code("R[[r, p]] = R[[p, r]]", 26)
-        swap_line.move_to(line).shift(0.85 * DOWN)
-        self.play(FadeIn(swap_line, DOWN), run_time=0.7)
+        # 행 교환
+        self.play(Transform(light, spotlight(2)))
+        target = self.board(self.swapped)
+        self.play(FadeTransform(group, target), run_time=1.0)
+        group, m = target, target.matrix
+        self.wait(0.7)
+
+        # 선행 성분을 1 로
+        self.play(Transform(light, spotlight(3)))
+        target = self.board(self.scaled, h_buff=1.15)
+        self.play(FadeTransform(group, target), run_time=1.0)
+        group, m = target, target.matrix
+        lead = box(m.get_rows()[0][0], DONE, 0.1)
+        self.play(ShowCreation(lead))
+        self.wait(0.8)
+        self.play(FadeOut(lead))
+
+        # 소거
+        self.play(Transform(light, spotlight(6)))
+        target = self.board(self.cleared, h_buff=1.15)
+        self.play(FadeTransform(group, target), run_time=1.1)
+        group, m = target, target.matrix
+        column = box(m.get_columns()[0], DONE, 0.13)
+        self.play(ShowCreation(column))
+        self.wait(1.0)
+        self.play(FadeOut(column))
+
+        # 다음 행으로
+        self.play(Transform(light, spotlight(7)))
+        self.wait(0.8)
+        self.play(FadeOut(light))
+
+        # ── 3. 열마다 되풀이 ──────────────────────────────────
+        again = caption("열마다 되풀이", 26, GREY_B)
+        again.next_to(group, DOWN, buff=0.5)
+        self.play(FadeIn(again, UP))
+        self.wait(0.8)
+
+        target = self.board(self.final)
+        self.play(FadeTransform(group, target), FadeOut(again), run_time=1.2)
+        group, m = target, target.matrix
+        answer = Tex("x_1 = 1,\\; x_2 = -1,\\; x_3 = 2").set_color(DONE)
+        answer.set_width(5.0).next_to(group, DOWN, buff=0.6)
+        self.play(Write(answer), run_time=1.0)
         self.wait(1.0)
 
-        why = caption("작은 수로 나누면 오차가 커짐", 26, GREY_B)
-        why.to_edge(DOWN, buff=0.4)
-        self.play(FadeIn(why, UP))
-        self.wait(2)
-
-
-# ─────────────────────────────────────────────────────────────
-# 16. 한 열 소거 — rref 안쪽 반복문
-# ─────────────────────────────────────────────────────────────
-class EliminateColumn(InteractiveScene):
-    """선행 성분을 1 로 만든 뒤 그 열의 나머지를 모두 0 으로 만든다.
-
-        R[r] = R[r] / R[r, c]
-        R[i] = R[i] - R[i, c] * R[r]
-
-    앞 편에서 3행을 올려 둔 상태에서 이어진다.
-    """
-    start = [[-3, 1, 1], [2, 2, 0], [1, 3, 2]]
-    scaled = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}"], ["2", "2", "0"],
-              ["1", "3", "2"]]
-    cleared = [["1", "-\\frac{1}{3}", "-\\frac{1}{3}"],
-               ["0", "\\frac{8}{3}", "\\frac{2}{3}"],
-               ["0", "\\frac{10}{3}", "\\frac{7}{3}"]]
-
-    def construct(self):
-        head = slide_title("한 열 소거")
-        self.play(FadeIn(head[0]), ShowCreation(head[1]))
-
-        m = mat(self.start, WHITE, h_buff=0.95)
-        m.move_to(3.2 * LEFT + 0.3 * DOWN)
-        self.play(FadeIn(m))
-        self.wait(0.5)
-
-        first = code("R[r] = R[r] / R[r, c]", 25)
-        first.move_to(2.6 * UP)
-        self.play(FadeIn(first, DOWN), run_time=0.7)
-
-        pivot = box(m.get_rows()[0], ACCENT, 0.13)
-        self.play(ShowCreation(pivot))
-        target = mat(self.scaled, WHITE, h_buff=0.95).move_to(m)
-        self.play(FadeTransform(m, target), run_time=1.1)
-        m = target
-        lead = box(m.get_rows()[0][0], DONE, 0.11)
-        self.play(FadeOut(pivot), ShowCreation(lead))
-        self.wait(0.9)
-
-        second = code("R[i] = R[i] - R[i, c] * R[r]", 25)
-        second.next_to(first, DOWN, buff=0.45)
-        self.play(FadeIn(second, DOWN), run_time=0.7)
-
-        rest = VGroup(box(m.get_rows()[1], WARN, 0.13),
-                      box(m.get_rows()[2], WARN, 0.13))
-        self.play(ShowCreation(rest))
-        target = mat(self.cleared, WHITE, h_buff=0.95).move_to(m)
-        self.play(FadeOut(lead), FadeTransform(m, target), run_time=1.2)
-        m = target
-        self.play(FadeOut(rest))
-
-        column = box(m.get_columns()[0], DONE, 0.14)
-        self.play(ShowCreation(column))
-        note = caption("피벗 열의 나머지가 0", 26, DONE)
-        note.next_to(m, RIGHT, buff=1.5)
-        self.play(FadeIn(note, LEFT))
-        self.wait(1.2)
-
-        last = caption("다음 열에서 같은 것을 되풀이", 26, GREY_B)
+        last = caption("교재 풀이와 중간값이 다름", 24, GREY_B)
         last.to_edge(DOWN, buff=0.4)
         self.play(FadeIn(last, UP))
         self.wait(2)

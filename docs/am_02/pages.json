@@ -14,18 +14,11 @@
   "kb": 1890
  },
  {
-  "scene": "PartialPivot",
-  "title": "부분 피벗",
-  "url": "https://songhune.github.io/manim_aimath/am_02/PartialPivot.html",
-  "slides": 11,
-  "kb": 1351
- },
- {
-  "scene": "EliminateColumn",
-  "title": "한 열 소거",
-  "url": "https://songhune.github.io/manim_aimath/am_02/EliminateColumn.html",
-  "slides": 11,
-  "kb": 1313
+  "scene": "RrefCodeReview",
+  "title": "rref 함수 읽기",
+  "url": "https://songhune.github.io/manim_aimath/am_02/RrefCodeReview.html",
+  "slides": 32,
+  "kb": 3270
  },
  {
   "scene": "Determinant2x2",

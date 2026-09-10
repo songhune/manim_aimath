@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_02 (교재 Chapter 2 가우스-조르당 소거법과 여러 가지 행렬) 영상 17편의 클릭 진행형 판.
+"""AM_02 (교재 Chapter 2 가우스-조르당 소거법과 여러 가지 행렬) 영상 16편의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_02 --module _2026/aimath/slides_am_02.py
 
@@ -14,8 +14,7 @@ from _2026.aimath import week03
 PAGES = build(globals(), [
     ("AugmentedMatrix", "첨가행렬"),
     ("GaussJordan", "가우스-조르당 소거법"),
-    ("PartialPivot", "부분 피벗"),
-    ("EliminateColumn", "한 열 소거"),
+    ("RrefCodeReview", "rref 함수 읽기"),
     ("Determinant2x2", "행렬식"),
     ("InverseByRowOps", "행 연산으로 구하는 역행렬"),
     ("DeterminantZero", "행렬식이 0 인 행렬"),
