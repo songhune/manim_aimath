@@ -261,3 +261,556 @@ class InverseByRowOps(InteractiveScene):
         check.next_to(group, RIGHT, buff=1.2)
         self.play(Write(check))
         self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 3. 첨가행렬 — 교재 2.1 절 정의
+# ─────────────────────────────────────────────────────────────
+class AugmentedMatrix(InteractiveScene):
+    """연립방정식의 계수와 상수가 첨가행렬의 어느 자리로 가는지 본다."""
+
+    def construct(self):
+        head = slide_title("첨가행렬")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        system = VGroup(*[Tex(line) for line in (
+            R"x_1 + 3x_2 + 2x_3 = 2",
+            R"2x_1 + 2x_2 + 0x_3 = 0",
+            R"-3x_1 + x_2 + x_3 = -2",
+        )])
+        system.arrange(DOWN, buff=0.42, aligned_edge=LEFT)
+        system.to_edge(LEFT, buff=1.1).shift(0.3 * DOWN)
+        self.play(LaggedStartMap(FadeIn, system, lag_ratio=0.3))
+        self.wait(0.6)
+
+        coeff = mat([[1, 3, 2], [2, 2, 0], [-3, 1, 1]], ACCENT)
+        const = mat([[2], [0], [-2]], DONE)
+        pair = VGroup(coeff, const).arrange(RIGHT, buff=0.7)
+        pair.to_edge(RIGHT, buff=1.4).shift(0.3 * DOWN)
+
+        names = VGroup(caption("계수행렬", 24, ACCENT),
+                       caption("상수벡터", 24, DONE))
+        names[0].next_to(coeff, UP, buff=0.35)
+        names[1].next_to(const, UP, buff=0.35)
+
+        self.play(TransformFromCopy(system, coeff), run_time=1.2)
+        self.play(FadeIn(names[0]))
+        self.wait(0.4)
+        self.play(TransformFromCopy(system, const), run_time=1.0)
+        self.play(FadeIn(names[1]))
+        self.wait(0.8)
+
+        joined = augmented([[1, 3, 2, 2], [2, 2, 0, 0], [-3, 1, 1, -2]], 3)
+        joined.move_to(pair)
+        self.play(FadeOut(names), FadeTransform(pair, joined), run_time=1.2)
+
+        note = caption("계수는 왼쪽, 상수는 오른쪽", 26, GREY_B)
+        note.next_to(joined, DOWN, buff=0.7)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 4. 기약 행 사다리꼴에서 해 읽기 — 교재 2.1 절 도입
+# ─────────────────────────────────────────────────────────────
+class ReadRREF(InteractiveScene):
+    """왼쪽이 단위행렬이 되면 마지막 열이 그대로 해다."""
+
+    def construct(self):
+        head = slide_title("기약 행 사다리꼴에서 해 읽기")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        group = augmented([[1, 0, 0, 1], [0, 1, 0, -1], [0, 0, 1, 2]], 3)
+        group.move_to(2.6 * LEFT + 0.3 * DOWN)
+        m = group.matrix
+        self.play(FadeIn(group))
+        self.wait(0.5)
+
+        left = box(VGroup(*m.get_columns()[:3]), ACCENT, 0.16)
+        left_tag = caption("단위행렬", 26, ACCENT)
+        left_tag.next_to(left, UP, buff=0.3)
+        self.play(ShowCreation(left), FadeIn(left_tag))
+        self.wait(0.6)
+
+        rows = [Tex(t) for t in (R"x_1 = 1", R"x_2 = -1", R"x_3 = 2")]
+        lines = VGroup(*rows).arrange(DOWN, buff=0.55)
+        lines.next_to(group, RIGHT, buff=1.9).set_color(DONE)
+
+        arrows = VGroup()
+        for i, line in enumerate(rows):
+            entry = m.get_rows()[i][3]
+            arrow = Arrow(entry.get_right(), line.get_left(), buff=0.25)
+            arrow.set_stroke(GREY_C, 3)
+            arrows.add(arrow)
+
+        for arrow, line in zip(arrows, rows):
+            self.play(ShowCreation(arrow), FadeIn(line, RIGHT), run_time=0.7)
+
+        note = caption("마지막 열이 그대로 해", 26, GREY_B)
+        note.next_to(group, DOWN, buff=0.8)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 5. 양말-신발 성질 — 교재 정리 2-4 (2)
+# ─────────────────────────────────────────────────────────────
+class SocksShoes(InteractiveScene):
+    """(AB)^{-1} = B^{-1}A^{-1}. 순서를 지키지 않은 곱은 다른 행렬이 된다.
+
+    A 는 예제 2-3 의 행렬이다. 그 역행렬을 이미 손으로 구해 봤으므로
+    여기서는 결과만 쓴다.
+    """
+    A = [[2, 3], [5, 7]]
+    B = [[1, 1], [2, 3]]
+    AB = [[8, 11], [19, 26]]
+    right = [[-26, 11], [19, -8]]      # (AB)^{-1} = B^{-1}A^{-1}
+    wrong = [[-27, 10], [19, -7]]      # A^{-1}B^{-1}
+
+    def construct(self):
+        head = slide_title("양말-신발 성질")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        chain = Tex(R"(AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = AA^{-1} = I")
+        chain.set_width(11.0).move_to(1.9 * UP)
+        self.play(Write(chain), run_time=1.6)
+        self.wait(0.6)
+
+        inner = caption("안쪽부터 만나 사라짐", 26, DONE)
+        inner.next_to(chain, DOWN, buff=0.45)
+        self.play(FadeIn(inner, UP))
+        self.wait(1.2)
+        self.play(FadeOut(inner))
+
+        good = VGroup(caption("순서를 지킨 곱", 24, DONE),
+                      Tex(R"B^{-1}A^{-1}").set_color(DONE),
+                      mat(self.right, DONE, h_buff=1.15))
+        bad = VGroup(caption("지키지 않은 곱", 24, WARN),
+                     Tex(R"A^{-1}B^{-1}").set_color(WARN),
+                     mat(self.wrong, WARN, h_buff=1.15))
+        for col in (good, bad):
+            col.arrange(DOWN, buff=0.4)
+        pair = VGroup(good, bad).arrange(RIGHT, buff=2.4)
+        pair.move_to(1.3 * DOWN)
+
+        self.play(FadeIn(good, LEFT), run_time=0.9)
+        self.wait(0.8)
+        self.play(FadeIn(bad, RIGHT), run_time=0.9)
+        self.wait(1.0)
+
+        marks = VGroup(box(bad[2].get_entries()[0], WARN, 0.1),
+                       box(bad[2].get_entries()[1], WARN, 0.1),
+                       box(bad[2].get_entries()[3], WARN, 0.1))
+        self.play(ShowCreation(marks))
+        note = caption("세 자리가 다름", 26, WARN)
+        note.next_to(bad, DOWN, buff=0.45)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 6. 역행렬로 푸는 행렬방정식 — 교재 예제 2-6
+# ─────────────────────────────────────────────────────────────
+class InverseSolve(InteractiveScene):
+    """x = A^{-1}b. 예제 2-1 을 소거법 대신 역행렬로 푼다.
+
+    분모 12 를 앞으로 빼면 정수 행렬만 남아 암산으로 검산된다.
+    그 12 는 A 의 행렬식이다(`Determinant3x3`).
+    """
+    adj = [[2, -1, -4], [-2, 7, 4], [8, -10, -4]]
+
+    def construct(self):
+        head = slide_title("역행렬로 푸는 행렬방정식")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        eq = Tex(R"A\mathbf{x} = \mathbf{b} \quad\Longrightarrow\quad "
+                 R"\mathbf{x} = A^{-1}\mathbf{b}")
+        eq.set_width(7.6).move_to(2.2 * UP)
+        self.play(Write(eq), run_time=1.2)
+        self.wait(0.8)
+
+        frac = Tex(R"\frac{1}{12}").set_color(DONE)
+        inv = mat(self.adj, WHITE, h_buff=1.0)
+        b = mat([[2], [0], [-2]], ACCENT)
+        row = VGroup(frac, inv, b).arrange(RIGHT, buff=0.35)
+        row.move_to(0.6 * DOWN)
+        self.play(FadeIn(row, UP), run_time=0.9)
+        self.wait(0.8)
+
+        product = mat([[12], [-12], [24]], WHITE)
+        answer = mat([[1], [-1], [2]], DONE)
+        eq2 = Tex("=")
+        eq3 = Tex("=")
+
+        stage = VGroup(row.copy(), eq2, VGroup(Tex(R"\frac{1}{12}").set_color(DONE),
+                                               product).arrange(RIGHT, buff=0.3),
+                       eq3, answer)
+        stage.arrange(RIGHT, buff=0.45).set_width(11.6).move_to(0.6 * DOWN)
+
+        self.play(Transform(row, stage[0]), run_time=0.8)
+        self.play(FadeIn(stage[1]), FadeIn(stage[2], RIGHT), run_time=1.0)
+        self.wait(0.8)
+        self.play(FadeIn(stage[3]), FadeIn(stage[4], RIGHT), run_time=1.0)
+
+        note = caption("예제 2-1 과 같은 해", 28, DONE)
+        note.next_to(stage, DOWN, buff=0.8)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 7. 행렬식 (2x2) — 교재 정리 2-3 의 ad-bc 에 이름을 붙인다
+# ─────────────────────────────────────────────────────────────
+class Determinant2x2(InteractiveScene):
+    """정리 2-3 의 분모 ad-bc 가 행렬식이다.
+
+    교재는 이 수에 이름을 붙이지 않고 공식 안에만 둔다. 이름이 없으면
+    2.2 절의 '역행렬이 존재하지 않는 경우'와 이어지지 않는다.
+    수는 예제 2-3 의 행렬을 그대로 쓴다.
+    """
+    values = [[2, 3], [5, 7]]
+
+    def construct(self):
+        head = slide_title("행렬식")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        symbol = mat([["a", "b"], ["c", "d"]], WHITE, h_buff=1.0)
+        symbol.move_to(3.9 * LEFT + 0.7 * UP)
+        self.play(FadeIn(symbol))
+        self.wait(0.4)
+
+        e = symbol.get_entries()
+        down = Line(e[0].get_center(), e[3].get_center()).set_stroke(DONE, 4)
+        up = Line(e[2].get_center(), e[1].get_center()).set_stroke(WARN, 4)
+        self.play(ShowCreation(down))
+        self.play(ShowCreation(up))
+
+        formula = Tex(R"\det A = ad - bc")
+        formula["ad"].set_color(DONE)
+        formula["bc"].set_color(WARN)
+        formula.set_width(5.2).next_to(symbol, RIGHT, buff=1.5)
+        self.play(Write(formula), run_time=1.2)
+
+        note = caption("어긋나게 곱해 뺀 수", 26, GREY_B)
+        note.next_to(symbol, DOWN, buff=0.9).align_to(symbol, LEFT)
+        self.play(FadeIn(note, UP))
+        self.wait(1.2)
+        self.play(FadeOut(note))
+
+        # 예제 2-3 의 수로 확인한다.
+        number = mat(self.values, WHITE, h_buff=1.0).move_to(symbol)
+        self.play(FadeTransform(symbol, number),
+                  FadeOut(down), FadeOut(up), run_time=0.9)
+        ne = number.get_entries()
+        down2 = Line(ne[0].get_center(), ne[3].get_center()).set_stroke(DONE, 4)
+        up2 = Line(ne[2].get_center(), ne[1].get_center()).set_stroke(WARN, 4)
+        self.play(ShowCreation(down2), ShowCreation(up2), run_time=0.6)
+
+        value = Tex(R"2 \cdot 7 - 3 \cdot 5 = -1")
+        value.set_width(5.2).move_to(formula).set_color(DONE)
+        self.play(FadeTransform(formula, value), run_time=0.9)
+        self.wait(0.8)
+
+        inverse = Tex(R"A^{-1} = \frac{1}{\det A}"
+                      R"\begin{bmatrix} d & -b \\ -c & a \end{bmatrix}")
+        inverse.set_width(6.4).move_to(2.2 * DOWN)
+        self.play(Write(inverse), run_time=1.4)
+        mark = box(inverse[R"\det A"], DONE, 0.1)
+        self.play(ShowCreation(mark))
+
+        last = caption("정리 2-3 의 분모", 26, DONE)
+        last.next_to(inverse, RIGHT, buff=0.9)
+        self.play(FadeIn(last, LEFT))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 8. 행렬식이 0 인 경우 — 역행렬이 없다는 신호
+# ─────────────────────────────────────────────────────────────
+class DeterminantZero(InteractiveScene):
+    """det = 0 과 '행 연산으로 밀면 영행이 생긴다'가 같은 신호임을 본다."""
+    values = [[1, 2], [2, 4]]
+
+    def construct(self):
+        head = slide_title("행렬식이 0 인 행렬")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        m = mat(self.values, WHITE, h_buff=1.0)
+        m.move_to(3.7 * LEFT + 1.0 * UP)
+        self.play(FadeIn(m))
+
+        e = m.get_entries()
+        down = Line(e[0].get_center(), e[3].get_center()).set_stroke(DONE, 4)
+        up = Line(e[2].get_center(), e[1].get_center()).set_stroke(WARN, 4)
+        self.play(ShowCreation(down), ShowCreation(up), run_time=0.6)
+
+        value = Tex(R"1 \cdot 4 - 2 \cdot 2 = 0").set_color(WARN)
+        value.set_width(4.6).next_to(m, RIGHT, buff=1.6)
+        self.play(Write(value), run_time=1.0)
+        self.wait(1.0)
+        self.play(FadeOut(down), FadeOut(up))
+
+        # 같은 행렬을 행 연산으로 밀면 영행이 남는다.
+        group = augmented([[1, 2, 1, 0], [2, 4, 0, 1]], 2, WHITE, h_buff=0.95)
+        group.move_to(2.4 * LEFT + 1.3 * DOWN)
+        self.play(FadeIn(group))
+
+        label = op_label(["2행 → 2행 - 2 × 1행"])
+        label.next_to(group, RIGHT, buff=1.3)
+        self.play(FadeIn(label, RIGHT), run_time=0.6)
+
+        target = augmented([[1, 2, 1, 0], [0, 0, -2, 1]], 2, WHITE,
+                           h_buff=0.95).move_to(group)
+        self.play(FadeTransform(group, target), run_time=1.1)
+        group = target
+
+        zero = box(group.matrix.get_rows()[1][:2], WARN, 0.14)
+        self.play(ShowCreation(zero))
+        tag = caption("영행", 26, WARN)
+        tag.next_to(zero, DOWN, buff=0.35)
+        self.play(FadeIn(tag, UP))
+        self.wait(0.8)
+        self.play(FadeOut(label))
+
+        note = caption("행렬식이 0 이면 역행렬 없음", 28, WARN)
+        note.to_edge(DOWN, buff=0.55)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 9. 행렬식 (3x3) — 사루스 법칙, 예제 2-4 의 행렬
+# ─────────────────────────────────────────────────────────────
+class Determinant3x3(InteractiveScene):
+    """앞의 두 열을 오른쪽에 베껴 두고 대각선 여섯 줄을 읽는다.
+
+    행렬은 예제 2-4(=예제 2-1 의 계수행렬)이고 det = 12 다. 그 12 가
+    예제 2-4 에서 구한 역행렬의 분모와 같다. 이 장의 매듭이 여기다.
+    """
+    wide = [[1, 3, 2, 1, 3], [2, 2, 0, 2, 2], [-3, 1, 1, -3, 1]]
+    downs = [(0, 2, 4, "1 \\cdot 2 \\cdot 1 = 2"),
+             (1, 3, 5, "3 \\cdot 0 \\cdot (-3) = 0"),
+             (2, 4, 6, "2 \\cdot 2 \\cdot 1 = 4")]
+
+    def construct(self):
+        head = slide_title("3차 정방행렬의 행렬식")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        m = mat(self.wide, WHITE, h_buff=0.85, v_buff=0.62)
+        m.set_width(8.6).move_to(1.1 * UP)
+        cols = m.get_columns()
+        for col in cols[3:]:
+            col.set_color(GREY_D)
+        self.play(FadeIn(m))
+
+        copied = caption("앞의 두 열을 베낌", 24, GREY_C)
+        copied.next_to(VGroup(*cols[3:]), UP, buff=0.35)
+        self.play(FadeIn(copied))
+        self.wait(0.8)
+
+        def diagonal(start_col, direction, color):
+            pts = []
+            for k in range(3):
+                r = k if direction > 0 else 2 - k
+                pts.append(m.get_rows()[r][start_col + k].get_center())
+            line = Line(pts[0], pts[2]).set_stroke(color, 4)
+            return line
+
+        down_lines = VGroup(*[diagonal(c, +1, DONE) for c in range(3)])
+        up_lines = VGroup(*[diagonal(c, -1, WARN) for c in range(3)])
+
+        self.play(LaggedStartMap(ShowCreation, down_lines, lag_ratio=0.35),
+                  run_time=1.4)
+        down_sum = Tex(R"2 + 0 + 4 = 6").set_color(DONE)
+        down_sum.move_to(1.55 * DOWN).shift(3.3 * LEFT)
+        self.play(Write(down_sum), run_time=0.9)
+        self.wait(0.8)
+
+        self.play(LaggedStartMap(ShowCreation, up_lines, lag_ratio=0.35),
+                  run_time=1.4)
+        up_sum = Tex(R"-12 + 0 + 6 = -6").set_color(WARN)
+        up_sum.move_to(1.55 * DOWN).shift(3.3 * RIGHT)
+        self.play(Write(up_sum), run_time=0.9)
+        self.wait(0.8)
+
+        note = caption("아래 합에서 위 합을 뺀다", 26, GREY_B)
+        note.move_to(2.55 * DOWN)
+        self.play(FadeIn(note, UP))
+        self.wait(1.0)
+
+        result = Tex(R"\det A = 6 - (-6) = 12").set_color(DONE)
+        result.set_width(6.2).move_to(2.55 * DOWN)
+        self.play(FadeTransform(note, result), run_time=0.9)
+        self.wait(1.2)
+
+        self.play(FadeOut(down_lines), FadeOut(up_lines), FadeOut(copied),
+                  FadeOut(down_sum), FadeOut(up_sum),
+                  FadeOut(m), FadeOut(result.copy()), run_time=0.8)
+
+        bridge = VGroup(
+            Tex(R"\det A = 12").set_color(DONE),
+            Tex(R"A^{-1} = \frac{1}{12}"
+                R"\begin{bmatrix} 2 & -1 & -4 \\ -2 & 7 & 4 \\ 8 & -10 & -4"
+                R"\end{bmatrix}"),
+        ).arrange(RIGHT, buff=1.3)
+        bridge.set_width(10.4).move_to(0.4 * UP)
+        self.play(Transform(result, bridge[0]), FadeIn(bridge[1], RIGHT),
+                  run_time=1.2)
+        same = caption("예제 2-4 의 분모와 같은 수", 28, DONE)
+        same.next_to(bridge, DOWN, buff=0.9)
+        self.play(FadeIn(same, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 10. 행렬식의 성질
+# ─────────────────────────────────────────────────────────────
+class DeterminantRules(InteractiveScene):
+    """곱·역·전치에서 행렬식이 어떻게 되는지 수로 확인한다."""
+    A = [[1, 2], [3, 4]]        # det = -2
+    B = [[2, 0], [1, 3]]        # det = 6
+    AB = [[4, 6], [10, 12]]     # det = -12
+
+    def construct(self):
+        head = slide_title("행렬식의 성질")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        row = VGroup(
+            VGroup(mat(self.A, ACCENT, h_buff=0.9),
+                   Tex(R"\det = -2").set_color(ACCENT)).arrange(DOWN, buff=0.35),
+            VGroup(mat(self.B, CALM, h_buff=0.9),
+                   Tex(R"\det = 6").set_color(CALM)).arrange(DOWN, buff=0.35),
+            VGroup(mat(self.AB, DONE, h_buff=0.9),
+                   Tex(R"\det = -12").set_color(DONE)).arrange(DOWN, buff=0.35),
+        )
+        row.arrange(RIGHT, buff=1.5).set_width(10.4).move_to(1.35 * UP)
+        names = VGroup(caption("A", 24, ACCENT), caption("B", 24, CALM),
+                       caption("AB", 24, DONE))
+        for name, block in zip(names, row):
+            name.next_to(block, UP, buff=0.3)
+
+        self.play(LaggedStartMap(FadeIn, row, lag_ratio=0.4), FadeIn(names),
+                  run_time=1.6)
+        self.wait(1.0)
+
+        rules = VGroup(
+            Tex(R"\det(AB) = \det A \cdot \det B"),
+            Tex(R"\det(A^{-1}) = \frac{1}{\det A}"),
+            Tex(R"\det(A^{T}) = \det A"),
+        )
+        rules.arrange(DOWN, buff=0.5, aligned_edge=LEFT)
+        rules.set_width(6.0).move_to(1.7 * DOWN).shift(2.6 * LEFT)
+
+        checks = VGroup(
+            Tex(R"-12 = (-2)(6)").set_color(DONE),
+            Tex(R"-\tfrac{1}{2}").set_color(DONE),
+            Tex(R"-2").set_color(DONE),
+        )
+        for rule, check in zip(rules, checks):
+            check.next_to(rule, RIGHT, buff=1.1)
+
+        for rule, check in zip(rules, checks):
+            self.play(FadeIn(rule, RIGHT), run_time=0.7)
+            self.play(FadeIn(check, LEFT), run_time=0.5)
+            self.wait(0.4)
+
+        note = caption("곱의 행렬식은 행렬식의 곱", 26, GREY_B)
+        note.to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 11. 전치행렬의 성질 — 교재 정리 2-5 (3) (5)
+# ─────────────────────────────────────────────────────────────
+class TransposeRules(InteractiveScene):
+    """(AB)^T = B^T A^T. 양말-신발과 같은 자리에서 순서가 뒤집힌다."""
+    A = [[1, 2], [3, 4]]
+    B = [[2, 0], [1, 3]]
+    AB = [[4, 6], [10, 12]]
+    ABt = [[4, 10], [6, 12]]
+
+    def construct(self):
+        head = slide_title("전치행렬의 성질")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        left = VGroup(Tex("(AB)^{T}").set_color(DONE),
+                      mat(self.ABt, DONE, h_buff=1.05))
+        left.arrange(DOWN, buff=0.45)
+        right = VGroup(Tex("B^{T}A^{T}").set_color(DONE),
+                       mat(self.ABt, DONE, h_buff=1.05))
+        right.arrange(DOWN, buff=0.45)
+        equal = Tex("=")
+        pair = VGroup(left, equal, right).arrange(RIGHT, buff=1.5)
+        pair.move_to(0.9 * UP)
+
+        source = VGroup(Tex("AB").set_color(GREY_B),
+                        mat(self.AB, GREY_B, h_buff=1.05))
+        source.arrange(DOWN, buff=0.45).move_to(0.9 * UP)
+
+        self.play(FadeIn(source))
+        self.wait(0.8)
+        self.play(FadeTransform(source, left), run_time=1.0)
+        self.play(FadeIn(equal), FadeIn(right, RIGHT), run_time=0.9)
+        self.wait(1.0)
+
+        flip = caption("전치도 순서가 뒤집힌다", 28, WARN)
+        flip.next_to(pair, DOWN, buff=0.9)
+        self.play(FadeIn(flip, UP))
+        self.wait(1.2)
+
+        also = Tex(R"(A^{T})^{-1} = (A^{-1})^{T}")
+        also.set_width(6.0).next_to(flip, DOWN, buff=0.8)
+        self.play(Write(also), run_time=1.2)
+        note = caption("전치와 역행렬은 자리를 바꿔도 같음", 24, GREY_B)
+        note.next_to(also, DOWN, buff=0.5)
+        self.play(FadeIn(note, UP))
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 12. 여러 가지 행렬 — 교재 2.3 절
+# ─────────────────────────────────────────────────────────────
+class MatrixZoo(InteractiveScene):
+    """이름이 붙는 자리를 색으로 보인다. 성분이 어디에 있느냐가 이름이다."""
+    items = [
+        ("대각행렬", [[2, 0, 0], [0, 3, 0], [0, 0, 5]],
+         [(0, 0), (1, 1), (2, 2)]),
+        ("상삼각행렬", [[1, 4, 2], [0, 2, 5], [0, 0, 3]],
+         [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]),
+        ("대칭행렬", [[1, 3, 2], [3, 2, 5], [2, 5, 4]],
+         [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)]),
+        ("직교행렬", [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
+         [(0, 1), (1, 2), (2, 0)]),
+    ]
+
+    def construct(self):
+        head = slide_title("여러 가지 행렬")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        blocks = VGroup()
+        for name, values, spots in self.items:
+            m = mat(values, GREY_B, h_buff=0.62, v_buff=0.48)
+            m.set_height(1.72)
+            for r, c in spots:
+                m.get_rows()[r][c].set_color(DONE)
+            block = VGroup(caption(name, 24, WHITE), m)
+            block.arrange(DOWN, buff=0.3)
+            blocks.add(block)
+
+        blocks.arrange_in_grid(2, 2, buff=1.25)
+        blocks.set_height(4.9).move_to(0.55 * DOWN)
+
+        for block in blocks:
+            self.play(FadeIn(block, UP), run_time=0.7)
+            self.wait(0.5)
+
+        note = caption("성분이 놓인 자리로 부르는 이름", 26, GREY_B)
+        note.to_edge(DOWN, buff=0.35)
+        self.play(FadeIn(note, UP))
+        self.wait(1.0)
+
+        ortho = Tex(R"Q^{T}Q = I").set_color(DONE)
+        ortho.next_to(blocks[3], RIGHT, buff=0.5).shift(0.2 * UP)
+        self.play(FadeIn(ortho, LEFT))
+        self.wait(2)

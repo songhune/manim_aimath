@@ -1,5 +1,12 @@
 [
  {
+  "scene": "AugmentedMatrix",
+  "title": "첨가행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_02/AugmentedMatrix.html",
+  "slides": 8,
+  "kb": 1602
+ },
+ {
   "scene": "GaussJordan",
   "title": "가우스-조르당 소거법",
   "url": "https://songhune.github.io/manim_aimath/am_02/GaussJordan.html",
@@ -7,10 +14,73 @@
   "kb": 1890
  },
  {
+  "scene": "ReadRREF",
+  "title": "기약 행 사다리꼴에서 해 읽기",
+  "url": "https://songhune.github.io/manim_aimath/am_02/ReadRREF.html",
+  "slides": 5,
+  "kb": 1071
+ },
+ {
+  "scene": "Determinant2x2",
+  "title": "행렬식",
+  "url": "https://songhune.github.io/manim_aimath/am_02/Determinant2x2.html",
+  "slides": 12,
+  "kb": 1267
+ },
+ {
   "scene": "InverseByRowOps",
   "title": "행 연산으로 구하는 역행렬",
   "url": "https://songhune.github.io/manim_aimath/am_02/InverseByRowOps.html",
   "slides": 11,
   "kb": 1446
+ },
+ {
+  "scene": "DeterminantZero",
+  "title": "행렬식이 0 인 행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantZero.html",
+  "slides": 10,
+  "kb": 1234
+ },
+ {
+  "scene": "Determinant3x3",
+  "title": "3차 정방행렬의 행렬식",
+  "url": "https://songhune.github.io/manim_aimath/am_02/Determinant3x3.html",
+  "slides": 12,
+  "kb": 1900
+ },
+ {
+  "scene": "DeterminantRules",
+  "title": "행렬식의 성질",
+  "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantRules.html",
+  "slides": 6,
+  "kb": 1546
+ },
+ {
+  "scene": "SocksShoes",
+  "title": "양말-신발 성질",
+  "url": "https://songhune.github.io/manim_aimath/am_02/SocksShoes.html",
+  "slides": 8,
+  "kb": 1370
+ },
+ {
+  "scene": "InverseSolve",
+  "title": "역행렬로 푸는 행렬방정식",
+  "url": "https://songhune.github.io/manim_aimath/am_02/InverseSolve.html",
+  "slides": 7,
+  "kb": 1231
+ },
+ {
+  "scene": "TransposeRules",
+  "title": "전치행렬의 성질",
+  "url": "https://songhune.github.io/manim_aimath/am_02/TransposeRules.html",
+  "slides": 7,
+  "kb": 1223
+ },
+ {
+  "scene": "MatrixZoo",
+  "title": "여러 가지 행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_02/MatrixZoo.html",
+  "slides": 7,
+  "kb": 1197
  }
 ]
