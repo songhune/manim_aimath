@@ -59,8 +59,8 @@
   "scene": "SocksShoes",
   "title": "양말-신발 성질",
   "url": "https://songhune.github.io/manim_aimath/am_02/SocksShoes.html",
-  "slides": 8,
-  "kb": 1370
+  "slides": 13,
+  "kb": 1558
  },
  {
   "scene": "InverseSolve",
@@ -74,21 +74,21 @@
   "title": "행렬식이 재는 것",
   "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantGeometry.html",
   "slides": 7,
-  "kb": 4835
+  "kb": 2931
  },
  {
   "scene": "DeterminantCollapse",
   "title": "행렬식이 0 인 경우",
   "url": "https://songhune.github.io/manim_aimath/am_02/DeterminantCollapse.html",
   "slides": 5,
-  "kb": 4417
+  "kb": 2641
  },
  {
   "scene": "InverseAsUndo",
   "title": "역행렬이 하는 일",
   "url": "https://songhune.github.io/manim_aimath/am_02/InverseAsUndo.html",
   "slides": 5,
-  "kb": 5497
+  "kb": 3095
  },
  {
   "scene": "InverseDenominator",
@@ -101,8 +101,8 @@
   "scene": "TransposeRules",
   "title": "전치행렬의 성질",
   "url": "https://songhune.github.io/manim_aimath/am_02/TransposeRules.html",
-  "slides": 7,
-  "kb": 1223
+  "slides": 19,
+  "kb": 1737
  },
  {
   "scene": "MatrixZoo",

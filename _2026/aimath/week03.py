@@ -342,13 +342,13 @@ class AugmentedMatrix(InteractiveScene):
 # 5. 양말-신발 성질 — 교재 정리 2-4 (2)
 # ─────────────────────────────────────────────────────────────
 class SocksShoes(InteractiveScene):
-    """(AB)^{-1} = B^{-1}A^{-1}. 순서를 지키지 않은 곱은 다른 행렬이 된다.
+    """정리 2-4 (2)  (AB)^{-1} = B^{-1}A^{-1}.
 
-    A 는 예제 2-3 의 행렬이다. 그 역행렬을 이미 손으로 구해 봤으므로
-    여기서는 결과만 쓴다.
+    강의자료의 정리 순서를 따른다. A 와 B 를 먼저 세우고, 각각의 역행렬을 보이고,
+    그다음 곱의 역행렬이 순서를 뒤집은 곱과 같은지 수로 확인한다. A 는 예제 2-3 의 행렬이다.
     """
-    A = [[2, 3], [5, 7]]
-    B = [[1, 1], [2, 3]]
+    A = [[2, 3], [5, 7]]; Ai = [[-7, 3], [5, -2]]
+    B = [[1, 1], [2, 3]]; Bi = [[3, -1], [-2, 1]]
     AB = [[8, 11], [19, 26]]
     right = [[-26, 11], [19, -8]]      # (AB)^{-1} = B^{-1}A^{-1}
     wrong = [[-27, 10], [19, -7]]      # A^{-1}B^{-1}
@@ -356,42 +356,46 @@ class SocksShoes(InteractiveScene):
     def construct(self):
         head = slide_title("양말-신발 성질")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("정리 2-4 (2)", 24, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
 
-        chain = Tex(R"(AB)(B^{-1}A^{-1}) = A(BB^{-1})A^{-1} = AA^{-1} = I")
-        chain.set_width(11.0).move_to(1.9 * UP)
-        self.play(Write(chain), run_time=1.6)
+        def named(sym, values, color):
+            g = VGroup(Tex(sym).set_color(color), mat(values, color, h_buff=0.9))
+            return g.arrange(DOWN, buff=0.3)
+
+        # A 와 B
+        a_blk = named("A", self.A, ACCENT); b_blk = named("B", self.B, CALM)
+        top = VGroup(a_blk, b_blk).arrange(RIGHT, buff=2.0).move_to(1.3 * UP)
+        self.play(FadeIn(a_blk, UP), FadeIn(b_blk, UP), run_time=0.9)
         self.wait(0.6)
 
-        inner = caption("안쪽부터 만나 사라짐", 26, DONE)
-        inner.next_to(chain, DOWN, buff=0.45)
-        self.play(FadeIn(inner, UP))
-        self.wait(1.2)
-        self.play(FadeOut(inner))
+        # 각각의 역행렬
+        ai_blk = named("A^{-1}", self.Ai, ACCENT); bi_blk = named("B^{-1}", self.Bi, CALM)
+        bottom = VGroup(ai_blk, bi_blk).arrange(RIGHT, buff=2.0).move_to(1.5 * DOWN)
+        self.play(FadeIn(ai_blk, UP), FadeIn(bi_blk, UP), run_time=0.9)
+        note = caption("예제 2-3 의 행렬과 그 역행렬", 22, GREY_B).to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(note)); self.wait(1.0)
+        self.play(FadeOut(VGroup(top, bottom, note)))
 
-        good = VGroup(caption("순서를 지킨 곱", 24, DONE),
-                      Tex(R"B^{-1}A^{-1}").set_color(DONE),
-                      mat(self.right, DONE, h_buff=1.15))
-        bad = VGroup(caption("지키지 않은 곱", 24, WARN),
-                     Tex(R"A^{-1}B^{-1}").set_color(WARN),
-                     mat(self.wrong, WARN, h_buff=1.15))
-        for col in (good, bad):
-            col.arrange(DOWN, buff=0.4)
-        pair = VGroup(good, bad).arrange(RIGHT, buff=2.4)
-        pair.move_to(1.3 * DOWN)
+        # 정리의 식
+        chain = Tex(R"(AB)^{-1} = B^{-1}A^{-1}").set_width(6.0).move_to(2.3 * UP)
+        self.play(Write(chain), run_time=1.0); self.wait(0.5)
 
-        self.play(FadeIn(good, LEFT), run_time=0.9)
-        self.wait(0.8)
-        self.play(FadeIn(bad, RIGHT), run_time=0.9)
-        self.wait(1.0)
-
-        marks = VGroup(box(bad[2].get_entries()[0], WARN, 0.1),
-                       box(bad[2].get_entries()[1], WARN, 0.1),
-                       box(bad[2].get_entries()[3], WARN, 0.1))
+        good = VGroup(caption("순서를 지킨 곱", 22, DONE), Tex(R"B^{-1}A^{-1}").set_color(DONE),
+                      mat(self.right, DONE, h_buff=1.1)).arrange(DOWN, buff=0.3)
+        bad = VGroup(caption("지키지 않은 곱", 22, WARN), Tex(R"A^{-1}B^{-1}").set_color(WARN),
+                     mat(self.wrong, WARN, h_buff=1.1)).arrange(DOWN, buff=0.3)
+        ab = VGroup(Tex(R"(AB)^{-1}").set_color(GREY_A), mat(self.right, GREY_A, h_buff=1.1)).arrange(DOWN, buff=0.3)
+        row = VGroup(ab, good, bad).arrange(RIGHT, buff=1.3).move_to(0.9 * DOWN)
+        self.play(FadeIn(ab, UP), run_time=0.8); self.wait(0.5)
+        self.play(FadeIn(good, UP), run_time=0.8); self.wait(0.6)
+        same = box(VGroup(ab, good), DONE, 0.2)
+        self.play(ShowCreation(same)); self.wait(0.8)
+        self.play(FadeIn(bad, UP), run_time=0.8)
+        marks = VGroup(*[box(bad[2].get_entries()[k], WARN, 0.1) for k in (0, 1, 3)])
         self.play(ShowCreation(marks))
-        note = caption("세 자리가 다름", 26, WARN)
-        note.next_to(bad, DOWN, buff=0.45)
-        self.play(FadeIn(note, UP))
-        self.wait(2)
+        last = caption("세 자리가 다름", 24, WARN).to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(last, UP)); self.wait(2)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -719,48 +723,65 @@ class DeterminantRules(InteractiveScene):
 # 11. 전치행렬의 성질 — 교재 정리 2-5 (3) (5)
 # ─────────────────────────────────────────────────────────────
 class TransposeRules(InteractiveScene):
-    """(AB)^T = B^T A^T. 양말-신발과 같은 자리에서 순서가 뒤집힌다."""
-    A = [[1, 2], [3, 4]]
-    B = [[2, 0], [1, 3]]
-    AB = [[4, 6], [10, 12]]
-    ABt = [[4, 10], [6, 12]]
+    """정의 2-4 전치행렬 → 정리 2-5 (3) (AB)^T = B^T A^T → (5) (A^T)^{-1} = (A^{-1})^T.
+
+    강의자료의 정의·정리 순서를 그대로 따른다. A 와 B 를 먼저 세우고 전치를 보인 뒤
+    정리로 간다. (3) 은 수로 확인하고, 순서를 지키지 않은 곱과 견준다.
+    """
+    A = [[1, 2], [3, 4]]; At = [[1, 3], [2, 4]]
+    B = [[2, 0], [1, 3]]; Bt = [[2, 1], [0, 3]]
+    AB = [[4, 6], [10, 12]]; ABt = [[4, 10], [6, 12]]
+    wrong = [[2, 10], [4, 14]]         # A^T B^T
 
     def construct(self):
         head = slide_title("전치행렬의 성질")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
-        left = VGroup(Tex("(AB)^{T}").set_color(DONE),
-                      mat(self.ABt, DONE, h_buff=1.05))
-        left.arrange(DOWN, buff=0.45)
-        right = VGroup(Tex("B^{T}A^{T}").set_color(DONE),
-                       mat(self.ABt, DONE, h_buff=1.05))
-        right.arrange(DOWN, buff=0.45)
-        equal = Tex("=")
-        pair = VGroup(left, equal, right).arrange(RIGHT, buff=1.5)
-        pair.move_to(0.9 * UP)
+        def named(sym, values, color, h=0.9):
+            g = VGroup(Tex(sym).set_color(color), mat(values, color, h_buff=h))
+            return g.arrange(DOWN, buff=0.3)
 
-        source = VGroup(Tex("AB").set_color(GREY_B),
-                        mat(self.AB, GREY_B, h_buff=1.05))
-        source.arrange(DOWN, buff=0.45).move_to(0.9 * UP)
+        # 정의 2-4 — 행과 열을 바꾼 행렬
+        tag = caption("정의 2-4 전치행렬", 24, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+        a_blk = named("A", self.A, ACCENT); at_blk = named("A^{T}", self.At, ACCENT)
+        b_blk = named("B", self.B, CALM); bt_blk = named("B^{T}", self.Bt, CALM)
+        grid = VGroup(a_blk, at_blk, b_blk, bt_blk).arrange_in_grid(2, 2, buff=1.2)
+        grid.set_height(4.6).move_to(0.4 * DOWN)
+        self.play(FadeIn(a_blk), FadeIn(b_blk), run_time=0.8); self.wait(0.5)
+        self.play(TransformFromCopy(a_blk, at_blk), run_time=1.0)
+        self.play(TransformFromCopy(b_blk, bt_blk), run_time=1.0)
+        rule = Tex(R"(A^{T})_{ij} = a_{ji}").set_color(GREY_B).set_width(3.6).to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(rule)); self.wait(1.2)
+        self.play(FadeOut(grid), FadeOut(rule), FadeOut(tag))
 
-        self.play(FadeIn(source))
-        self.wait(0.8)
-        self.play(FadeTransform(source, left), run_time=1.0)
-        self.play(FadeIn(equal), FadeIn(right, RIGHT), run_time=0.9)
-        self.wait(1.0)
+        # 정리 2-5 (3) — 곱의 전치는 순서가 뒤집힌다
+        tag = caption("정리 2-5 (3)", 24, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+        law = Tex(R"(AB)^{T} = B^{T}A^{T}").set_width(5.4).move_to(2.2 * UP)
+        self.play(Write(law), run_time=1.0)
+        left = named("(AB)^{T}", self.ABt, DONE, 1.05)
+        right = named("B^{T}A^{T}", self.ABt, DONE, 1.05)
+        bad = named("A^{T}B^{T}", self.wrong, WARN, 1.05)
+        row = VGroup(left, right, bad).arrange(RIGHT, buff=1.4).move_to(0.9 * DOWN)
+        ab_blk = named("AB", self.AB, GREY_A, 1.05).move_to(left)
+        self.play(FadeIn(ab_blk)); self.wait(0.5)
+        self.play(FadeTransform(ab_blk, left), run_time=0.9)
+        self.play(FadeIn(right, UP), run_time=0.8)
+        same = box(VGroup(left, right), DONE, 0.2)
+        self.play(ShowCreation(same)); self.wait(0.7)
+        self.play(FadeIn(bad, UP), run_time=0.8)
+        flip = caption("순서를 지키지 않으면 다른 행렬", 24, WARN).to_edge(DOWN, buff=0.4)
+        self.play(FadeIn(flip, UP)); self.wait(1.4)
+        self.play(FadeOut(VGroup(row, same, flip, law, tag)))
 
-        flip = caption("전치도 순서가 뒤집힌다", 28, WARN)
-        flip.next_to(pair, DOWN, buff=0.9)
-        self.play(FadeIn(flip, UP))
-        self.wait(1.2)
-
-        also = Tex(R"(A^{T})^{-1} = (A^{-1})^{T}")
-        also.set_width(6.0).next_to(flip, DOWN, buff=0.8)
+        # 정리 2-5 (5) — 전치와 역행렬은 순서를 바꿔도 같다
+        tag = caption("정리 2-5 (5)", 24, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+        also = Tex(R"(A^{T})^{-1} = (A^{-1})^{T}").set_width(6.0).move_to(0.6 * UP)
         self.play(Write(also), run_time=1.2)
-        note = caption("전치와 역행렬은 자리를 바꿔도 같음", 24, GREY_B)
-        note.next_to(also, DOWN, buff=0.5)
-        self.play(FadeIn(note, UP))
-        self.wait(2)
+        note = caption("전치와 역행렬은 순서를 바꿔도 같음", 24, GREY_B).next_to(also, DOWN, buff=0.7)
+        self.play(FadeIn(note, UP)); self.wait(2)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -824,6 +845,23 @@ class MatrixZoo(InteractiveScene):
 # **이 두 편은 맛보기다.** 기저와 선형변환의 정의는 CH04 에서 한다. 여기서는
 # 행렬식이라는 수가 무엇을 재는 수인지, 역행렬이 무엇을 되돌리는지까지만 본다.
 # ─────────────────────────────────────────────────────────────
+# 배경 격자. 공용 클래스 기본값은 NumberPlane 의 보조선(faded line)까지 그려 격자가
+# 두 겹으로 겹친다. 뒤에 남는 격자는 "원래 자리" 만 보이면 되므로 큰 눈금만 옅게 둔다.
+# 움직이는 파란 격자는 그대로 둔다 — 그것이 변환이다.
+BACK_PLANE = dict(
+    x_range=(-7, 7, 1), y_range=(-4, 4, 1),
+    faded_line_ratio=0,
+    axis_config=dict(stroke_color=GREY_B, stroke_width=2),
+    background_line_style=dict(stroke_color=GREY_D, stroke_width=1,
+                               stroke_opacity=0.5),
+)
+FRONT_PLANE = dict(
+    x_range=(-7, 7, 1), y_range=(-4, 4, 1),
+    faded_line_ratio=0,
+    background_line_style=dict(stroke_color=BLUE_D, stroke_width=2),
+)
+
+
 def overlay(mob, scene, edge=DOWN, buff=0.4):
     """격자 위에 얹는 문구. 격자가 비쳐 읽히지 않으므로 뒷판을 깐다."""
     mob.to_edge(edge, buff=buff)
@@ -839,6 +877,8 @@ class DeterminantGeometry(LinearTransformationScene):
     """
     include_background_plane = True
     include_foreground_plane = True
+    background_plane_kwargs = BACK_PLANE
+    foreground_plane_kwargs = FRONT_PLANE
     show_coordinates = True
     show_basis_vectors = True
     matrix = [[2, 1], [1, 3]]      # det = 5
@@ -894,6 +934,8 @@ class DeterminantCollapse(LinearTransformationScene):
     보였고, 이 편은 같은 사실을 그림으로 본다.
     """
     include_background_plane = True
+    background_plane_kwargs = BACK_PLANE
+    foreground_plane_kwargs = FRONT_PLANE
     show_coordinates = True
     show_basis_vectors = True
     matrix = [[1, 2], [2, 4]]      # det = 0
@@ -935,6 +977,8 @@ class InverseAsUndo(LinearTransformationScene):
     분모가 det A 라는 것을 그림 뒤에 한 번 더 만난다. 예제 2-4 의 분모 12 와 같은 자리다.
     """
     include_background_plane = True
+    background_plane_kwargs = BACK_PLANE
+    foreground_plane_kwargs = FRONT_PLANE
     show_coordinates = True
     show_basis_vectors = True
     matrix = [[2, 1], [1, 3]]      # DeterminantGeometry 와 같은 행렬
