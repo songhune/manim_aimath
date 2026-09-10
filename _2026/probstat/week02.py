@@ -33,7 +33,6 @@ legacy/_2018/eop/chapter2/permutation_grid.py 는 격자 배치만 참고했다.
     ./render.sh list  _2026/probstat/week02.py
     ./render.sh check _2026/probstat/week02.py            # 전 씬 빠른 점검
     ./render.sh ppt   _2026/probstat/week02.py SampleSpace   # PPT 삽입용 재인코딩
-    ./render.sh gif   _2026/probstat/week02.py SampleSpace   # Notability 용
 """
 from manim_imports_ext import *
 
