@@ -300,7 +300,8 @@ class Example234Flights(InteractiveScene):
 class SuneungConditional(InteractiveScene):
     """주사위 눈 여섯을 상자 규칙으로 돌리면 한 번의 시행은 네 유형뿐이다.
     홀수 눈(1/2): 공 3, 3번 상자 +1 · 눈 2(1/6): 공 2, 2번 +1 · 눈 4(1/6): 공 3, 2번 +1 · 눈 6(1/6): 공 4, 2번·3번 +1.
-    조건 A(공의 합이 홀수)는 '공이 홀수인 시행(홀 또는 4, 확률 2/3)'이 홀수 번 → P(A) = 40/81.
+    조건 A(공의 합이 홀수)는 '공이 홀수인 시행(홀 또는 4, 확률 2/3)'이 1번 또는 3번 → 독립시행의 곱셈법칙과
+    조합으로 4·(2/3)(1/3)³ + 4·(2/3)³(1/3) = 40/81 (이항분포의 이름은 5장에서 붙는다).
     A 안에서 3번 − 2번 = 1 인 패턴은 {홀,6,6,6}(4가지, 1/108)과 {홀,홀,4,6}(12가지, 1/12) → 5/54.
     넓이 모형: A 조각 40/81 을 남기고 늘리면 5/54 조각이 3/16. 답 ②."""
 
@@ -352,12 +353,17 @@ class SuneungConditional(InteractiveScene):
         self.wait(0.8)
 
         # ── 조건 A: 공의 합이 홀수 = 홀수 시행(2/3)이 홀수 번
-        self.play(FadeOut(rows), FadeOut(delta), run_time=0.5)
+        self.play(FadeOut(rows), FadeOut(delta), types.animate.scale(0.85).move_to([4.6, 2.2, 0]), run_time=0.6)
         pa_txt = Tex(R"A:\ \text{odd total} \Leftrightarrow \text{odd count of odd trials}").scale(0.7).set_color(WHITE)
-        pa_txt.move_to([-2.6, 2.3, 0])
-        pa = Tex(R"P(A) = \frac{1 - (1 - 2\cdot\frac{2}{3})^4}{2} = \frac{1 - \frac{1}{81}}{2} = \frac{40}{81}").scale(0.8).set_color(CALM)
-        pa.next_to(pa_txt, DOWN, buff=0.35).align_to(pa_txt, LEFT)
+        pa_txt.move_to([-3.0, 2.4, 0])
+        # 독립시행의 곱셈법칙 + 조합으로 센다(이항분포의 이름은 5장에서 붙는다)
+        pa_k = Tex(R"\text{odd trials: } 1 \text{ or } 3 \text{ of } 4,\ p = \tfrac{2}{3}").scale(0.7).set_color(GREY_A)
+        pa_k.next_to(pa_txt, DOWN, buff=0.28).align_to(pa_txt, LEFT)
+        pa = Tex(R"P(A) = \binom{4}{1}\tfrac{2}{3}\left(\tfrac{1}{3}\right)^{3} + \binom{4}{3}\left(\tfrac{2}{3}\right)^{3}\tfrac{1}{3}"
+                 R" = \tfrac{8}{81} + \tfrac{32}{81} = \tfrac{40}{81}").scale(0.75).set_color(CALM)
+        pa.next_to(pa_k, DOWN, buff=0.28).align_to(pa_txt, LEFT)
         self.play(Write(pa_txt))
+        self.play(FadeIn(pa_k))
         self.play(Write(pa))
         self.wait(0.8)
 
@@ -366,10 +372,10 @@ class SuneungConditional(InteractiveScene):
         pat2 = VGroup(note("odd · odd · 4 · 6", 24, MEAN_COLOR), Tex(R"12 \times \left(\tfrac12\right)^2 \tfrac16 \cdot \tfrac16 = \tfrac{1}{12}").scale(0.75).set_color(MEAN_COLOR))
         for p_ in (pat1, pat2):
             p_.arrange(RIGHT, buff=0.4)
-        pats = VGroup(pat1, pat2).arrange(DOWN, buff=0.2, aligned_edge=LEFT).move_to([-2.6, -0.3, 0]).align_to(pa_txt, LEFT)
-        pab = Tex(R"P(A \cap B) = \frac{1}{108} + \frac{1}{12} = \frac{5}{54}").scale(0.85).set_color(MEAN_COLOR)
-        pab.next_to(pats, DOWN, buff=0.3).align_to(pa_txt, LEFT)
-        btxt = Tex(R"B:\ \Delta\text{ sum} = +1").scale(0.7).set_color(WHITE).next_to(pats, UP, buff=0.25).align_to(pa_txt, LEFT)
+        pats = VGroup(pat1, pat2).arrange(DOWN, buff=0.16, aligned_edge=LEFT).move_to([-2.6, -0.75, 0]).align_to(pa_txt, LEFT)
+        pab = Tex(R"P(A \cap B) = \tfrac{1}{108} + \tfrac{1}{12} = \tfrac{5}{54}").scale(0.8).set_color(MEAN_COLOR)
+        pab.next_to(pats, DOWN, buff=0.22).align_to(pa_txt, LEFT)
+        btxt = Tex(R"B:\ \Delta\text{ sum} = +1").scale(0.7).set_color(WHITE).next_to(pats, UP, buff=0.2).align_to(pa_txt, LEFT)
         self.play(FadeIn(btxt), LaggedStartMap(FadeIn, pats, lag_ratio=0.3), run_time=1.0)
         self.play(Write(pab))
         self.wait(0.8)
@@ -389,8 +395,8 @@ class SuneungConditional(InteractiveScene):
         self.wait(0.5)
         self.play(Transform(rA, region(x0, y0, W, W, CALM, 0.14)), Transform(rAB, region(x0, y0, W, hB, MEAN_COLOR, 0.5)),
                   tAB.animate.move_to([x0 + W / 2, y0 + hB / 2, 0]), tA.animate.next_to(S, DOWN, buff=0.1), run_time=1.2)
-        ans = Tex(R"P(B \mid A) = \frac{5/54}{40/81} = \frac{3}{16}").scale(0.95).set_color(MEAN_COLOR)
-        ans.next_to(pab, DOWN, buff=0.45).align_to(pa_txt, LEFT)
+        ans = Tex(R"P(B \mid A) = \frac{5/54}{40/81} = \frac{3}{16}").scale(0.9).set_color(MEAN_COLOR)
+        ans.next_to(pab, DOWN, buff=0.3).align_to(pa_txt, LEFT)
         self.play(Write(ans))
         self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.2), run_time=1.2)
         pick = note("answer ②", 28, WHITE).next_to(ans, RIGHT, buff=0.6)
