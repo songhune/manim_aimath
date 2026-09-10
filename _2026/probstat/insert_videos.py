@@ -213,7 +213,7 @@ def poster(name, out_dir):
 # 문제 문장은 원문 그대로 옮기고 출처를 적는다. 2026학년도 수능 확률과 통계 28번(조건부확률 + 독립시행).
 EXTRA_SLIDES = {
     "suneung_cond": dict(
-        title="2.6 Conditional Probability · 2026학년도 수능 확률과 통계 28번",
+        title="2.6 Conditional Probability · 수능 28번",
         body=[
             (0, "16개의 공과 1부터 6까지의 자연수가 하나씩 적혀 있는 여섯 개의 빈 상자가 있다. 한 개의 주사위를 사용하여 다음 시행을 한다."),
             (1, "주사위를 한 번 던져 나온 눈의 수가 k일 때, k가 홀수이면 1, 3, 5가 적힌 상자에 공을 각각 1개씩 넣고, "
@@ -233,15 +233,21 @@ def extra_slide(prs, key):
     slide = prs.slides.add_slide(prs.slide_layouts[1])          # 제목 및 내용
     slide.shapes.title.text = spec["title"]
     body = slide.placeholders[1]
-    body.width, body.height = int(prs.slide_width * 0.86), int(prs.slide_height * 0.42)
+    # 자리표시자의 네 값을 모두 준다. 폭·높이만 주면 left·top 이 0 이 되어 제목 위에 겹친다(2026-09-10 확인).
+    body.left, body.top = int(prs.slide_width * 0.069), int(prs.slide_height * 0.15)
+    body.width, body.height = int(prs.slide_width * 0.862), int(prs.slide_height * 0.42)
     tf = body.text_frame
+    tf.word_wrap = True
     tf.text = spec["body"][0][1]
     for level, text in spec["body"][1:]:
         para = tf.add_paragraph()
         para.text = text
         para.level = level
+    for para in tf.paragraphs:
+        for run in para.runs:
+            run.font.size = Pt(18 if para.level == 0 else 16)
     if not spec.get("table"):
-        body.height = int(prs.slide_height * 0.72)
+        body.height = int(prs.slide_height * 0.74)
         return slide
     rows, cols = len(spec["table"]), len(spec["table"][0])
     left = int(prs.slide_width * 0.30)
