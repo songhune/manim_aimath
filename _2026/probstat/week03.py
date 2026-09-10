@@ -356,8 +356,8 @@ class SuneungConditional(InteractiveScene):
         # ── 2) 표본공간: 4번 던지면 6⁴ = 1296. 한 칸이 결과 하나.
         self.play(FadeOut(rows), FadeOut(delta), types.animate.scale(0.8).move_to([4.6, 2.2, 0]), run_time=0.6)
         n_tr = ValueTracker(0)
-        num = counter(n_tr, size=56).move_to([-2.4, 2.3, 0])
-        tag = note("outcomes", 24, MEAN_COLOR).next_to(num, RIGHT, buff=0.25)
+        tag = note("outcomes", 24, MEAN_COLOR).move_to([-4.6, 2.3, 0])
+        num = counter(n_tr, size=56).move_to([-3.0, 2.3, 0]).align_to([-3.6, 0, 0], LEFT)   # 숫자는 오른쪽으로 자란다
         self.add(num)
         self.play(FadeIn(tag))
 
