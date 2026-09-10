@@ -308,37 +308,45 @@ def trial_info(k):
     return 4, 0
 
 
-ODD_FACES = [1, 3, 5, 4]        # 공이 홀수 개인 눈
-EVEN_FACES = [2, 6]             # 공이 짝수 개인 눈
+ODD = "1,3,4,5"          # 공이 홀수 개인 눈
+EVEN = "2,6"             # 공이 짝수 개인 눈
 
 
 class SuneungConditional(InteractiveScene):
     """등가능 표본공간이라 칸 수로 센다는 것이 이 문제의 특수성이다. 주사위를 4번 던지므로 표본공간은
     6⁴ = 1296 으로 고정되어 있고, 조건부확률은 n(A ∩ B)/n(A) 다.
-    n(A): 공이 홀수 개인 눈은 1, 3, 5, 4 (넷), 짝수 개인 눈은 2, 6 (둘). 홀수 시행이 1번이면 자리 4가지 × 4 × 2³,
-    3번이면 자리 4가지 × 4³ × 2 → 128 + 512 = 640. 자리(₄C₁, ₄C₃)와 눈의 가짓수를 네 칸으로 그려 보인다.
-    n(A ∩ B): {홀, 6, 6, 6} 은 자리 4 × 눈 3 = 12, {홀, 홀, 4, 6} 은 자리 4!/2! = 12 × 눈 3·3 = 108 → 120.
-    P(B | A) = 120/640 = 3/16. 답 ②."""
+    네 번의 결과를 괄호 네 칸으로 적고 칸마다 올 수 있는 눈을 넣는다. (1,3,4,5 | 2,6 | 2,6 | 2,6) 은
+    첫 시행만 공이 홀수 개인 경우이고 4·2·2·2 = 32 가지. 홀수 시행의 자리가 넷이니 4 × 32 = 128.
+    홀수 시행 3번은 (1,3,4,5 | 1,3,4,5 | 1,3,4,5 | 2,6) 꼴 네 자리, 4 × 4·4·4·2 = 512 → n(A) = 640.
+    A 안에서 3번 − 2번 = 1 인 무늬는 (1,3,5 | 6 | 6 | 6) 네 자리 × 3 = 12 와
+    (1,3,5 | 1,3,5 | 4 | 6) 12 가지 순서 × 3·3 = 108 → n(A ∩ B) = 120. P(B | A) = 120/640 = 3/16. 답 ②."""
 
-    def slots(self, marks, color=MUTED, size=0.62, buff=0.14):
-        """네 칸. marks 의 칸은 색을 준다."""
-        g = VGroup()
-        for i in range(4):
-            r = RoundedRectangle(width=size, height=size, corner_radius=0.1).set_stroke(color, 2)
-            if i in marks:
-                r.set_fill(CALM, 0.35).set_stroke(CALM, 2.5)
-            g.add(r)
-        return g.arrange(RIGHT, buff=buff)
+    def tuple_row(self, labels, colors, w=1.05, h=0.46, size=0.5):
+        """괄호 네 칸. labels 는 칸마다 올 수 있는 눈."""
+        cells = VGroup()
+        for lab, col in zip(labels, colors):
+            r = RoundedRectangle(width=w, height=h, corner_radius=0.08).set_stroke(col, 1.8).set_fill(col, 0.10)
+            t = Tex(lab).scale(size).set_color(col).move_to(r)
+            cells.add(VGroup(r, t))
+        cells.arrange(RIGHT, buff=0.1)
+        lp = Tex("(").scale(1.1).set_color(GREY_B).next_to(cells, LEFT, buff=0.05)
+        rp = Tex(")").scale(1.1).set_color(GREY_B).next_to(cells, RIGHT, buff=0.05)
+        return VGroup(lp, cells, rp)
 
-    def mini(self, marks, color=CALM):
-        """작은 네 칸. 자리 패턴 하나."""
-        g = VGroup()
-        for i in range(4):
-            r = Square(side_length=0.22).set_stroke(GREY_C, 1)
-            if i in marks:
-                r.set_fill(color, 0.85)
-            g.add(r)
-        return g.arrange(RIGHT, buff=0.05)
+    def pattern_block(self, rows_spec, center, count_tex, color):
+        """자리 무늬 여러 줄. 첫 줄 오른쪽에 한 줄의 가짓수. rows_spec = [(labels, colors), ...]"""
+        rows = VGroup(*[self.tuple_row(l, c) for l, c in rows_spec]).arrange(DOWN, buff=0.1, aligned_edge=LEFT)
+        rows.move_to(center)
+        each = Tex(count_tex).scale(0.65).set_color(color).next_to(rows[0], RIGHT, buff=0.35)
+        return rows, each
+
+    def total_line(self, rows, total_tex, color, note_tex=None):
+        """마지막 줄 오른쪽에 무늬 수 × 한 줄 가짓수. 옆에 조합 기호가 그 무늬 고르기라는 메모."""
+        eq = Tex(total_tex).scale(0.75).set_color(color).next_to(rows[-1], RIGHT, buff=0.35)
+        if note_tex is None:
+            return eq, None
+        nt = Tex(note_tex).scale(0.55).set_color(GREY_B).next_to(eq, RIGHT, buff=0.3)
+        return eq, nt
 
     def construct(self):
         head = slide_title("CSAT 2026 · Problem 28")
@@ -350,91 +358,96 @@ class SuneungConditional(InteractiveScene):
                          for k, f in zip(range(1, 7), faces)])
         bl = note("balls", 22, GREY_B).next_to(balls, LEFT, buff=0.3)
         self.play(LaggedStartMap(FadeIn, faces, lag_ratio=0.1), FadeIn(balls), FadeIn(bl))
-        odd_faces = VGroup(*[faces[k - 1] for k in ODD_FACES])
-        rings = VGroup(*[ring(f, CALM, buff=0.05) for f in odd_faces])
-        odd_tag = Tex(R"\text{odd balls: } 4 \text{ faces}").scale(0.7).set_color(CALM).move_to([3.6, 2.4, 0])
-        even_tag = Tex(R"\text{even balls: } 2 \text{ faces}").scale(0.7).set_color(MUTED).next_to(odd_tag, DOWN, buff=0.2).align_to(odd_tag, LEFT)
+        rings = VGroup(*[ring(faces[k - 1], CALM, buff=0.05) for k in (1, 3, 4, 5)])
+        odd_tag = Tex(R"\text{odd balls: } 1, 3, 4, 5").scale(0.7).set_color(CALM).move_to([3.6, 2.4, 0])
+        even_tag = Tex(R"\text{even balls: } 2, 6").scale(0.7).set_color(MUTED).next_to(odd_tag, DOWN, buff=0.2).align_to(odd_tag, LEFT)
         self.play(ShowCreation(rings), FadeIn(odd_tag), FadeIn(even_tag))
         self.wait(0.8)
 
-        # ── 2) 표본공간: 네 칸에 눈 6가지씩. 6⁴ 으로 크기가 고정된 등가능 공간이라 칸 수로 센다.
-        S_slots = self.slots([], MUTED, 0.7, 0.2).move_to([-3.2, 0.7, 0])
-        sixes = VGroup(*[Tex("6").scale(0.8).set_color(GREY_A).move_to(r) for r in S_slots])
-        times = VGroup(*[Tex(R"\times").scale(0.6).set_color(GREY_B).move_to((S_slots[i].get_center() + S_slots[i + 1].get_center()) / 2) for i in range(3)])
-        s_tag = note("4 throws", 22, GREY_B).next_to(S_slots, UP, buff=0.15).align_to(S_slots, LEFT)
-        self.play(ShowCreation(S_slots), FadeIn(s_tag))
-        self.play(LaggedStartMap(FadeIn, sixes, lag_ratio=0.15), FadeIn(times))
-        ns = Tex(R"n(S) = 6^4 = 1296").scale(0.9).set_color(GREY_A).move_to([3.6, 0.9, 0])
+        # ── 2) 표본공간: 괄호 네 칸에 눈 6가지씩. 6⁴ 으로 크기가 고정된 등가능 공간이라 칸 수로 센다.
+        S_row = self.tuple_row(["1..6", "1..6", "1..6", "1..6"], [GREY_A] * 4).move_to([-3.2, 0.9, 0])
+        s_tag = note("4 throws", 22, GREY_B).next_to(S_row, UP, buff=0.15).align_to(S_row, LEFT)
+        self.play(FadeIn(S_row), FadeIn(s_tag))
+        ns = Tex(R"n(S) = 6 \cdot 6 \cdot 6 \cdot 6 = 1296").scale(0.85).set_color(GREY_A).move_to([3.6, 0.9, 0])
         fixed = note("fixed, equally likely", 22, GREY_B).next_to(ns, DOWN, buff=0.15)
         count_rule = Tex(R"P(B \mid A) = \frac{n(A \cap B)}{n(A)}").scale(0.85).set_color(WHITE).next_to(fixed, DOWN, buff=0.3)
         self.play(Write(ns), FadeIn(fixed))
         self.play(Write(count_rule))
         self.wait(1.0)
 
-        # ── 3) n(A): 홀수 시행의 자리를 고르고, 칸마다 눈의 가짓수를 곱한다
-        self.play(FadeOut(sixes), FadeOut(times), FadeOut(s_tag), FadeOut(count_rule), FadeOut(fixed), FadeOut(S_slots),
-                  ns.animate.scale(0.8).move_to([3.6, 1.6, 0]), run_time=0.5)
+        # ── 3) n(A): 홀수 시행이 1번 — 괄호에 올 수 있는 눈을 적고 곱한다. 자리가 넷.
+        self.play(FadeOut(S_row), FadeOut(s_tag), FadeOut(count_rule), FadeOut(fixed),
+                  ns.animate.scale(0.8).move_to([3.6, 1.45, 0]), run_time=0.5)
         a_head = Tex(R"A:\ \text{odd total} \Leftrightarrow 1 \text{ or } 3 \text{ odd trials}").scale(0.7).set_color(CALM)
-        a_head.move_to([-2.4, 1.1, 0])
+        a_head.move_to([-2.4, 1.3, 0])
         self.play(FadeIn(a_head))
 
-        # k = 1: 자리 4가지, 눈 4 × 2 × 2 × 2
-        k1_pat = VGroup(*[self.mini([i]) for i in range(4)]).arrange(DOWN, buff=0.08).move_to([-5.9, 0.0, 0])
-        k1_c = Tex(R"\binom{4}{1} = 4").scale(0.65).set_color(CALM).next_to(k1_pat, RIGHT, buff=0.25)
-        k1_slots = self.slots([0], size=0.55, buff=0.12).next_to(k1_c, RIGHT, buff=0.45)
-        k1_nums = VGroup(*[Tex(t).scale(0.7).set_color(CALM if i == 0 else MUTED).move_to(r) for i, (t, r) in enumerate(zip(["4", "2", "2", "2"], k1_slots))])
-        k1_eq = Tex(R"4 \times 4 \cdot 2^3 = 128").scale(0.7).set_color(CALM).next_to(k1_slots, RIGHT, buff=0.4)
-        self.play(LaggedStartMap(FadeIn, k1_pat, lag_ratio=0.15), FadeIn(k1_c))
-        self.play(ShowCreation(k1_slots), FadeIn(k1_nums))
+        C1 = [CALM, MUTED, MUTED, MUTED]
+        k1_rows, k1_each = self.pattern_block(
+            [([ODD, EVEN, EVEN, EVEN], C1), ([EVEN, ODD, EVEN, EVEN], [MUTED, CALM, MUTED, MUTED]),
+             ([EVEN, EVEN, ODD, EVEN], [MUTED, MUTED, CALM, MUTED]), ([EVEN, EVEN, EVEN, ODD], [MUTED, MUTED, MUTED, CALM])],
+            [-3.6, -0.1, 0], R"4 \cdot 2 \cdot 2 \cdot 2 = 32", CALM)
+        self.play(FadeIn(k1_rows[0]), Write(k1_each))
+        self.wait(0.4)
+        self.play(LaggedStartMap(FadeIn, VGroup(*k1_rows[1:]), lag_ratio=0.25), run_time=0.9)
+        k1_eq, k1_nt = self.total_line(k1_rows, R"4 \times 32 = 128", CALM, R"4 \text{ patterns} = \binom{4}{1}")
         self.play(Write(k1_eq))
+        self.play(FadeIn(k1_nt))
         self.wait(0.6)
 
-        # k = 3: 자리 4가지, 눈 4 × 4 × 4 × 2
-        k3_pat = VGroup(*[self.mini([j for j in range(4) if j != i]) for i in range(4)]).arrange(DOWN, buff=0.08).move_to([-5.9, -1.75, 0])
-        k3_c = Tex(R"\binom{4}{3} = 4").scale(0.65).set_color(CALM).next_to(k3_pat, RIGHT, buff=0.25)
-        k3_slots = self.slots([0, 1, 2], size=0.55, buff=0.12).next_to(k3_c, RIGHT, buff=0.45)
-        k3_nums = VGroup(*[Tex(t).scale(0.7).set_color(CALM if i < 3 else MUTED).move_to(r) for i, (t, r) in enumerate(zip(["4", "4", "4", "2"], k3_slots))])
-        k3_eq = Tex(R"4 \times 4^3 \cdot 2 = 512").scale(0.7).set_color(CALM).next_to(k3_slots, RIGHT, buff=0.4)
-        self.play(LaggedStartMap(FadeIn, k3_pat, lag_ratio=0.15), FadeIn(k3_c))
-        self.play(ShowCreation(k3_slots), FadeIn(k3_nums))
-        self.play(Write(k3_eq))
+        # k = 3
+        k3_rows, k3_each = self.pattern_block(
+            [([ODD, ODD, ODD, EVEN], [CALM, CALM, CALM, MUTED]), ([ODD, ODD, EVEN, ODD], [CALM, CALM, MUTED, CALM]),
+             ([ODD, EVEN, ODD, ODD], [CALM, MUTED, CALM, CALM]), ([EVEN, ODD, ODD, ODD], [MUTED, CALM, CALM, CALM])],
+            [-3.6, -2.45, 0], R"4 \cdot 4 \cdot 4 \cdot 2 = 128", CALM)
+        self.play(FadeIn(k3_rows[0]), Write(k3_each))
+        self.play(LaggedStartMap(FadeIn, VGroup(*k3_rows[1:]), lag_ratio=0.25), run_time=0.9)
+        k3_eq, k3_nt = self.total_line(k3_rows, R"4 \times 128 = 512", CALM, R"4 \text{ patterns} = \binom{4}{3}")
+        self.play(Write(k3_eq), FadeIn(k3_nt))
         na = Tex(R"n(A) = 128 + 512 = 640").scale(0.85).set_color(CALM).move_to([3.6, 0.7, 0])
         self.play(TransformFromCopy(VGroup(k1_eq, k3_eq), na), run_time=1.0)
         self.wait(1.0)
 
         # ── 4) n(A ∩ B): Δ 의 합이 +1 이 되는 눈의 무늬는 둘뿐
-        self.play(*[FadeOut(m) for m in (k1_pat, k1_c, k1_slots, k1_nums, k1_eq, k3_pat, k3_c, k3_slots, k3_nums, k3_eq, a_head)], run_time=0.5)
-        b_head = Tex(R"B:\ \text{box 3} - \text{box 2} = 1 \text{ inside } A").scale(0.7).set_color(MEAN_COLOR).move_to([-2.4, 1.1, 0])
+        self.play(*[FadeOut(m) for m in (k1_rows, k1_each, k1_eq, k1_nt, k3_rows, k3_each, k3_eq, k3_nt, a_head)], run_time=0.5)
+        b_head = Tex(R"B:\ \text{box 3} - \text{box 2} = 1 \text{ inside } A").scale(0.7).set_color(MEAN_COLOR).move_to([-2.4, 1.3, 0])
         self.play(FadeIn(b_head))
-        p1_slots = self.slots([0], size=0.55, buff=0.12).move_to([-4.3, 0.1, 0])
-        p1_faces = VGroup(*[Tex(t).scale(0.55).set_color(MEAN_COLOR if i == 0 else MUTED).move_to(r) for i, (t, r) in enumerate(zip(["1,3,5", "6", "6", "6"], p1_slots))])
-        p1_eq = Tex(R"\binom{4}{1} \times 3 = 12").scale(0.7).set_color(MEAN_COLOR).next_to(p1_slots, RIGHT, buff=0.4)
-        p2_slots = self.slots([0, 1], size=0.55, buff=0.12).move_to([-4.3, -1.2, 0])
-        p2_faces = VGroup(*[Tex(t).scale(0.55).set_color(MEAN_COLOR if i < 2 else MUTED).move_to(r) for i, (t, r) in enumerate(zip(["1,3,5", "1,3,5", "4", "6"], p2_slots))])
-        p2_eq = Tex(R"\frac{4!}{2!} \times 3 \cdot 3 = 108").scale(0.7).set_color(MEAN_COLOR).next_to(p2_slots, RIGHT, buff=0.4)
-        d1 = Tex(R"\Delta: +1, 0, 0, 0").scale(0.55).set_color(GREY_B).next_to(p1_slots, DOWN, buff=0.1)
-        d2 = Tex(R"\Delta: +1, +1, -1, 0").scale(0.55).set_color(GREY_B).next_to(p2_slots, DOWN, buff=0.1)
-        self.play(ShowCreation(p1_slots), FadeIn(p1_faces), FadeIn(d1))
-        self.play(Write(p1_eq))
-        self.play(ShowCreation(p2_slots), FadeIn(p2_faces), FadeIn(d2))
-        self.play(Write(p2_eq))
-        nab = Tex(R"n(A \cap B) = 12 + 108 = 120").scale(0.85).set_color(MEAN_COLOR).next_to(na, DOWN, buff=0.35).align_to(na, LEFT)
+        Y, M = MEAN_COLOR, MUTED
+        p1_rows, p1_each = self.pattern_block(
+            [(["1,3,5", "6", "6", "6"], [Y, M, M, M]), (["6", "1,3,5", "6", "6"], [M, Y, M, M]),
+             (["6", "6", "1,3,5", "6"], [M, M, Y, M]), (["6", "6", "6", "1,3,5"], [M, M, M, Y])],
+            [-3.6, -0.1, 0], R"3 \cdot 1 \cdot 1 \cdot 1 = 3", Y)
+        self.play(FadeIn(p1_rows[0]), Write(p1_each))
+        self.play(LaggedStartMap(FadeIn, VGroup(*p1_rows[1:]), lag_ratio=0.25), run_time=0.9)
+        p1_eq, p1_nt = self.total_line(p1_rows, R"4 \times 3 = 12", Y, R"4 \text{ patterns}")
+        self.play(Write(p1_eq), FadeIn(p1_nt))
+        self.wait(0.5)
+        p2_rows, p2_each = self.pattern_block(
+            [(["1,3,5", "1,3,5", "4", "6"], [Y, Y, M, M]), (["1,3,5", "4", "1,3,5", "6"], [Y, M, Y, M]),
+             (["4", "6", "1,3,5", "1,3,5"], [M, M, Y, Y])],
+            [-3.6, -2.3, 0], R"3 \cdot 3 \cdot 1 \cdot 1 = 9", Y)
+        dots = Tex(R"\cdots").scale(0.8).set_color(GREY_B).next_to(p2_rows, DOWN, buff=0.1).align_to(p2_rows[0][1], LEFT)
+        self.play(FadeIn(p2_rows[0]), Write(p2_each))
+        self.play(LaggedStartMap(FadeIn, VGroup(*p2_rows[1:]), lag_ratio=0.25), FadeIn(dots), run_time=0.9)
+        p2_eq, p2_nt = self.total_line(p2_rows, R"12 \times 9 = 108", Y, R"12 \text{ patterns} = \tfrac{4!}{2!}")
+        self.play(Write(p2_eq), FadeIn(p2_nt))
+        nab = Tex(R"n(A \cap B) = 12 + 108 = 120").scale(0.85).set_color(Y).next_to(na, DOWN, buff=0.35).align_to(na, LEFT)
         self.play(TransformFromCopy(VGroup(p1_eq, p2_eq), nab), run_time=1.0)
         self.wait(1.0)
 
-        # ── 5) A 가 일어났다: 640 칸이 세계. 그 안의 120 칸.
-        self.play(*[FadeOut(m) for m in (p1_slots, p1_faces, p1_eq, p2_slots, p2_faces, p2_eq, d1, d2, b_head, faces, balls, bl, rings)], run_time=0.5)
+        # ── 5) A 가 일어났다: 640 가지가 세계. 그 안의 120 가지.
+        self.play(*[FadeOut(m) for m in (p1_rows, p1_each, p1_eq, p1_nt, p2_rows, p2_each, p2_eq, p2_nt, dots, b_head, faces, balls, bl, rings)], run_time=0.5)
         Wb = 8.0
         bar = Rectangle(width=Wb, height=0.9).set_stroke(CALM, 2.5).set_fill(CALM, 0.18).move_to([-2.4, -0.5, 0])
-        part = Rectangle(width=Wb * 120 / 640, height=0.9).set_stroke(width=0).set_fill(MEAN_COLOR, 0.8).align_to(bar, LEFT).set_y(bar.get_y())
+        part = Rectangle(width=Wb * 120 / 640, height=0.9).set_stroke(width=0).set_fill(Y, 0.8).align_to(bar, LEFT).set_y(bar.get_y())
         t640 = Tex("640").scale(0.7).set_color(CALM).next_to(bar, DOWN, buff=0.15).align_to(bar, RIGHT)
-        t120 = Tex("120").scale(0.7).set_color(MEAN_COLOR).next_to(part, DOWN, buff=0.15)
+        t120 = Tex("120").scale(0.7).set_color(Y).next_to(part, DOWN, buff=0.15)
         given = Tex(R"\text{given } A").set_color(CALM).scale(0.9).next_to(bar, UP, buff=0.15).align_to(bar, LEFT)
         self.play(FadeIn(bar), FadeIn(given), FadeIn(t640))
         self.play(GrowFromEdge(part, LEFT), FadeIn(t120), run_time=1.0)
         ans = Tex(R"P(B \mid A) = \frac{n(A \cap B)}{n(A)} = \frac{120}{640} = \frac{3}{16}").scale(0.95).set_color(WHITE).move_to([-1.6, -2.3, 0])
         self.play(Write(ans))
-        self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.2), run_time=1.2)
+        self.play(FlashAround(ans, color=Y, buff=0.2), run_time=1.2)
         pick = note("answer ②", 28, WHITE).next_to(ans, RIGHT, buff=0.6)
         self.play(FadeIn(pick))
         self.wait(2)
