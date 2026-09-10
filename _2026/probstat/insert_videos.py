@@ -105,7 +105,7 @@ JOBS = [
         dst="PS1_02_restyled_영상.pptx",
         place="before",
         drop=[47],                                       # 원본 47 은 글이 없는 빈 슬라이드다. 뺀다 (2026-09-10)
-        extra=[(45, "suneung_cond")],                    # 45 뒤에 수능형 연습 문제 슬라이드 (2026-09-10)
+        extra=[(52, "suneung_cond")],                    # 52 뒤(곱셈법칙 끝)에 수능 28번 문제 슬라이드. 독립·곱셈법칙을 배운 뒤 푼다 (2026-09-10)
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -124,11 +124,11 @@ JOBS = [
                 # 2.6–2.8 (week03.py). 2026-09-08 추가.
                 (41, ["ConditionalProbability"]),            # 42 = Definition 2.10
                 (44, ["Example234Flights"]),                 # 44 = Ex 2.34·2.35 문제, 45 = 풀이
-                (45, ["SuneungConditional", "Independence"]),   # 45 뒤: 수능형 문제 슬라이드(extra) → 그 풀이 영상 → 46 = Definition 2.11 앞 개념 영상
+                (45, ["Independence"]),                      # 46 = Definition 2.11
                 (47, ["ProductRule"]),                       # 48 = Theorem 2.10–2.12
                 (49, ["Example236Fuses"]),                   # 49 = Ex 2.36·2.37 문제, 50 = 풀이
                 (51, ["Example238Emergency"]),               # 51 = Ex 2.38·2.40 문제, 52 = 풀이
-                (52, ["TotalProbability"]),                  # 53 = Theorem 2.13
+                (52, ["SuneungConditional", "TotalProbability"]),   # 52 뒤: 수능 28번 문제 슬라이드(extra) → 그 풀이 영상 → 53 = Theorem 2.13 앞 개념 영상
                 (54, ["Example241Machines"]),                # 54 = Ex 2.41 문제, 55 = 풀이
                 (55, ["BayesRule"]),                         # 56 = Theorem 2.14
                 (57, ["Example242Bayes"])],                  # 57 = Ex 2.42·2.43 문제, 58 = 풀이
@@ -138,7 +138,7 @@ JOBS = [
                  "Example222Cartridges": 26, "ProbabilityOfEvent": 27, "Example225LoadedDie": 29,
                  "Example228Poker": 33, "AdditionRule": 35, "Example229Jobs": 37,
                  "Example233Cable": 41,
-                 "ConditionalProbability": 42, "Example234Flights": 45, "SuneungConditional": 46, "Independence": 46,
+                 "ConditionalProbability": 42, "Example234Flights": 45, "Independence": 46, "SuneungConditional": 53,
                  "ProductRule": 48, "Example236Fuses": 50, "Example238Emergency": 52,
                  "TotalProbability": 53, "Example241Machines": 55, "BayesRule": 56,
                  "Example242Bayes": 58},
@@ -149,7 +149,7 @@ JOBS = [
         dst="PS1_02_restyled_한글_영상.pptx",
         place="before",
         drop=[47],
-        extra=[(45, "suneung_cond")],
+        extra=[(52, "suneung_cond")],
         insert=[(3, ["SampleSpace"]),                        # 4 = Definition 2.1 · Example 2.1
                 (7, ["EventsAndSetOps"]),                    # 8 = Definition 2.2–2.6
                 (11, ["MultiplicationRule"]),                # 12 = Rule 2.1 · 2.2
@@ -168,11 +168,11 @@ JOBS = [
                 # 2.6–2.8 (week03.py). 2026-09-08 추가.
                 (41, ["ConditionalProbability"]),            # 42 = Definition 2.10
                 (44, ["Example234Flights"]),                 # 44 = Ex 2.34·2.35 문제, 45 = 풀이
-                (45, ["SuneungConditional", "Independence"]),   # 45 뒤: 수능형 문제 슬라이드(extra) → 그 풀이 영상 → 46 = Definition 2.11 앞 개념 영상
+                (45, ["Independence"]),                      # 46 = Definition 2.11
                 (47, ["ProductRule"]),                       # 48 = Theorem 2.10–2.12
                 (49, ["Example236Fuses"]),                   # 49 = Ex 2.36·2.37 문제, 50 = 풀이
                 (51, ["Example238Emergency"]),               # 51 = Ex 2.38·2.40 문제, 52 = 풀이
-                (52, ["TotalProbability"]),                  # 53 = Theorem 2.13
+                (52, ["SuneungConditional", "TotalProbability"]),   # 52 뒤: 수능 28번 문제 슬라이드(extra) → 그 풀이 영상 → 53 = Theorem 2.13 앞 개념 영상
                 (54, ["Example241Machines"]),                # 54 = Ex 2.41 문제, 55 = 풀이
                 (55, ["BayesRule"]),                         # 56 = Theorem 2.14
                 (57, ["Example242Bayes"])],                  # 57 = Ex 2.42·2.43 문제, 58 = 풀이
@@ -182,7 +182,7 @@ JOBS = [
                  "Example222Cartridges": 26, "ProbabilityOfEvent": 27, "Example225LoadedDie": 29,
                  "Example228Poker": 33, "AdditionRule": 35, "Example229Jobs": 37,
                  "Example233Cable": 41,
-                 "ConditionalProbability": 42, "Example234Flights": 45, "SuneungConditional": 46, "Independence": 46,
+                 "ConditionalProbability": 42, "Example234Flights": 45, "Independence": 46, "SuneungConditional": 53,
                  "ProductRule": 48, "Example236Fuses": 50, "Example238Emergency": 52,
                  "TotalProbability": 53, "Example241Machines": 55, "BayesRule": 56,
                  "Example242Bayes": 58},
@@ -213,7 +213,7 @@ def poster(name, out_dir):
 # 문제 문장은 원문 그대로 옮기고 출처를 적는다. 2026학년도 수능 확률과 통계 28번(조건부확률 + 독립시행).
 EXTRA_SLIDES = {
     "suneung_cond": dict(
-        title="2.6 Conditional Probability · 수능 28번",
+        title="2.6 Product Rule · 수능 28번",
         body=[
             (0, "16개의 공과 1부터 6까지의 자연수가 하나씩 적혀 있는 여섯 개의 빈 상자가 있다. 한 개의 주사위를 사용하여 다음 시행을 한다."),
             (1, "주사위를 한 번 던져 나온 눈의 수가 k일 때, k가 홀수이면 1, 3, 5가 적힌 상자에 공을 각각 1개씩 넣고, "

@@ -157,7 +157,7 @@ SECTIONS = {
         ("2.4 Probability of an Event", ["ProbabilityOfEvent", "Example225LoadedDie", "Example228Poker"]),
         ("2.5 Additive Rules", ["AdditionRule", "Example229Jobs", "Example233Cable"]),
         ("2.6 Conditional Probability, Independence, and the Product Rule",
-         ["ConditionalProbability", "Example234Flights", "SuneungConditional", "Independence", "ProductRule", "Example236Fuses", "Example238Emergency"]),
+         ["ConditionalProbability", "Example234Flights", "Independence", "ProductRule", "Example236Fuses", "Example238Emergency", "SuneungConditional"]),
         ("2.7 Bayes' Rule", ["TotalProbability", "Example241Machines", "BayesRule", "Example242Bayes"]),
     ]
 }

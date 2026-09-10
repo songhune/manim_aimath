@@ -8,7 +8,7 @@
 덱 삽입 자리 (원본 PS1_02_restyled.pptx 기준):
     ConditionalProbability   42 앞   Definition 2.10 (Table 2.1 의 900 명을 단위 정사각형에. 넓이 = 확률, 조건 = 조각을 남기고 늘리기)
     Example234Flights        44 뒤   Ex 2.34 (넓이 모형, 두 방향으로 늘린다)
-    SuneungConditional       45 뒤   2026학년도 수능 확통 28번 슬라이드(insert_videos 가 끼운다) 다음
+    SuneungConditional       52 뒤   2026학년도 수능 확통 28번 슬라이드(insert_videos 가 끼운다) 다음. 곱셈법칙 끝, 전확률 앞
     Independence             46 앞   Definition 2.11 (Table 2.1 → 종속, 복원 카드 → 독립. 가르는 선이 수평이면 독립)
     ProductRule              48 앞   Theorem 2.10–2.12 (Table 2.1 의 나무)
     Example236Fuses          49 뒤   Ex 2.36
@@ -295,7 +295,7 @@ class Example234Flights(InteractiveScene):
 
 
 # ─────────────────────────────────────────────────────────────
-# 2026학년도 수능 확률과 통계 28번 — 조건부확률 + 독립시행. 덱에 끼운 문제 슬라이드 뒤 (원본 45 뒤)
+# 2026학년도 수능 확률과 통계 28번 — 조건부확률 + 곱셈법칙. 덱에 끼운 문제 슬라이드 뒤 (원본 52 뒤, 곱셈법칙 끝)
 # ─────────────────────────────────────────────────────────────
 class SuneungConditional(InteractiveScene):
     """주사위 눈 여섯을 상자 규칙으로 돌리면 한 번의 시행은 네 유형뿐이다.
