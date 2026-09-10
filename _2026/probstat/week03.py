@@ -427,7 +427,7 @@ class SuneungConditional(InteractiveScene):
         Wb = 8.0
         bar = Rectangle(width=Wb, height=0.9).set_stroke(CALM, 2.5).set_fill(CALM, 0.18).move_to([-2.4, -0.5, 0])
         part = Rectangle(width=Wb * 120 / 640, height=0.9).set_stroke(width=0).set_fill(MEAN_COLOR, 0.8).align_to(bar, LEFT).set_y(bar.get_y())
-        t640 = Tex(R"n(A) = 640").scale(0.7).set_color(CALM).next_to(bar, UP, buff=0.15).align_to(bar, RIGHT)
+        t640 = Tex("640").scale(0.7).set_color(CALM).next_to(bar, DOWN, buff=0.15).align_to(bar, RIGHT)
         t120 = Tex("120").scale(0.7).set_color(MEAN_COLOR).next_to(part, DOWN, buff=0.15)
         given = Tex(R"\text{given } A").set_color(CALM).scale(0.9).next_to(bar, UP, buff=0.15).align_to(bar, LEFT)
         self.play(FadeIn(bar), FadeIn(given), FadeIn(t640))
