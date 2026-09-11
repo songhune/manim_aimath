@@ -788,16 +788,20 @@ class TransposeRules(InteractiveScene):
 # 12. 여러 가지 행렬 — 교재 2.3 절
 # ─────────────────────────────────────────────────────────────
 class MatrixZoo(InteractiveScene):
-    """이름이 붙는 자리를 색으로 보인다. 성분이 어디에 있느냐가 이름이다."""
+    """이름이 붙는 자리를 색으로 보이고, 정의 조건을 이름 아래 같은 형식으로 단다.
+
+    네 행렬 모두 같은 꼴(이름 · 행렬 · 조건)로 놓는다. 어느 하나에만 식이 붙으면
+    그것만 다른 종류로 보인다. 기호는 다른 편과 같이 A 로 통일한다.
+    """
     items = [
         ("대각행렬", [[2, 0, 0], [0, 3, 0], [0, 0, 5]],
-         [(0, 0), (1, 1), (2, 2)]),
+         [(0, 0), (1, 1), (2, 2)], R"a_{ij} = 0 \quad (i \neq j)"),
         ("상삼각행렬", [[1, 4, 2], [0, 2, 5], [0, 0, 3]],
-         [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]),
+         [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)], R"a_{ij} = 0 \quad (i > j)"),
         ("대칭행렬", [[1, 3, 2], [3, 2, 5], [2, 5, 4]],
-         [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)]),
+         [(0, 1), (1, 0), (0, 2), (2, 0), (1, 2), (2, 1)], R"A^{T} = A"),
         ("직교행렬", [[0, 1, 0], [0, 0, 1], [1, 0, 0]],
-         [(0, 1), (1, 2), (2, 0)]),
+         [(0, 1), (1, 2), (2, 0)], R"A^{T} A = I"),
     ]
 
     def construct(self):
@@ -805,30 +809,26 @@ class MatrixZoo(InteractiveScene):
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
         blocks = VGroup()
-        for name, values, spots in self.items:
+        for name, values, spots, cond in self.items:
             m = mat(values, GREY_B, h_buff=0.62, v_buff=0.48)
-            m.set_height(1.72)
+            m.set_height(1.6)
             for r, c in spots:
                 m.get_rows()[r][c].set_color(DONE)
-            block = VGroup(caption(name, 24, WHITE), m)
-            block.arrange(DOWN, buff=0.3)
+            rule = Tex(cond).set_color(GREY_B).set_height(0.34)
+            block = VGroup(caption(name, 24, WHITE), m, rule)
+            block.arrange(DOWN, buff=0.26)
             blocks.add(block)
 
-        blocks.arrange_in_grid(2, 2, buff=1.25)
-        blocks.set_height(4.9).move_to(0.55 * DOWN)
+        blocks.arrange_in_grid(2, 2, buff=1.1)
+        blocks.set_height(5.3).move_to(0.45 * DOWN)
 
         for block in blocks:
             self.play(FadeIn(block, UP), run_time=0.7)
             self.wait(0.5)
 
         note = caption("성분이 놓인 자리로 부르는 이름", 26, GREY_B)
-        note.to_edge(DOWN, buff=0.35)
+        note.to_edge(DOWN, buff=0.3)
         self.play(FadeIn(note, UP))
-        self.wait(1.0)
-
-        ortho = Tex(R"Q^{T}Q = I").set_color(DONE)
-        ortho.next_to(blocks[3], RIGHT, buff=0.5).shift(0.2 * UP)
-        self.play(FadeIn(ortho, LEFT))
         self.wait(2)
 
 
