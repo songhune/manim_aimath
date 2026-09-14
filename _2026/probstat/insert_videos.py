@@ -52,6 +52,30 @@ VIDEOS = os.path.join(DECKS, "영상")
 #              1차·2차에 이미 나간 오리엔테이션·PS1_01 덱은 교안의 슬라이드 표와 판서 덱이
 #              그 순서에 맞춰져 있으므로 그대로 둔다.
 # verify() 가 만들어진 파일에서 실제 순서를 다시 센다.
+# PS1_03 (Chapter 3) 삽입표. 영문판·한글판이 같은 장 수·순서라 함께 쓴다. 원본 N 뒤 = 다음 장 앞.
+PS1_03_INSERT = [
+    (2, ["RandomVariableAsFunction"]),        # 3 = 정의 3.1–3.3
+    (6, ["DiscreteVsContinuous"]),            # 7 = 예제 3.4–3.7
+    (7, ["PmfAsBars"]),                       # 8 = 정의 3.4 · 3.5
+    (9, ["Example38Laptops"]),                # 9 = 예제 3.8·3.9 문제, 10 = 풀이
+    (10, ["Example32Helmets"]),               # 11 = (다시) 예제 3.2 cdf
+    (12, ["Example310Cdf"]),                  # 12 = 예제 3.10 문제, 13 = 풀이
+    (13, ["PdfAsArea"]),                      # 14 = 정의 3.6 · 3.7
+    (15, ["Example311Temperature"]),          # 15 = 예제 3.11 문제, 16 = 풀이
+    (17, ["Example312Cdf"]),                  # 17 = 예제 3.12 문제, 18 = 풀이
+    (19, ["Example313Bid"]),                  # 19 = 예제 3.13 문제, 20 = 풀이
+    (20, ["JointDistributionGrid"]),          # 21 = 정의 3.8
+    (22, ["Example314Pens"]),                 # 22 = 예제 3.14 문제, 23 = 풀이
+    (25, ["Example315DriveIn"]),              # 25 = 예제 3.15 문제, 26 = 풀이(그림)
+    (26, ["MarginalAsRowSums"]),              # 27 = 정의 3.10
+    (30, ["ConditionalDistributionSlice"]),   # 31 = 정의 3.11
+    (34, ["Example319Spectrum"]),             # 34 = 예제 3.19 문제, 35·36 = 풀이
+    (37, ["Example320Rectangle"]),            # 37 = 예제 3.20 문제, 38 = 풀이
+    (38, ["IndependenceProductCheck"]),       # 39 = 정의 3.12
+    (44, ["Example322ShelfLife"]),            # 44 = 예제 3.22 문제, 45 = 풀이
+]
+PS1_03_ANCHORS = {name: after + 1 for after, names in PS1_03_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -186,6 +210,23 @@ JOBS = [
                  "ProductRule": 48, "Example236Fuses": 50, "Example238Emergency": 52,
                  "TotalProbability": 53, "Example241Machines": 55, "BayesRule": 56,
                  "Example242Bayes": 58},
+    ),
+
+    dict(
+        # PS1_03 (week04.py, 2026-09-14). 5차(9/15) 는 3.1–3.3 = 원본 1–20, 6차(9/18) 는 3.4 = 원본 21–46.
+        # 개념 영상은 정의 슬라이드 앞, 예제 영상은 문제 슬라이드 다음(풀이 앞). 3.19 는 풀이가 35·36 두 장이라 35 앞.
+        src="PS1_03_restyled.pptx",
+        dst="PS1_03_restyled_영상.pptx",
+        place="before",
+        insert=PS1_03_INSERT,
+        anchors=PS1_03_ANCHORS,
+    ),
+    dict(
+        src="PS1_03_restyled_한글.pptx",
+        dst="PS1_03_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_03_INSERT,
+        anchors=PS1_03_ANCHORS,
     ),
 ]
 
