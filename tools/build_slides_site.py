@@ -62,6 +62,7 @@ CHAPTER_TITLE = {
     "am_01": "Chapter 01 · 연립선형방정식과 행렬",
     "am_02": "Chapter 02 · 가우스-조르당 소거법과 여러 가지 행렬",
     "ps1_02": "Chapter 2 · Probability",
+    "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
 }
 
 
@@ -166,7 +167,16 @@ SECTIONS = {
         ("2.6 Conditional Probability, Independence, and the Product Rule",
          ["ConditionalProbability", "Example234Flights", "Independence", "ProductRule", "Example236Fuses", "Example238Emergency", "SuneungConditional"]),
         ("2.7 Bayes' Rule", ["TotalProbability", "Example241Machines", "BayesRule", "Example242Bayes"]),
-    ]
+    ],
+    "ps1_03": [
+        ("3.1 Concept of a Random Variable", ["RandomVariableAsFunction", "DiscreteVsContinuous"]),
+        ("3.2 Discrete Probability Distributions", ["PmfAsBars", "Example38Laptops", "Example32Helmets", "Example310Cdf"]),
+        ("3.3 Continuous Probability Distributions", ["PdfAsArea", "Example311Temperature", "Example312Cdf", "Example313Bid"]),
+        ("3.4 Joint Probability Distributions",
+         ["JointDistributionGrid", "Example314Pens", "Example315DriveIn", "MarginalAsRowSums",
+          "ConditionalDistributionSlice", "Example319Spectrum", "Example320Rectangle",
+          "IndependenceProductCheck", "Example322ShelfLife"]),
+    ],
 }
 
 

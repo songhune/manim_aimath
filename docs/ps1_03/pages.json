@@ -1,0 +1,135 @@
+[
+ {
+  "scene": "RandomVariableAsFunction",
+  "title": "Random Variable",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/RandomVariableAsFunction.html",
+  "slides": 5,
+  "kb": 1470
+ },
+ {
+  "scene": "DiscreteVsContinuous",
+  "title": "Discrete, Continuous",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/DiscreteVsContinuous.html",
+  "slides": 2,
+  "kb": 1093
+ },
+ {
+  "scene": "PmfAsBars",
+  "title": "Probability Mass Function",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/PmfAsBars.html",
+  "slides": 3,
+  "kb": 1274
+ },
+ {
+  "scene": "Example38Laptops",
+  "title": "Example 3.8",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example38Laptops.html",
+  "slides": 6,
+  "kb": 1651
+ },
+ {
+  "scene": "Example32Helmets",
+  "title": "Example 3.2",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example32Helmets.html",
+  "slides": 3,
+  "kb": 2076
+ },
+ {
+  "scene": "Example310Cdf",
+  "title": "Example 3.10",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example310Cdf.html",
+  "slides": 3,
+  "kb": 1220
+ },
+ {
+  "scene": "PdfAsArea",
+  "title": "Probability Density Function",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/PdfAsArea.html",
+  "slides": 5,
+  "kb": 1469
+ },
+ {
+  "scene": "Example311Temperature",
+  "title": "Example 3.11",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example311Temperature.html",
+  "slides": 3,
+  "kb": 1268
+ },
+ {
+  "scene": "Example312Cdf",
+  "title": "Example 3.12",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example312Cdf.html",
+  "slides": 3,
+  "kb": 1300
+ },
+ {
+  "scene": "Example313Bid",
+  "title": "Example 3.13",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example313Bid.html",
+  "slides": 4,
+  "kb": 1194
+ },
+ {
+  "scene": "JointDistributionGrid",
+  "title": "Joint Probability Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/JointDistributionGrid.html",
+  "slides": 3,
+  "kb": 1133
+ },
+ {
+  "scene": "Example314Pens",
+  "title": "Example 3.14",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example314Pens.html",
+  "slides": 2,
+  "kb": 1774
+ },
+ {
+  "scene": "Example315DriveIn",
+  "title": "Example 3.15",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example315DriveIn.html",
+  "slides": 3,
+  "kb": 1617
+ },
+ {
+  "scene": "MarginalAsRowSums",
+  "title": "Marginal Distributions",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/MarginalAsRowSums.html",
+  "slides": 3,
+  "kb": 1797
+ },
+ {
+  "scene": "ConditionalDistributionSlice",
+  "title": "Conditional Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/ConditionalDistributionSlice.html",
+  "slides": 3,
+  "kb": 1520
+ },
+ {
+  "scene": "Example319Spectrum",
+  "title": "Example 3.19",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example319Spectrum.html",
+  "slides": 4,
+  "kb": 1572
+ },
+ {
+  "scene": "Example320Rectangle",
+  "title": "Example 3.20",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example320Rectangle.html",
+  "slides": 6,
+  "kb": 1555
+ },
+ {
+  "scene": "IndependenceProductCheck",
+  "title": "Statistical Independence",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/IndependenceProductCheck.html",
+  "slides": 3,
+  "kb": 1662
+ },
+ {
+  "scene": "Example322ShelfLife",
+  "title": "Example 3.22",
+  "url": "https://songhune.github.io/manim_aimath/ps1_03/Example322ShelfLife.html",
+  "slides": 2,
+  "kb": 1357
+ }
+]
