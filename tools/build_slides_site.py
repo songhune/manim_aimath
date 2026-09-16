@@ -61,6 +61,7 @@ CHAPTER_TITLE = {
     "am_00": "오리엔테이션 · 강좌소개",
     "am_01": "Chapter 01 · 연립선형방정식과 행렬",
     "am_02": "Chapter 02 · 가우스-조르당 소거법과 여러 가지 행렬",
+    "am_03": "Chapter 03 · 벡터공간과 내적",
     "ps1_02": "Chapter 2 · Probability",
     "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
 }
@@ -156,6 +157,15 @@ SECTIONS = {
                                    "DeterminantCollapse", "InverseAsUndo",
                                    "InverseDenominator"]),
         ("2.3 여러 가지 행렬", ["TransposeRules", "MatrixZoo"]),
+    ],
+    "am_03": [
+        ("3.1 벡터와 벡터공간", ["VectorOperations", "ClosedUnderOperations", "SubspaceLine",
+                          "LinearCombination", "IndependenceCollinear", "SpanLineToPlane",
+                          "BasisDimension", "VectorNorm", "TriangleInequality"]),
+        ("3.2 벡터의 내적", ["InnerProduct", "InnerProductCosine", "CauchySchwarz",
+                        "OrthogonalPythagoras", "ProjectionOntoVector", "InnerProductFamily",
+                        "HammingManhattan"]),
+        ("3.3 벡터의 미분", ["Gradient", "Jacobian", "HessianLaplacian"]),
     ],
     "ps1_02": [
         ("2.1 Sample Space", ["SampleSpace"]),

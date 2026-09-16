@@ -1,0 +1,135 @@
+[
+ {
+  "scene": "VectorOperations",
+  "title": "벡터의 합 · 차 · 스칼라곱",
+  "url": "https://songhune.github.io/manim_aimath/am_03/VectorOperations.html",
+  "slides": 18,
+  "kb": 2020
+ },
+ {
+  "scene": "ClosedUnderOperations",
+  "title": "벡터공간의 조건",
+  "url": "https://songhune.github.io/manim_aimath/am_03/ClosedUnderOperations.html",
+  "slides": 18,
+  "kb": 1516
+ },
+ {
+  "scene": "SubspaceLine",
+  "title": "부분공간 판정법",
+  "url": "https://songhune.github.io/manim_aimath/am_03/SubspaceLine.html",
+  "slides": 18,
+  "kb": 1823
+ },
+ {
+  "scene": "LinearCombination",
+  "title": "선형결합",
+  "url": "https://songhune.github.io/manim_aimath/am_03/LinearCombination.html",
+  "slides": 9,
+  "kb": 1245
+ },
+ {
+  "scene": "IndependenceCollinear",
+  "title": "선형독립과 선형종속",
+  "url": "https://songhune.github.io/manim_aimath/am_03/IndependenceCollinear.html",
+  "slides": 12,
+  "kb": 1600
+ },
+ {
+  "scene": "SpanLineToPlane",
+  "title": "생성집합",
+  "url": "https://songhune.github.io/manim_aimath/am_03/SpanLineToPlane.html",
+  "slides": 13,
+  "kb": 1574
+ },
+ {
+  "scene": "BasisDimension",
+  "title": "기저와 차원",
+  "url": "https://songhune.github.io/manim_aimath/am_03/BasisDimension.html",
+  "slides": 12,
+  "kb": 1380
+ },
+ {
+  "scene": "VectorNorm",
+  "title": "노름",
+  "url": "https://songhune.github.io/manim_aimath/am_03/VectorNorm.html",
+  "slides": 10,
+  "kb": 1339
+ },
+ {
+  "scene": "TriangleInequality",
+  "title": "삼각부등식",
+  "url": "https://songhune.github.io/manim_aimath/am_03/TriangleInequality.html",
+  "slides": 10,
+  "kb": 1546
+ },
+ {
+  "scene": "InnerProduct",
+  "title": "내적",
+  "url": "https://songhune.github.io/manim_aimath/am_03/InnerProduct.html",
+  "slides": 12,
+  "kb": 1461
+ },
+ {
+  "scene": "InnerProductCosine",
+  "title": "사잇각을 이용한 내적",
+  "url": "https://songhune.github.io/manim_aimath/am_03/InnerProductCosine.html",
+  "slides": 9,
+  "kb": 1258
+ },
+ {
+  "scene": "CauchySchwarz",
+  "title": "코시-슈바르츠 부등식",
+  "url": "https://songhune.github.io/manim_aimath/am_03/CauchySchwarz.html",
+  "slides": 8,
+  "kb": 1341
+ },
+ {
+  "scene": "OrthogonalPythagoras",
+  "title": "직교와 피타고라스 정리",
+  "url": "https://songhune.github.io/manim_aimath/am_03/OrthogonalPythagoras.html",
+  "slides": 14,
+  "kb": 1631
+ },
+ {
+  "scene": "ProjectionOntoVector",
+  "title": "정사영",
+  "url": "https://songhune.github.io/manim_aimath/am_03/ProjectionOntoVector.html",
+  "slides": 11,
+  "kb": 1523
+ },
+ {
+  "scene": "InnerProductFamily",
+  "title": "내적공간",
+  "url": "https://songhune.github.io/manim_aimath/am_03/InnerProductFamily.html",
+  "slides": 7,
+  "kb": 1579
+ },
+ {
+  "scene": "HammingManhattan",
+  "title": "해밍 거리와 맨하튼 거리",
+  "url": "https://songhune.github.io/manim_aimath/am_03/HammingManhattan.html",
+  "slides": 13,
+  "kb": 1407
+ },
+ {
+  "scene": "Gradient",
+  "title": "그래디언트",
+  "url": "https://songhune.github.io/manim_aimath/am_03/Gradient.html",
+  "slides": 11,
+  "kb": 1829
+ },
+ {
+  "scene": "Jacobian",
+  "title": "자코비안 행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_03/Jacobian.html",
+  "slides": 7,
+  "kb": 1332
+ },
+ {
+  "scene": "HessianLaplacian",
+  "title": "헤시안 행렬과 라플라시안",
+  "url": "https://songhune.github.io/manim_aimath/am_03/HessianLaplacian.html",
+  "slides": 10,
+  "kb": 1584
+ }
+]
