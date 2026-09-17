@@ -248,7 +248,7 @@ class VectorSpaceAsPlane(InteractiveScene):
         # 1. 모든 화살표의 모임
         rng = np.random.default_rng(3)
         faint = VGroup(*[arrow(p, (float(x), float(y)), GREY_C)
-                         for x, y in rng.uniform(-3.5, 3.5, (14, 2))]).set_opacity(0.35)
+                         for x, y in zip(rng.uniform(-3.5, 3.5, 14), rng.uniform(-2.7, 2.7, 14))]).set_opacity(0.35)
         self.play(FadeIn(faint, lag_ratio=0.05), run_time=1.2)
         r2 = Tex(R"\mathbb{R}^2 = \{(x,\,y)\mid x,\,y\in\mathbb{R}\}").set_color(INK)
         r2.set_width(5.2).next_to(p, RIGHT, buff=0.8).align_to(p, UP).shift(0.2 * DOWN)
@@ -265,7 +265,7 @@ class VectorSpaceAsPlane(InteractiveScene):
         ghost = DashedLine(p.c2p(2, 1), p.c2p(1, 3)).set_stroke(CALM, 2)
         self.play(GrowArrow(x), GrowArrow(y))
         self.play(ShowCreation(ghost), GrowArrow(s))
-        two = arrow(p, (-2, 4), DONE)
+        two = arrow(p, (-1.5, 3), DONE)
         self.play(FadeOut(ghost), FadeOut(s), GrowArrow(two))
         note2 = caption("더해도 늘려도 평면 안", 24, DONE).move_to(note)
         self.play(FadeTransform(note, note2))
