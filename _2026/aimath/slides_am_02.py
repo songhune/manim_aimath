@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_02 (교재 Chapter 2 가우스-조르당 소거법과 여러 가지 행렬) 영상 16편의 클릭 진행형 판.
+"""AM_02 (교재 Chapter 2 가우스-조르당 소거법과 여러 가지 행렬) 영상 21편(본문 16 + 구름EDU 5)의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_02 --module _2026/aimath/slides_am_02.py
 
@@ -28,4 +28,10 @@ PAGES = build(globals(), [
     ("InverseDenominator", "역행렬의 분모"),
     ("TransposeRules", "전치행렬의 성질"),
     ("MatrixZoo", "여러 가지 행렬"),
+    # 구름EDU 6~10번 — 문제 코드가 하는 일 (2026-09-18)
+    ("GoormHstack", "np.hstack 과 첨가행렬"),
+    ("GoormRrefSolve", "rref 와 마지막 열"),
+    ("GoormMatrixPower", "matrix_power 와 역행렬"),
+    ("GoormProductInverse", "곱의 역행렬 코드"),
+    ("GoormTriuTril", "triu · tril 과 판별"),
 ], (week03,))

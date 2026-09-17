@@ -1264,3 +1264,287 @@ class RrefCodeReview(InteractiveScene):
         VGroup(why1, why2).arrange(DOWN, buff=0.25).next_to(answer, DOWN, buff=0.5)
         self.play(FadeIn(why1, UP)); self.wait(0.9)
         self.play(FadeIn(why2, UP)); self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 구름EDU 6~10번 — 문제 코드가 하는 일 (2026-09-18)
+#
+# 문제마다 학생이 치는 numpy 한두 줄이 배열을 어떻게 바꾸는지 그림으로 본다.
+# 값은 각 문제의 예제 입력 1(교재 예제 2-1 · 2-3 · 정리 2-4 · 2.3 절)과 같다.
+# 슬라이드에는 넣지 않고 클릭 진행형 페이지(am_02 하단)에만 둔다.
+# ─────────────────────────────────────────────────────────────
+def shape_tag(mob, text, color=GREY_B):
+    """배열 아래에 shape 를 적는다."""
+    t = Text(text, font="D2Coding", font_size=22).set_color(color)
+    return t.next_to(mob, DOWN, buff=0.18)
+
+
+class GoormHstack(InteractiveScene):
+    """6번 첨가행렬. b 를 세워(b.T) A 옆에 가로로 붙인다(np.hstack)."""
+    A = [[1, 3, 2], [2, 2, 0], [-3, 1, 1]]
+    b = [2, 0, -2]
+
+    def construct(self):
+        head = slide_title("np.hstack 과 첨가행렬")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("구름EDU 6번 · 예제 2-1 의 값", 22, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+
+        A = mat(self.A, ACCENT, h_buff=0.75, v_buff=0.55)
+        brow = mat([self.b], CALM, h_buff=0.75, v_buff=0.55)
+        A.move_to(3.4 * LEFT + 0.3 * UP)
+        brow.next_to(A, RIGHT, buff=1.6).align_to(A, UP)
+        ta = shape_tag(A, "A.shape = (3, 3)")
+        tb = shape_tag(brow, "b.shape = (1, 3)")
+        self.play(FadeIn(A), FadeIn(ta), FadeIn(brow), FadeIn(tb))
+        self.wait(0.6)
+
+        # b.T — 행 하나가 열 하나로 선다
+        line1 = code("b = np.array([[2, 0, -2]])", 22).to_edge(DOWN, buff=1.5)
+        self.play(FadeIn(line1, UP))
+        bcol = mat([[v] for v in self.b], CALM, h_buff=0.75, v_buff=0.55)
+        bcol.move_to(brow).align_to(A, UP)
+        tbc = shape_tag(bcol, "b.T.shape = (3, 1)")
+        line2 = code("b.T", 22).move_to(line1)
+        self.play(FadeTransform(brow, bcol), FadeTransform(tb, tbc), FadeTransform(line1, line2))
+        note = caption("행 하나를 열 하나로 세움", 24, CALM).next_to(tbc, DOWN, buff=0.35)
+        self.play(FadeIn(note, UP))
+        self.wait(0.8)
+
+        # np.hstack — 가로로 이어 붙인다
+        line3 = code("C = np.hstack((A, b.T))", 22).move_to(line2)
+        self.play(FadeTransform(line2, line3), FadeOut(note))
+        target = augmented([row + [v] for row, v in zip(self.A, self.b)], 3, WHITE, h_buff=0.75, v_buff=0.55)
+        target.move_to(0.3 * UP)
+        self.play(FadeOut(ta), FadeOut(tbc),
+                  bcol.animate.next_to(A, RIGHT, buff=0.35), run_time=0.8)
+        self.play(FadeTransform(VGroup(A, bcol), target))
+        tc = shape_tag(target, "C.shape = (3, 4)")
+        self.play(FadeIn(tc))
+        note2 = caption("행 수 같은 배열을 가로로 붙임", 24, DONE).next_to(tc, DOWN, buff=0.35)
+        self.play(FadeIn(note2, UP))
+        self.wait(1.0)
+
+        # 함정 — 1차원 배열은 전치해도 그대로
+        self.play(FadeOut(VGroup(target, tc, note2, line3)))
+        bad = code("b = np.array([2, 0, -2])      b.shape = (3,)", 22).move_to(1.0 * UP)
+        bad2 = code("b.T.shape = (3,)", 22, WARN).next_to(bad, DOWN, buff=0.35)
+        bad3 = code("np.hstack((A, b.T))   -> ValueError", 22, WARN).next_to(bad2, DOWN, buff=0.35)
+        for m in (bad, bad2, bad3):
+            self.play(FadeIn(m, UP), run_time=0.5)
+        last = caption("1차원은 전치해도 그대로", 26, WARN).next_to(bad3, DOWN, buff=0.6)
+        self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class GoormRrefSolve(InteractiveScene):
+    """7번 연립선형방정식의 해. rref 를 부르고 마지막 열을 꺼낸다."""
+    start = [[1, 3, 2, 2], [2, 2, 0, 0], [-3, 1, 1, -2]]
+    end = [[1, 0, 0, 1], [0, 1, 0, -1], [0, 0, 1, 2]]
+
+    def construct(self):
+        head = slide_title("rref 와 마지막 열")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("구름EDU 7번 · 예제 2-1 의 값", 22, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+
+        src = augmented(self.start, 3, WHITE, h_buff=0.7, v_buff=0.55)
+        src.move_to(3.6 * LEFT + 0.4 * UP)
+        s1 = shape_tag(src, "augmented_A")
+        self.play(FadeIn(src), FadeIn(s1))
+        line1 = code("R = rref(augmented_A)", 22).to_edge(DOWN, buff=1.5)
+        self.play(FadeIn(line1, UP))
+        arrow = Arrow(src.get_right(), src.get_right() + 1.6 * RIGHT, buff=0.2).set_color(GREY_B)
+        lab = caption("행 연산 반복", 20, GREY_B).next_to(arrow, UP, buff=0.1)
+        dst = augmented(self.end, 3, DONE, h_buff=0.7, v_buff=0.55)
+        dst.next_to(arrow, RIGHT, buff=0.2).align_to(src, UP)
+        s2 = shape_tag(dst, "R")
+        self.play(GrowArrow(arrow), FadeIn(lab))
+        self.play(FadeIn(dst), FadeIn(s2))
+        note = caption("왼쪽은 단위행렬 · 오른쪽에 해", 24, DONE).next_to(VGroup(src, dst), DOWN, buff=0.8)
+        self.play(FadeIn(note, UP))
+        self.wait(0.8)
+
+        # R[:, n] — 모든 행의 n 번 열
+        line2 = code("x = R[:, n]", 22).move_to(line1)
+        self.play(FadeTransform(line1, line2))
+        # get_columns() 는 처음 만든 묶음을 다시 주므로 옮긴 뒤엔 자리가 옛것이다. 성분에서 새로 묶는다.
+        entries = dst.matrix.get_entries()
+        fresh = [VGroup(*entries[k::4]) for k in range(4)]
+        col = fresh[3]
+        mark = box(col, DONE, 0.12)
+        self.play(ShowCreation(mark))
+        idx = VGroup(*[Text(str(k), font="D2Coding", font_size=20).set_color(GREY_B)
+                       for k in range(4)])
+        for k, c in enumerate(fresh):
+            idx[k].next_to(c, UP, buff=0.15)
+        self.play(FadeIn(idx))
+        note2 = caption("모든 행의 n 번 열", 24, DONE).move_to(note)
+        self.play(FadeTransform(note, note2))
+        self.wait(0.8)
+
+        x = Tex(R"\mathbf{x} = (1,\,-1,\,2)").set_color(DONE).next_to(note2, DOWN, buff=0.4)
+        self.play(Write(x))
+        last = code("int(round(float(value)))   1.0000000000000002 -> 1", 20, GREY_B).to_edge(DOWN, buff=0.7)
+        self.play(FadeOut(line2), FadeIn(last, UP))
+        self.wait(2)
+
+
+class GoormMatrixPower(InteractiveScene):
+    """8번 역행렬. matrix_power 의 지수가 -1 이면 역행렬이고, ** -1 은 성분별이다."""
+    A = [[2, 3], [5, 7]]
+
+    def construct(self):
+        head = slide_title("matrix_power 와 역행렬")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("구름EDU 8번 · 예제 2-3 의 값", 22, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+
+        A = mat(self.A, ACCENT, h_buff=0.75, v_buff=0.55).move_to(4.6 * LEFT + 0.6 * UP)
+        al = Tex("A").set_color(ACCENT).next_to(A, UP, buff=0.2)
+        self.play(FadeIn(A), FadeIn(al))
+
+        cases = [
+            ("np.linalg.matrix_power(A, 2)", [[19, 27], [45, 64]], R"A\,A", INK),
+            ("np.linalg.matrix_power(A, 0)", [[1, 0], [0, 1]], "I", INK),
+            ("np.linalg.matrix_power(A, -1)", [[-7, 3], [5, -2]], R"A^{-1}", DONE),
+        ]
+        line = code(cases[0][0], 22).to_edge(DOWN, buff=1.5)
+        self.play(FadeIn(line, UP))
+        shown = None
+        for k, (src, values, sym, color) in enumerate(cases):
+            m = mat(values, color, h_buff=0.75, v_buff=0.55).move_to(0.6 * UP + 0.6 * LEFT)
+            s = Tex(sym).set_color(color).next_to(m, UP, buff=0.2)
+            new_line = code(src, 22).move_to(line)
+            if shown is None:
+                self.play(FadeIn(m), FadeIn(s))
+            else:
+                self.play(FadeTransform(shown, VGroup(m, s)), FadeTransform(line, new_line))
+                line = new_line
+            shown = VGroup(m, s)
+            self.wait(0.7)
+        note = caption("지수 -1 이 역행렬", 26, DONE).next_to(shown, RIGHT, buff=1.0)
+        self.play(FadeIn(note, UP))
+        self.wait(0.6)
+
+        check = Tex(R"A\,A^{-1} = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}").set_color(DONE)
+        check.set_width(4.2).next_to(note, DOWN, buff=0.5).align_to(note, LEFT)
+        self.play(Write(check))
+        self.wait(0.8)
+
+        # 함정 — A ** -1
+        bad_line = code("A ** -1", 22, WARN).move_to(line)
+        bad = mat([["1/2", "1/3"], ["1/5", "1/7"]], WARN, h_buff=0.85, v_buff=0.55).move_to(shown[0])
+        bs = caption("성분별 거듭제곱", 22, WARN).next_to(bad, UP, buff=0.2)
+        self.play(FadeTransform(line, bad_line), FadeTransform(shown, VGroup(bad, bs)),
+                  FadeOut(note), FadeOut(check))
+        last = caption("역행렬이 아님", 26, WARN).next_to(bad, RIGHT, buff=1.0)
+        self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class GoormProductInverse(InteractiveScene):
+    """9번 곱의 역행렬. (AB)^{-1} 을 구하고 A^{-1}B^{-1} 과 견줄 때 반올림이 필요한 이유."""
+    A = [[2, 3], [5, 7]]
+    B = [[1, 1], [0, 1]]
+
+    def construct(self):
+        head = slide_title("곱의 역행렬 코드")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("구름EDU 9번 · 정리 2-4", 22, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+
+        def named(sym, values, color):
+            g = VGroup(Tex(sym).set_color(color), mat(values, color, h_buff=0.75, v_buff=0.5))
+            return g.arrange(DOWN, buff=0.2)
+
+        top = VGroup(named("A", self.A, ACCENT), named("B", self.B, CALM),
+                     named("AB", [[2, 5], [5, 12]], INK)).arrange(RIGHT, buff=1.2)
+        top.scale(0.85).move_to(1.5 * UP)
+        self.play(FadeIn(top))
+        line = code("C = np.linalg.matrix_power(np.matmul(A, B), -1)", 21).to_edge(DOWN, buff=1.3)
+        self.play(FadeIn(line, UP))
+        C = named("C", [[-12, 5], [5, -2]], DONE).scale(0.85)
+        wrong = named(R"A^{-1}B^{-1}", [[-7, 10], [5, -7]], WARN).scale(0.85)
+        right = named(R"B^{-1}A^{-1}", [[-12, 5], [5, -2]], DONE).scale(0.85)
+        bottom = VGroup(C, wrong, right).arrange(RIGHT, buff=1.2).move_to(1.3 * DOWN)
+        self.play(FadeIn(C, UP))
+        self.wait(0.5)
+        line2 = code("wrong = np.matmul(np.linalg.matrix_power(A, -1), np.linalg.matrix_power(B, -1))", 18).move_to(line)
+        self.play(FadeTransform(line, line2), FadeIn(wrong, UP))
+        self.wait(0.5)
+        self.play(FadeIn(right, UP))
+        marks = VGroup(*[box(wrong[1].get_entries()[k], WARN, 0.08) for k in (0, 1, 3)])
+        self.play(ShowCreation(marks))
+        note = caption("순서를 뒤집은 쪽이 C 와 같음", 24, DONE).next_to(bottom, DOWN, buff=0.35)
+        self.play(FadeIn(note, UP))
+        self.wait(0.9)
+
+        # 반올림 — 실수 배열은 바로 견줄 수 없다
+        self.play(FadeOut(VGroup(top, bottom, marks, note, line2)))
+        raw = code("C[0, 0] = -12.000000000000002", 22, WARN).move_to(1.2 * UP)
+        rint = code("np.rint(C)[0, 0] = -12.0", 22, DONE).next_to(raw, DOWN, buff=0.4)
+        eq = code("same = np.array_equal(np.rint(C), np.rint(wrong))", 21).next_to(rint, DOWN, buff=0.6)
+        for m in (raw, rint, eq):
+            self.play(FadeIn(m, UP), run_time=0.5)
+        last = caption("반올림한 뒤 견줌", 26, DONE).next_to(eq, DOWN, buff=0.6)
+        self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class GoormTriuTril(InteractiveScene):
+    """10번 여러 가지 행렬 판별. triu · tril 이 지운 것과 원래를 견주면 판별이 된다."""
+    A = [[1, 2, 3], [2, 5, 4], [3, 4, 9]]
+
+    def construct(self):
+        head = slide_title("triu · tril 과 판별")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        tag = caption("구름EDU 10번 · 예제 입력 1", 22, GREY_B).next_to(head, DOWN, buff=0.25).align_to(head, LEFT)
+        self.play(FadeIn(tag))
+
+        A = mat(self.A, ACCENT, h_buff=0.7, v_buff=0.5).move_to(4.4 * LEFT + 0.5 * UP)
+        al = Tex("A").set_color(ACCENT).next_to(A, UP, buff=0.2)
+        self.play(FadeIn(A), FadeIn(al))
+
+        def zeroed(keep):
+            vals = [[self.A[i][j] if keep(i, j) else 0 for j in range(3)] for i in range(3)]
+            m = mat(vals, INK, h_buff=0.7, v_buff=0.5)
+            for i in range(3):
+                for j in range(3):
+                    if not keep(i, j):
+                        m.get_rows()[i][j].set_color(WARN)
+            return m
+
+        line = code("np.triu(A)", 22).to_edge(DOWN, buff=1.5)
+        self.play(FadeIn(line, UP))
+        up = zeroed(lambda i, j: i <= j).move_to(0.5 * UP + 0.4 * LEFT)
+        ul = caption("주대각선 아래를 0 으로", 22, GREY_B).next_to(up, UP, buff=0.2)
+        self.play(FadeTransform(A.copy(), up), FadeIn(ul))
+        self.wait(0.6)
+        cmp1 = code("np.array_equal(A, np.triu(A)) -> False", 20, WARN).next_to(up, RIGHT, buff=0.8)
+        self.play(FadeIn(cmp1, UP))
+        self.wait(0.6)
+
+        line2 = code("np.tril(A)", 22).move_to(line)
+        low = zeroed(lambda i, j: i >= j).move_to(up)
+        ll = caption("주대각선 위를 0 으로", 22, GREY_B).next_to(low, UP, buff=0.2)
+        self.play(FadeTransform(line, line2), FadeTransform(VGroup(up, ul), VGroup(low, ll)))
+        cmp2 = code("np.array_equal(A, np.tril(A)) -> False", 20, WARN).move_to(cmp1).align_to(cmp1, LEFT)
+        self.play(FadeTransform(cmp1, cmp2))
+        self.wait(0.6)
+
+        line3 = code("A.T", 22).move_to(line2)
+        at = mat(self.A, INK, h_buff=0.7, v_buff=0.5).move_to(up)
+        tl = caption("전치해도 그대로", 22, GREY_B).next_to(at, UP, buff=0.2)
+        self.play(FadeTransform(line2, line3), FadeTransform(VGroup(low, ll), VGroup(at, tl)))
+        cmp3 = code("np.array_equal(A, A.T) -> True", 20, DONE).move_to(cmp2).align_to(cmp2, LEFT)
+        self.play(FadeTransform(cmp2, cmp3))
+        self.wait(0.6)
+
+        note = caption("지운 것이 원래와 같은지 견줌", 24, DONE).next_to(VGroup(A, at), DOWN, buff=0.7)
+        self.play(FadeIn(note, UP))
+        outs = code_block(["symmetric = True", "upper = False", "lower = False",
+                           "diagonal = bool(upper and lower) = False"], 19)
+        outs.next_to(note, DOWN, buff=0.35)
+        self.play(FadeOut(line3), FadeIn(outs, lag_ratio=0.2))
+        self.wait(2)

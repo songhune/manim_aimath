@@ -157,6 +157,8 @@ SECTIONS = {
                                    "DeterminantCollapse", "InverseAsUndo",
                                    "InverseDenominator"]),
         ("2.3 여러 가지 행렬", ["TransposeRules", "MatrixZoo"]),
+        ("구름EDU 6~10번 · 문제 코드가 하는 일", ["GoormHstack", "GoormRrefSolve", "GoormMatrixPower",
+                                       "GoormProductInverse", "GoormTriuTril"]),
     ],
     "am_03": [
         ("3.1 도입 · 좌표평면", ["VectorsOnCoordinatePlane", "VectorSpaceAsPlane"]),
