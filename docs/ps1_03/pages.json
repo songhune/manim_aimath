@@ -73,15 +73,15 @@
   "scene": "JointDistributionGrid",
   "title": "Joint Probability Distribution",
   "url": "https://songhune.github.io/manim_aimath/ps1_03/JointDistributionGrid.html",
-  "slides": 3,
-  "kb": 1133
+  "slides": 8,
+  "kb": 2227
  },
  {
   "scene": "Example314Pens",
   "title": "Example 3.14",
   "url": "https://songhune.github.io/manim_aimath/ps1_03/Example314Pens.html",
-  "slides": 2,
-  "kb": 1774
+  "slides": 11,
+  "kb": 3391
  },
  {
   "scene": "Example315DriveIn",

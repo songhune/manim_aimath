@@ -22,8 +22,8 @@
     Example312Cdf                  17 뒤    예제 3.12 (풀이 18 앞. 왼쪽부터 쌓은 넓이)
     Example313Bid                  19 뒤    예제 3.13 (풀이 20 앞. 직사각형 밀도)
     6차 9/18
-    JointDistributionGrid          21 앞    정의 3.8 (3×3 격자)
-    Example314Pens                 22 뒤    예제 3.14 (풀이 23 앞. 표 3.1 채우기)
+    JointDistributionGrid          21 앞    정의 3.8 (이산 pmf 격자 → 연속 pdf 부피, 2026-09-18 개정)
+    Example314Pens                 22 뒤    예제 3.14 (풀이 23 앞. 단계 넷을 걸고 하나씩, 2026-09-18 개정)
     Example315DriveIn              25 뒤    예제 3.15 (그림 26 앞. 단위 정사각형 위의 부피)
     MarginalAsRowSums              27 앞    정의 3.10 (행 합 · 열 합)
     ConditionalDistributionSlice   31 앞    정의 3.11 (한 행만 남기고 늘리기)
@@ -585,31 +585,101 @@ class Example313Bid(InteractiveScene):
 # 11. 결합분포 = 격자 — 슬라이드 21 (정의 3.8) 앞
 # ─────────────────────────────────────────────────────────────
 class JointDistributionGrid(InteractiveScene):
-    """X(파랑 개수)·Y(빨강 개수) 두 축의 3×3 격자. 칸 하나가 사건 (X=x, Y=y)."""
+    """결합분포를 이산·연속 둘로 나눠 보인다 (2026-09-18 개정. 전에는 격자만 보이고 pmf 라는 말도 pdf 예도 없었다).
+    앞: 이산 — 3×3 격자가 결합확률질량함수. 칸 하나 = 사건 (X=x, Y=y), 조건 셋, 영역 A 의 확률 = 칸의 합.
+    뒤: 연속 — 단위 정사각형 위의 높이가 결합확률밀도함수. 전체 부피 1, 영역 A 위의 부피 = 이중적분."""
 
     def construct(self):
         head = slide_title("Joint Probability Distribution")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
+        # ── 1. 이산: 결합 pmf ───────────────────────────────────
+        kind = label("discrete: joint probability mass function", 26, ACCENT).next_to(head, DOWN, buff=0.3).align_to(head[0], LEFT)
+        self.play(FadeIn(kind))
+
         vals = [[R"\ ", R"\ ", R"\ "] for _ in range(3)]
         table, cells, texts, heads = grid_table(vals, ["0", "1", "2"], ["0", "1", "2"], w=1.3, h=0.9)
-        table.move_to([-2.2, -0.5, 0])
-        x_tag = label("x = blue pens", 24, ACCENT).next_to(table, UP, buff=0.5)
-        y_tag = label("y = red pens", 24, WARN).next_to(table, LEFT, buff=0.6)
+        table.move_to([-2.4, -0.9, 0])
+        x_tag = label("x = blue pens", 24, ACCENT).next_to(table, UP, buff=0.45)
+        y_tag = label("y = red pens", 24, WARN).next_to(table, LEFT, buff=0.5)
         self.play(ShowCreation(table[0]), FadeIn(heads), FadeIn(x_tag), FadeIn(y_tag))
         self.wait(0.4)
 
+        # 칸 하나 = 사건 하나
         one = cells[(0, 1)]
         hl = one.copy().set_fill(MEAN_COLOR, 0.5).set_stroke(MEAN_COLOR, 3)
-        ev = Tex(R"f(1, 0) = P(X = 1, Y = 0)").scale(0.8).set_color(MEAN_COLOR).move_to([3.6, 1.2, 0])
-        self.play(FadeIn(hl), Write(ev))
+        ev = Tex(R"f(1, 0) = P(X = 1,\ Y = 0)").scale(0.8).set_color(MEAN_COLOR).move_to([3.5, 1.5, 0])
+        ev_tag = note("one cell, one event", 22, MEAN_COLOR).next_to(ev, DOWN, buff=0.15).align_to(ev, LEFT)
+        self.play(FadeIn(hl), Write(ev), FadeIn(ev_tag))
+        self.wait(1.0)
+
+        # 조건 셋: 0 이상, 다 더하면 1
+        all_cells = VGroup(*[c.copy().set_fill(ACCENT, 0.35).set_stroke(ACCENT, 2) for c in cells.values()])
+        c1 = Tex(R"f(x, y) \ge 0").scale(0.85).set_color(INK)
+        c2 = Tex(R"\sum_x \sum_y f(x, y) = 1").scale(0.85).set_color(INK)
+        C = VGroup(c1, c2).arrange(DOWN, buff=0.35, aligned_edge=LEFT).move_to([3.5, -0.3, 0]).align_to(ev, LEFT)
+        self.play(FadeOut(hl), FadeOut(ev_tag), Write(c1))
+        self.play(LaggedStartMap(FadeIn, all_cells, lag_ratio=0.08), Write(c2), run_time=1.4)
+        self.wait(1.0)
+
+        # 영역 A 의 확률 = 그 칸들의 합
+        region = [(0, 0), (0, 1), (1, 0)]
+        hls = VGroup(*[cells[k].copy().set_fill(MEAN_COLOR, 0.5).set_stroke(MEAN_COLOR, 3) for k in region])
+        c3 = Tex(R"P[(X, Y) \in A] = \sum_{A} f(x, y)").scale(0.85).set_color(MEAN_COLOR).next_to(C, DOWN, buff=0.45).align_to(ev, LEFT)
+        a_tag = Tex(R"A:\ x + y \le 1").scale(0.7).set_color(MEAN_COLOR).next_to(c3, DOWN, buff=0.15).align_to(ev, LEFT)
+        self.play(FadeOut(all_cells), FadeIn(hls), Write(c3), FadeIn(a_tag))
+        self.wait(1.6)
+
+        # ── 2. 연속: 결합 pdf ───────────────────────────────────
+        discrete = VGroup(kind, table, x_tag, y_tag, ev, C, c3, a_tag, hls)
+        kind2 = label("continuous: joint probability density function", 26, CALM).move_to(kind).align_to(head[0], LEFT)
+        self.play(FadeOut(discrete), FadeIn(kind2))
+
+        S = 3.4
+        x0, y0 = -5.4, -2.9
+        sq = Square(side_length=S).set_stroke(GREY_B, 2).move_to([x0 + S / 2, y0 + S / 2, 0])
+        shade = VGroup()
+        n = 10
+        for i in range(n):
+            for j in range(n):
+                x, y = (j + 0.5) / n, (i + 0.5) / n
+                v = (x + y) / 2.0
+                c = Square(side_length=S / n).set_stroke(width=0).set_fill(CALM, 0.12 + 0.65 * v)
+                c.move_to([x0 + (j + 0.5) * S / n, y0 + (i + 0.5) * S / n, 0])
+                shade.add(c)
+        xl = VGroup(Tex("0").scale(0.6), Tex("1").scale(0.6)).set_color(GREY_B)
+        xl[0].next_to(sq.get_corner(DL), DOWN, buff=0.12)
+        xl[1].next_to(sq.get_corner(DR), DOWN, buff=0.12)
+        yl = Tex("1").scale(0.6).set_color(GREY_B).next_to(sq.get_corner(UL), LEFT, buff=0.12)
+        xt = Tex("x").scale(0.7).set_color(GREY_B).next_to(sq, DOWN, buff=0.35)
+        yt = Tex("y").scale(0.7).set_color(GREY_B).next_to(sq, LEFT, buff=0.35)
+        f_tag = Tex(R"f(x, y)").scale(0.85).set_color(CALM).next_to(sq, UP, buff=0.3)
+        h_tag = note("shade = height = density", 22, CALM).next_to(f_tag, RIGHT, buff=0.5)
+        self.play(ShowCreation(sq), FadeIn(xl), FadeIn(yl), FadeIn(xt), FadeIn(yt), FadeIn(f_tag))
+        self.play(LaggedStartMap(FadeIn, shade, lag_ratio=0.01), FadeIn(h_tag), run_time=1.2)
+        self.wait(0.6)
+
+        d1 = Tex(R"f(x, y) \ge 0").scale(0.85).set_color(INK)
+        d2 = Tex(R"\int_{-\infty}^{\infty}\!\int_{-\infty}^{\infty} f(x, y)\,dx\,dy = 1").scale(0.85).set_color(INK)
+        D = VGroup(d1, d2).arrange(DOWN, buff=0.35, aligned_edge=LEFT).move_to([3.3, 0.9, 0])
+        v_tag = note("total volume 1", 22, GREY_B).next_to(d2, DOWN, buff=0.15).align_to(d1, LEFT)
+        self.play(Write(d1))
+        self.play(Write(d2), FadeIn(v_tag))
         self.wait(0.8)
 
-        all_cells = VGroup(*[c.copy().set_fill(ACCENT, 0.35).set_stroke(ACCENT, 2) for c in cells.values()])
-        total = Tex(R"\sum_x \sum_y f(x, y) = 1").scale(0.85).set_color(INK).next_to(ev, DOWN, buff=0.6).align_to(ev, LEFT)
-        self.play(FadeOut(hl), LaggedStartMap(FadeIn, all_cells, lag_ratio=0.08), Write(total), run_time=1.4)
-        nonneg = Tex(R"f(x, y) \ge 0").scale(0.85).set_color(INK).next_to(total, DOWN, buff=0.4).align_to(ev, LEFT)
-        self.play(FadeIn(nonneg))
+        rect = Rectangle(width=S * 0.5, height=S * 0.3).set_stroke(MEAN_COLOR, 3).set_fill(MEAN_COLOR, 0.35)
+        rect.move_to([x0 + S * 0.3, y0 + S * 0.55, 0])
+        a_lab = Tex("A").scale(0.8).set_color(MEAN_COLOR).move_to(rect)
+        d3 = Tex(R"P[(X, Y) \in A] = \iint_{A} f(x, y)\,dx\,dy").scale(0.85).set_color(MEAN_COLOR).next_to(D, DOWN, buff=0.7).align_to(d1, LEFT)
+        vol_tag = note("volume over A", 22, MEAN_COLOR).next_to(d3, DOWN, buff=0.15).align_to(d1, LEFT)
+        self.play(FadeIn(rect), FadeIn(a_lab))
+        self.play(Write(d3), FadeIn(vol_tag))
+        self.wait(1.2)
+
+        # 나란히: 합 ↔ 적분
+        pair = VGroup(note("discrete: sum over cells", 22, ACCENT), note("continuous: volume over region", 22, CALM))
+        pair.arrange(DOWN, buff=0.15, aligned_edge=LEFT).next_to(vol_tag, DOWN, buff=0.5).align_to(d1, LEFT)
+        self.play(FadeIn(pair))
         self.wait(2)
 
 
@@ -617,52 +687,111 @@ class JointDistributionGrid(InteractiveScene):
 # 12. 예제 3.14 볼펜 — 슬라이드 22 뒤 (풀이 23 앞)
 # ─────────────────────────────────────────────────────────────
 class Example314Pens(InteractiveScene):
-    """파랑 3·빨강 2·초록 3 에서 둘. 칸마다 C(3,x)C(2,y)C(3,2−x−y)/28. 표 3.1 을 채우고 x+y≤1 칸을 더한다."""
+    """파랑 3·빨강 2·초록 3 에서 둘. 2026-09-18 개정: 풀이 단계 넷을 먼저 목록으로 걸어 두고 한 단계씩 진행한다.
+    1 전체 경우 C(8,2)=28 → 2 칸 하나의 셈(세 조합의 곱, 인자를 하나씩) → 3 표 3.1 채우기(첫 칸은 풀어서, 나머지는 빠르게)
+    → 4 영역 A 의 칸을 더해 9/14. 전에는 첫 장면에 상자·개수·공식이 한꺼번에 나왔다."""
 
     def construct(self):
         head = slide_title("Example 3.14")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
+        # 소재: 볼펜 여덟 자루, 둘을 고른다
         pens = VGroup(*[letter_chip("B", 0.5, ACCENT) for _ in range(3)],
                       *[letter_chip("R", 0.5, WARN) for _ in range(2)],
                       *[letter_chip("G", 0.5, GREEN_PEN) for _ in range(3)])
-        pens.arrange(RIGHT, buff=0.12).move_to([-3.4, 2.2, 0])
+        pens.arrange(RIGHT, buff=0.12).move_to([-3.6, 2.15, 0])
         box = panel(pens, MUTED, buff=0.18)
-        pick = Tex(R"\binom{8}{2} = 28").scale(0.85).set_color(INK).next_to(box, RIGHT, buff=0.6)
-        self.play(FadeIn(box), LaggedStartMap(FadeIn, pens, lag_ratio=0.06), Write(pick))
+        ask = note("pick 2 pens", 22, INK).next_to(box, DOWN, buff=0.18)
+        xy = Tex(R"X = \text{blue},\quad Y = \text{red}", t2c={R"\text{blue}": ACCENT, R"\text{red}": WARN}).scale(0.7).next_to(ask, DOWN, buff=0.12)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, pens, lag_ratio=0.06))
+        self.play(FadeIn(ask), FadeIn(xy))
+        self.wait(0.6)
 
+        # 풀이 단계 넷을 먼저 걸어 둔다
+        steps = VGroup(label("1. count all pairs", 24, INK),
+                       label("2. count pairs per cell", 24, INK),
+                       label("3. fill Table 3.1", 24, INK),
+                       label("4. add the region A", 24, INK))
+        steps.arrange(DOWN, buff=0.22, aligned_edge=LEFT).move_to([3.4, 1.75, 0])
+        steps_box = panel(steps, GREY_C, buff=0.22)
+        self.play(FadeIn(steps_box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        self.wait(0.8)
+
+        def focus(k):
+            anims = []
+            for i, st in enumerate(steps):
+                anims.append(st.animate.set_color(MEAN_COLOR if i == k else GREY_C))
+            return AnimationGroup(*anims)
+
+        # ── 1. 전체 경우의 수
+        self.play(focus(0))
+        two = VGroup(ring(pens[1], MEAN_COLOR, 0.04), ring(pens[6], MEAN_COLOR, 0.04))
+        pick = Tex(R"\binom{8}{2} = 28").scale(0.9).set_color(INK).next_to(box, RIGHT, buff=0.5)
+        self.play(ShowCreation(two))
+        self.play(Write(pick))
+        self.play(FadeOut(two))
+        self.wait(0.8)
+
+        # ── 2. 칸 하나의 셈: 인자를 하나씩
+        self.play(focus(1))
         formula = Tex(R"f(x, y) = \frac{\binom{3}{x}\binom{2}{y}\binom{3}{2-x-y}}{28}",
                       t2c={R"\binom{3}{x}": ACCENT, R"\binom{2}{y}": WARN, R"\binom{3}{2-x-y}": GREEN_PEN}).scale(0.85)
-        formula.move_to([3.6, 0.9, 0])
-        self.play(Write(formula))
+        formula.move_to([3.4, -0.35, 0])
+        self.play(Write(formula), run_time=1.2)
+        self.wait(0.3)
+        for chips, key, color, words in ((pens[:3], R"\binom{3}{x}", ACCENT, "x blue from 3"),
+                                         (pens[3:5], R"\binom{2}{y}", WARN, "y red from 2"),
+                                         (pens[5:], R"\binom{3}{2-x-y}", GREEN_PEN, "the rest, green")):
+            marks = VGroup(*[ring(c, color, 0.04) for c in chips])
+            fl = FlashAround(formula[key], color=color, buff=0.08)
+            tag = note(words, 22, color).next_to(formula, DOWN, buff=0.25)
+            self.play(ShowCreation(marks), fl, FadeIn(tag), run_time=1.0)
+            self.wait(0.5)
+            self.play(FadeOut(marks), FadeOut(tag), run_time=0.25)
+        self.wait(0.4)
 
+        # ── 3. 표 3.1 채우기 — 첫 칸은 풀어서, 나머지는 빠르게
+        self.play(focus(2))
         blank = [[R"\ "] * 3 for _ in range(3)]
         table, cells, texts, heads = grid_table(blank, ["0", "1", "2"], ["0", "1", "2"], w=1.2, h=0.8)
-        table.move_to([-2.8, -1.3, 0])
+        table.move_to([-2.9, -1.55, 0])
         self.play(ShowCreation(table[0]), FadeIn(heads))
 
-        order = [(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (2, 0), (1, 2), (2, 1), (2, 2)]
+        first = Tex(R"f(0, 0) = \frac{\binom{3}{0}\binom{2}{0}\binom{3}{2}}{28} = \frac{3}{28}",
+                    t2c={R"\binom{3}{0}": ACCENT, R"\binom{2}{0}": WARN, R"\binom{3}{2}": GREEN_PEN}).scale(0.75)
+        first.next_to(formula, DOWN, buff=0.35).align_to(formula, LEFT)
+        marks = VGroup(*[ring(c, GREEN_PEN, 0.04) for c in pens[5:7]])
+        hl0 = cells[(0, 0)].copy().set_fill(MEAN_COLOR, 0.4).set_stroke(MEAN_COLOR, 3)
+        self.play(FadeIn(hl0), ShowCreation(marks), Write(first), run_time=1.2)
+        t00 = Tex(R"\tfrac{3}{28}").scale(0.75).set_color(INK).move_to(cells[(0, 0)])
+        self.play(FadeIn(t00), FadeOut(marks), FadeOut(hl0))
+        self.wait(0.8)
+        self.play(FadeOut(first))
+
+        order = [(0, 1), (0, 2), (1, 0), (1, 1), (2, 0), (1, 2), (2, 1), (2, 2)]
         for (i, j) in order:
             x, y = j, i
             g = 2 - x - y
             if g < 0:
                 t = Tex("0").scale(0.75).set_color(MUTED).move_to(cells[(i, j)])
-                self.play(FadeIn(t), run_time=0.25)
+                self.play(FadeIn(t), run_time=0.3)
                 continue
             marks = VGroup(*[ring(c, ACCENT, 0.04) for c in pens[:x]],
                            *[ring(c, WARN, 0.04) for c in pens[3:3 + y]],
                            *[ring(c, GREEN_PEN, 0.04) for c in pens[5:5 + g]])
             n = comb(3, x) * comb(2, y) * comb(3, g)
             t = Tex(R"\tfrac{%d}{28}" % n).scale(0.75).set_color(INK).move_to(cells[(i, j)])
-            self.play(ShowCreation(marks), FadeIn(t), run_time=0.4)
-            self.play(FadeOut(marks), run_time=0.15)
-        self.wait(0.5)
+            self.play(ShowCreation(marks), FadeIn(t), run_time=0.5)
+            self.play(FadeOut(marks), run_time=0.2)
+        self.wait(0.6)
 
+        # ── 4. 영역 A 의 칸을 더한다
+        self.play(focus(3))
         want = [(0, 0), (0, 1), (1, 0)]
         hls = VGroup(*[cells[k].copy().set_fill(MEAN_COLOR, 0.45).set_stroke(MEAN_COLOR, 3) for k in want])
-        cond = Tex(R"x + y \le 1").scale(0.85).set_color(MEAN_COLOR).move_to([3.6, -0.6, 0])
+        cond = Tex(R"A:\ x + y \le 1").scale(0.85).set_color(MEAN_COLOR).next_to(formula, DOWN, buff=0.4).align_to(formula, LEFT)
         ans = Tex(R"\frac{3}{28} + \frac{9}{28} + \frac{6}{28} = \frac{18}{28} = \frac{9}{14}").scale(0.8).set_color(MEAN_COLOR)
-        ans.next_to(cond, DOWN, buff=0.4)
+        ans.next_to(cond, DOWN, buff=0.35).align_to(formula, LEFT)
         self.play(FadeIn(hls), Write(cond))
         self.play(Write(ans))
         self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.15), run_time=1.2)
