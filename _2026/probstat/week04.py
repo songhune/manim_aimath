@@ -24,7 +24,7 @@
     6차 9/18
     JointDistributionGrid          21 앞    정의 3.8 (이산 pmf 격자 → 연속 pdf 부피, 2026-09-18 개정)
     Example314Pens                 22 뒤    예제 3.14 (풀이 23 앞. 단계 넷을 걸고 하나씩, 2026-09-18 개정)
-    Example315DriveIn              25 뒤    예제 3.15 (그림 26 앞. 단위 정사각형 위의 부피)
+    Example315DriveIn              25 뒤    예제 3.15 (그림 26 앞. 단계 넷을 걸고 원시함수·대입까지 줄마다, 2026-09-18 개정)
     MarginalAsRowSums              27 앞    정의 3.10 (행 합 · 열 합)
     ConditionalDistributionSlice   31 앞    정의 3.11 (한 행만 남기고 늘리기)
     Example319Spectrum             34 뒤    예제 3.19 (풀이 35 앞. 삼각형 정의역)
@@ -802,16 +802,18 @@ class Example314Pens(InteractiveScene):
 # 13. 예제 3.15 단위 정사각형 위의 밀도 — 슬라이드 25 뒤 (26 앞)
 # ─────────────────────────────────────────────────────────────
 class Example315DriveIn(InteractiveScene):
-    """정사각형 [0,1]² 위에서 높이가 (2/5)(2x+3y). 전체 부피 1, 작은 직사각형 위의 부피 13/160. 안쪽 적분부터."""
+    """정사각형 [0,1]² 위에서 높이가 (2/5)(2x+3y). 2026-09-18 개정: 단계 넷(적분 세우기 → 안쪽 dx → 바깥 dy → 영역 A 에서 반복)을
+    먼저 걸고 하나씩. 원시함수와 대입을 줄마다 다 적는다(전에는 inner·outer 결과만 있었다). 그림은 안쪽 적분 때 가로 띠 하나,
+    바깥 적분 때 띠를 쌓는다. (a) 전체 부피 1, (b) 13/160."""
 
     def construct(self):
         head = slide_title("Example 3.15")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
-        S = 3.6
-        x0, y0 = -6.0, -2.6
+        # 그림: 단위 정사각형, 농도 = 높이
+        S = 3.3
+        x0, y0 = -6.3, -2.85
         sq = Square(side_length=S).set_stroke(GREY_B, 2).move_to([x0 + S / 2, y0 + S / 2, 0])
-        # 높이를 색 농도로: 오른쪽 위가 진하다
         cells = VGroup()
         n = 8
         for i in range(n):
@@ -827,34 +829,88 @@ class Example315DriveIn(InteractiveScene):
         yl = Tex("1").scale(0.6).set_color(GREY_B).next_to(sq.get_corner(UL), LEFT, buff=0.12)
         xt = Tex("x").scale(0.7).set_color(GREY_B).next_to(sq, DOWN, buff=0.35)
         yt = Tex("y").scale(0.7).set_color(GREY_B).next_to(sq, LEFT, buff=0.35)
-        f_tag = Tex(R"f(x, y) = \frac{2}{5}(2x + 3y)").scale(0.8).set_color(CALM).next_to(sq, UP, buff=0.3)
+        f_tag = Tex(R"f(x, y) = \frac{2}{5}(2x + 3y)").scale(0.75).set_color(CALM).next_to(sq, UP, buff=0.25)
         self.play(ShowCreation(sq), FadeIn(cells), FadeIn(xl), FadeIn(yl), FadeIn(xt), FadeIn(yt), FadeIn(f_tag))
-        self.wait(0.4)
+        self.wait(0.5)
 
-        a1 = Tex(R"\int_0^1\int_0^1 \frac{2}{5}(2x + 3y)\,dx\,dy").scale(0.68).set_color(INK)
-        a2 = Tex(R"\mathrm{inner:}\  \frac{2}{5}\left[x^2 + 3yx\right]_0^1 = \frac{2}{5}(1 + 3y)").scale(0.68).set_color(INK)
-        a3 = Tex(R"\mathrm{outer:}\  \frac{2}{5}\left[y + \frac{3y^2}{2}\right]_0^1 = 1").scale(0.68).set_color(MEAN_COLOR)
-        A = VGroup(a1, a2, a3).arrange(DOWN, buff=0.24, aligned_edge=LEFT).move_to([3.3, 1.45, 0])
-        vol_tag = note("(a) total volume", 22, GREY_B).next_to(A, UP, buff=0.15).align_to(A, LEFT)
-        self.play(FadeIn(vol_tag), Write(a1))
-        self.play(Write(a2))
-        self.play(Write(a3))
+        # 풀이 단계 넷
+        steps = VGroup(label("1. write the double integral", 24, INK),
+                       label("2. inner integral, dx", 24, INK),
+                       label("3. outer integral, dy", 24, INK),
+                       label("4. repeat over region A", 24, INK))
+        steps.arrange(DOWN, buff=0.2, aligned_edge=LEFT).move_to([3.5, 2.0, 0])
+        steps_box = panel(steps, GREY_C, buff=0.2)
+        self.play(FadeIn(steps_box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        self.wait(0.6)
+
+        def focus(k):
+            return AnimationGroup(*[st.animate.set_color(MEAN_COLOR if i == k else GREY_C) for i, st in enumerate(steps)])
+
+        def column(lines, color=INK, scale=0.57):
+            # 단계 상자 아래에 왼쪽 맞춤으로 쌓는다. 꼬리표는 열 위에 붙인다.
+            texs = [Tex(t).scale(scale).set_color(color) for t in lines]
+            col = VGroup(*texs).arrange(DOWN, buff=0.2, aligned_edge=LEFT)
+            col.next_to(steps_box, DOWN, buff=0.75).align_to([0.75, 0, 0], LEFT)
+            return col
+
+        # ── (a) 전체 부피 1
+        A = column([
+            R"\int_0^1\int_0^1 \tfrac{2}{5}(2x + 3y)\,dx\,dy",
+            R"\mathrm{inner:}\ \tfrac{2}{5}\big[x^2 + 3xy\big]_{x=0}^{x=1} = \tfrac{2}{5}(1 + 3y)",
+            R"\mathrm{outer:}\ \int_0^1 \tfrac{2}{5}(1 + 3y)\,dy = \tfrac{2}{5}\Big[y + \tfrac{3y^2}{2}\Big]_0^1",
+            R"= \tfrac{2}{5}\Big(1 + \tfrac{3}{2}\Big) = \tfrac{2}{5}\cdot\tfrac{5}{2} = 1",
+        ])
+        A[3].set_color(MEAN_COLOR)
+        a_tag = note("(a) total volume", 22, GREY_B).next_to(A, UP, buff=0.15).align_to(A, LEFT)
+
+        self.play(focus(0), FadeIn(a_tag), Write(A[0]))
         self.wait(0.8)
 
-        # (b) 작은 직사각형
+        # 안쪽 적분: y 를 고정한 가로 띠
+        strip = Rectangle(width=S, height=S / n).set_stroke(MEAN_COLOR, 2).set_fill(MEAN_COLOR, 0.45)
+        strip.move_to([x0 + S / 2, y0 + S * 0.45, 0])
+        s_tag = note("fix y, integrate along x", 22, MEAN_COLOR).next_to(sq, DOWN, buff=0.7)
+        self.play(focus(1), FadeIn(strip), FadeOut(xt), FadeIn(s_tag))
+        self.play(Write(A[1]))
+        self.wait(1.0)
+
+        # 바깥 적분: 띠를 y 방향으로 쌓는다
+        strips = VGroup(*[Rectangle(width=S, height=S / n).set_stroke(width=0).set_fill(MEAN_COLOR, 0.3)
+                          .move_to([x0 + S / 2, y0 + (i + 0.5) * S / n, 0]) for i in range(n)])
+        s_tag2 = note("then add the strips in y", 22, MEAN_COLOR).move_to(s_tag)
+        self.play(focus(2), FadeOut(s_tag), FadeIn(s_tag2), FadeOut(strip),
+                  LaggedStartMap(FadeIn, strips, lag_ratio=0.12), run_time=1.2)
+        self.play(Write(A[2]))
+        self.wait(0.6)
+        self.play(Write(A[3]))
+        self.play(FlashAround(A[3], color=MEAN_COLOR, buff=0.12), run_time=1.0)
+        self.wait(1.2)
+
+        # ── (b) 영역 A 위의 부피
+        self.play(FadeOut(strips), FadeOut(s_tag2), FadeOut(A), FadeOut(a_tag), FadeIn(xt))
         rect = Rectangle(width=S * 0.5, height=S * 0.25).set_stroke(MEAN_COLOR, 3).set_fill(MEAN_COLOR, 0.35)
         rect.move_to([x0 + S * 0.25, y0 + S * 0.375, 0])
-        r_tag = Tex(R"0 < x < \tfrac12,\ \tfrac14 < y < \tfrac12").scale(0.65).set_color(MEAN_COLOR).next_to(sq, DOWN, buff=0.75)
-        self.play(FadeOut(xt), FadeIn(rect), FadeIn(r_tag))
-        b1 = Tex(R"\int_{1/4}^{1/2}\int_0^{1/2} \frac{2}{5}(2x + 3y)\,dx\,dy").scale(0.68).set_color(INK)
-        b2 = Tex(R"\mathrm{inner:}\  \frac{1}{10} + \frac{3y}{5}").scale(0.68).set_color(INK)
-        b3 = Tex(R"\mathrm{outer:}\  \left[\frac{y}{10} + \frac{3y^2}{10}\right]_{1/4}^{1/2} = \frac{13}{160}").scale(0.68).set_color(MEAN_COLOR)
-        B = VGroup(b1, b2, b3).arrange(DOWN, buff=0.24, aligned_edge=LEFT).next_to(A, DOWN, buff=0.45).align_to(A, LEFT)
-        b_tag = note("(b) volume over A", 22, GREY_B).next_to(B, UP, buff=0.15).align_to(A, LEFT)
-        self.play(FadeIn(b_tag), Write(b1))
-        self.play(Write(b2))
-        self.play(Write(b3))
-        self.play(FlashAround(b3, color=MEAN_COLOR, buff=0.15), run_time=1.2)
+        r_tag = Tex(R"A:\ 0 < x < \tfrac12,\ \tfrac14 < y < \tfrac12").scale(0.62).set_color(MEAN_COLOR).next_to(sq, DOWN, buff=0.7)
+        B = column([
+            R"\int_{1/4}^{1/2}\int_0^{1/2} \tfrac{2}{5}(2x + 3y)\,dx\,dy",
+            R"\mathrm{inner:}\ \tfrac{2}{5}\big[x^2 + 3xy\big]_{x=0}^{x=1/2} = \tfrac{2}{5}\Big(\tfrac14 + \tfrac{3y}{2}\Big) = \tfrac{1}{10} + \tfrac{3y}{5}",
+            R"\mathrm{outer:}\ \int_{1/4}^{1/2}\Big(\tfrac{1}{10} + \tfrac{3y}{5}\Big)dy = \Big[\tfrac{y}{10} + \tfrac{3y^2}{10}\Big]_{1/4}^{1/2}",
+            R"= \Big(\tfrac{1}{20} + \tfrac{3}{40}\Big) - \Big(\tfrac{1}{40} + \tfrac{3}{160}\Big)",
+            R"= \tfrac{20}{160} - \tfrac{7}{160} = \tfrac{13}{160}",
+        ])
+        B[4].set_color(MEAN_COLOR)
+        b_tag = note("(b) volume over A", 22, GREY_B).next_to(B, UP, buff=0.15).align_to(B, LEFT)
+        self.play(focus(3), FadeIn(rect), FadeIn(r_tag), FadeIn(b_tag))
+        self.play(Write(B[0]))
+        self.wait(0.6)
+        self.play(Write(B[1]))
+        self.wait(0.8)
+        self.play(Write(B[2]))
+        self.wait(0.6)
+        self.play(Write(B[3]))
+        self.wait(0.6)
+        self.play(Write(B[4]))
+        self.play(FlashAround(B[4], color=MEAN_COLOR, buff=0.12), run_time=1.0)
         self.wait(2)
 
 
