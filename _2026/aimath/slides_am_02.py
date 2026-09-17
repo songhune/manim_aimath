@@ -28,7 +28,7 @@ PAGES = build(globals(), [
     ("InverseDenominator", "역행렬의 분모"),
     ("TransposeRules", "전치행렬의 성질"),
     ("MatrixZoo", "여러 가지 행렬"),
-    # 구름EDU 6~10번 — 문제 코드가 하는 일 (2026-09-18)
+    # 구름EDU 6~10번 (2026-09-18)
     ("GoormHstack", "np.hstack 과 첨가행렬"),
     ("GoormRrefSolve", "rref 와 마지막 열"),
     ("GoormMatrixPower", "matrix_power 와 역행렬"),
