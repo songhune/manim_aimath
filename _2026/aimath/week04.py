@@ -363,163 +363,363 @@ class VectorOperations(InteractiveScene):
 
 
 class ClosedUnderOperations(InteractiveScene):
-    """정의 3-3 · 3-4. 합과 스칼라곱에 닫혀 있어야 벡터공간이다.
+    """정의 3-3 의 열 조건을 그림으로 하나씩 확인한다.
 
-    열 가지 조건 가운데 (1) 과 (6) 이 '닫힘' 이고 나머지는 계산 규칙이다.
-    닫히지 않는 집합의 예로 1사분면을 든다. 반대 벡터가 밖으로 나간다.
+    (1)·(6) 이 '닫힘' 이고 나머지는 합과 스칼라곱의 계산 규칙이다. 규칙마다 평면에서
+    한 번씩 보이고 표에 ✓ 를 단다. 끝에 닫히지 않는 집합 둘(1사분면 · 단위원)을 본다.
     """
+    x = (2, 1)
+    y = (-1, 2)
+    z = (2, -1)
 
     def construct(self):
         head = slide_title("벡터공간의 조건")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
-        self.play(FadeIn(tag_under(head, "정의 3-3 · 3-4")))
+        self.play(FadeIn(tag_under(head, "정의 3-3 · 열 조건")))
 
-        p = plane((-4, 4, 1), (-3, 3, 1), 4.9)
-        p.to_edge(LEFT, buff=0.5).shift(0.5 * DOWN)
+        p = plane((-4, 4, 1), (-3, 3, 1), 4.7)
+        p.to_edge(LEFT, buff=0.4).shift(0.55 * DOWN)
         self.play(FadeIn(p))
 
-        rules = VGroup(
-            Tex(R"(1)\ \ \mathbf{x},\mathbf{y}\in V \Rightarrow \mathbf{x}+\mathbf{y}\in V").set_color(INK),
-            Tex(R"(6)\ \ \alpha\mathbf{x}\in V").set_color(INK),
-        ).arrange(DOWN, buff=0.45, aligned_edge=LEFT)
-        rules.set_width(5.2).next_to(p, RIGHT, buff=0.8).align_to(p, UP)
-        self.play(FadeIn(rules))
-
-        x = arrow(p, (1, 1), ACCENT)
-        y = arrow(p, (2, -1), CALM)
-        s = arrow(p, (3, 0), DONE)
-        self.play(GrowArrow(x), GrowArrow(y))
-        self.play(GrowArrow(s))
-        ok1 = check_mark().next_to(rules[0], RIGHT, buff=0.3)
-        self.play(FadeIn(ok1))
-        self.play(FadeOut(VGroup(y, s)))
-        two = arrow(p, (2, 2), DONE)
-        self.play(GrowArrow(two))
-        ok2 = check_mark().next_to(rules[1], RIGHT, buff=0.3)
-        self.play(FadeIn(ok2))
-        note = caption("평면 전체는 닫힌 집합", 24, DONE).next_to(p, DOWN, buff=0.25)
+        items = [
+            R"(1)\ \mathbf{x}+\mathbf{y}\in V",
+            R"(2)\ \mathbf{x}+(\mathbf{y}+\mathbf{z})=(\mathbf{x}+\mathbf{y})+\mathbf{z}",
+            R"(3)\ \mathbf{x}+\mathbf{y}=\mathbf{y}+\mathbf{x}",
+            R"(4)\ \mathbf{x}+\mathbf{0}=\mathbf{x}",
+            R"(5)\ \mathbf{x}+(-\mathbf{x})=\mathbf{0}",
+            R"(6)\ \alpha\mathbf{x}\in V",
+            R"(7)\ \alpha(\mathbf{x}+\mathbf{y})=\alpha\mathbf{x}+\alpha\mathbf{y}",
+            R"(8)\ (\alpha+\beta)\mathbf{x}=\alpha\mathbf{x}+\beta\mathbf{x}",
+            R"(9)\ \alpha(\beta\mathbf{x})=(\alpha\beta)\mathbf{x}",
+            R"(10)\ 1\mathbf{x}=\mathbf{x}",
+        ]
+        rows = VGroup(*[Tex(t).set_color(GREY_B) for t in items])
+        rows.arrange(DOWN, buff=0.16, aligned_edge=LEFT)
+        rows.set_height(4.9).to_edge(RIGHT, buff=0.5).shift(0.5 * DOWN)
+        if rows.get_width() > 6.4:
+            rows.set_width(6.4).to_edge(RIGHT, buff=0.5)
+        self.play(FadeIn(rows, lag_ratio=0.05))
+        note = caption("합 규칙 다섯 · 스칼라곱 규칙 다섯", 22, GREY_B).next_to(p, DOWN, buff=0.2)
         self.play(FadeIn(note, UP))
-        self.wait(0.8)
+        self.wait(0.5)
 
-        # 닫히지 않는 예 — 1사분면
-        self.play(FadeOut(VGroup(x, two)))
+        x = arrow(p, self.x, ACCENT)
+        y = arrow(p, self.y, CALM)
+        xl = vlabel(x, R"\mathbf{x}", ACCENT, DR)
+        yl = vlabel(y, R"\mathbf{y}", CALM, UL)
+        self.play(GrowArrow(x), FadeIn(xl), GrowArrow(y), FadeIn(yl))
+
+        def show(k, text, *mobs, keep=()):
+            mark = check_mark().scale(0.8).next_to(rows[k], RIGHT, buff=0.2)
+            cap = caption(text, 22, DONE).move_to(note)
+            anims = [rows[k].animate.set_color(DONE), FadeIn(mark)]
+            for m in mobs:
+                anims.append(GrowArrow(m) if isinstance(m, Arrow) else FadeIn(m))
+            self.play(*anims, run_time=0.7)
+            self.play(FadeIn(cap), run_time=0.3)
+            self.wait(0.7)
+            gone = [m for m in mobs if m not in keep]
+            self.play(FadeOut(VGroup(*gone)), FadeOut(cap), run_time=0.35)
+
+        sx, sy = self.x, self.y
+        s_ = (sx[0] + sy[0], sx[1] + sy[1])
+        self.remove(note)
+        # (1) 합에 닫힘
+        show(0, "더한 것도 평면 안", DashedLine(p.c2p(*sx), p.c2p(*s_)).set_stroke(CALM, 2),
+             arrow(p, s_, DONE))
+        # (3) 교환 — 두 길이 같은 머리에 닿음
+        show(2, "어느 순서로 가도 같은 머리",
+             DashedLine(p.c2p(*sx), p.c2p(*s_)).set_stroke(CALM, 2),
+             DashedLine(p.c2p(*sy), p.c2p(*s_)).set_stroke(ACCENT, 2),
+             arrow(p, s_, DONE))
+        # (2) 결합 — 셋을 어떻게 묶어도 같은 머리
+        z = arrow(p, self.z, PURPLE_B, start=s_)
+        end = (s_[0] + self.z[0], s_[1] + self.z[1])
+        show(1, "셋을 어떻게 묶어도 같은 머리",
+             DashedLine(p.c2p(*sx), p.c2p(*s_)).set_stroke(CALM, 2), z, arrow(p, end, DONE))
+        # (4) 영벡터
+        show(3, "영벡터를 더하면 그대로", Dot(p.c2p(0, 0), color=DONE))
+        # (5) 역원
+        nx = (-sx[0], -sx[1])
+        show(4, "반대 벡터를 더하면 원점", arrow(p, nx, WARN), Dot(p.c2p(0, 0), color=DONE))
+        # (6) 스칼라곱에 닫힘
+        show(5, "늘려도 같은 직선 위", arrow(p, (1.5 * sx[0], 1.5 * sx[1]), DONE))
+        # (7) 분배 — 평행사변형이 통째로 줄어듦
+        hx, hy, hs = (sx[0] / 2, sx[1] / 2), (sy[0] / 2, sy[1] / 2), (s_[0] / 2, s_[1] / 2)
+        show(6, "평행사변형이 통째로 줄어듦",
+             DashedLine(p.c2p(*hx), p.c2p(*hs)).set_stroke(CALM, 2),
+             DashedLine(p.c2p(*hy), p.c2p(*hs)).set_stroke(ACCENT, 2), arrow(p, hs, DONE))
+        # (8) 분배 — 같은 직선 위에서 이어 붙임
+        show(7, "같은 직선 위에서 이어 붙임", arrow(p, hx, DONE),
+             arrow(p, (1.5 * sx[0], 1.5 * sx[1]), PURPLE_B, start=hx))
+        # (9) 결합 — 두 번 늘린 것과 한 번에 늘린 것
+        show(8, "두 번 늘려도 한 번에 늘려도", arrow(p, (1.5 * sx[0], 1.5 * sx[1]), DONE))
+        # (10) 1 배
+        show(9, "1 배는 그대로", Dot(p.c2p(*sx), color=DONE))
+
+        done = caption("열 조건 모두 통과 · 벡터공간", 24, DONE).move_to(note)
+        self.play(FadeIn(done, UP))
+        self.wait(1.0)
+
+        # 반례 — 1사분면, 단위원
+        self.play(FadeOut(VGroup(x, xl, y, yl, done)), rows.animate.set_color(GREY_B))
         quad = Polygon(p.c2p(0, 0), p.c2p(4, 0), p.c2p(4, 3), p.c2p(0, 3))
         quad.set_fill(CALM, 0.18).set_stroke(width=0)
         self.play(FadeIn(quad))
         v = arrow(p, (2, 1), ACCENT)
-        self.play(GrowArrow(v))
         w = arrow(p, (-2, -1), WARN)
-        wl = vlabel(w, R"(-1)\mathbf{x}", WARN, DL)
+        wl = vlabel(w, R"(-1)\mathbf{x}", WARN, DOWN)
+        self.play(GrowArrow(v))
         self.play(GrowArrow(w), FadeIn(wl))
-        bad = cross_mark().next_to(rules[1], RIGHT, buff=0.3)
-        self.play(FadeTransform(ok2, bad))
-        note2 = caption("1사분면은 스칼라곱에 열림", 24, WARN).move_to(note)
-        self.play(FadeTransform(note, note2))
+        bad6 = cross_mark().scale(0.8).next_to(rows[5], RIGHT, buff=0.2)
+        self.play(rows[5].animate.set_color(WARN), FadeIn(bad6))
+        c1 = caption("1사분면은 (6) 에서 탈락", 24, WARN).move_to(note)
+        self.play(FadeIn(c1, UP))
         self.wait(1.0)
 
-        last = caption("닫힌 집합이 벡터공간", 26, DONE).next_to(rules, DOWN, buff=0.9)
-        self.play(FadeIn(last, UP))
+        self.play(FadeOut(VGroup(quad, v, w, wl, c1, bad6)), rows[5].animate.set_color(GREY_B))
+        unit = np.linalg.norm(p.c2p(1, 0) - p.c2p(0, 0))
+        circle = Circle(radius=unit).move_to(p.c2p(0, 0)).set_stroke(CALM, 3)
+        self.play(ShowCreation(circle))
+        e1 = arrow(p, (1, 0), ACCENT)
+        e2 = arrow(p, (0, 1), ACCENT)
+        e12 = arrow(p, (1, 1), WARN)
+        self.play(GrowArrow(e1), GrowArrow(e2))
+        self.play(GrowArrow(e2.copy().shift(p.c2p(1, 0) - p.c2p(0, 0))), GrowArrow(e12))
+        bad1 = cross_mark().scale(0.8).next_to(rows[0], RIGHT, buff=0.2)
+        self.play(rows[0].animate.set_color(WARN), FadeIn(bad1))
+        c2 = caption("단위원은 (1) 에서 탈락", 24, WARN).move_to(note)
+        self.play(FadeIn(c2, UP))
+        self.wait(1.0)
+
+        last = caption("하나라도 깨지면 벡터공간 아님", 24, WARN).move_to(note)
+        self.play(FadeTransform(c2, last))
         self.wait(2)
 
 
 class SubspaceLine(InteractiveScene):
-    """정리 3-1 부분공간 판정법. 원점을 지나는 직선은 되고, 안 지나면 안 된다.
+    """정리 3-1 세 조건으로 후보 집합 넷을 판정하고, 예제 3-3 의 초평면까지 간다.
 
-    예제 3-3 의 초평면 x_1 + ... + x_n = 0 도 같은 이유로 부분공간이다.
+    후보마다 어느 조건에서 걸리는지가 다르다. 원점 안 지나는 직선은 (1), 1사분면은 (3),
+    두 축의 합집합은 (2) 에서 탈락한다. 세 조건이 서로 다른 것을 보는 것이 요점이다.
     """
+    cands = ["y = x", "y = x + 1.5", "1사분면", "x축 ∪ y축"]
 
     def construct(self):
         head = slide_title("부분공간 판정법")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
         self.play(FadeIn(tag_under(head, "정리 3-1 · 예제 3-3")))
 
-        p = plane((-3, 4, 1), (-3, 4, 1), 5.0)
-        p.to_edge(LEFT, buff=0.5).shift(0.5 * DOWN)
+        p = plane((-3, 4, 1), (-3, 4, 1), 4.7)
+        p.to_edge(LEFT, buff=0.4).shift(0.55 * DOWN)
         self.play(FadeIn(p))
 
-        rules = VGroup(
-            Tex(R"(1)\ \ \mathbf{0}\in S").set_color(INK),
-            Tex(R"(2)\ \ \mathbf{x},\mathbf{y}\in S \Rightarrow \mathbf{x}+\mathbf{y}\in S").set_color(INK),
-            Tex(R"(3)\ \ \mathbf{x}\in S \Rightarrow \alpha\mathbf{x}\in S").set_color(INK),
-        ).arrange(DOWN, buff=0.4, aligned_edge=LEFT)
-        rules.set_width(5.6).next_to(p, RIGHT, buff=0.8).align_to(p, UP)
-        self.play(FadeIn(rules))
+        # 점검표 — 행은 후보, 열은 세 조건과 판정
+        heads = VGroup(
+            Tex(R"S").set_color(GREY_B),
+            Tex(R"(1)\ \mathbf{0}\in S").set_color(GREY_B),
+            Tex(R"(2)\ \mathbf{x}+\mathbf{y}").set_color(GREY_B),
+            Tex(R"(3)\ \alpha\mathbf{x}").set_color(GREY_B),
+            caption("판정", 22, GREY_B),
+        )
+        for h in heads:
+            h.set_height(min(h.get_height(), 0.34))
+        table = VGroup(heads)
+        for name in self.cands:
+            row = VGroup(caption(name, 22, INK), *[VGroup() for _ in range(4)])
+            table.add(row)
+        # 칸 배치
+        col_w = [1.9, 1.5, 1.5, 1.3, 1.3]
+        right = FRAME_WIDTH / 2 - 0.4
+        left = right - sum(col_w)
+        top = p.get_top()[1] - 0.05
+        row_h = 0.62
+        cells = {}
+        for r, row in enumerate(table):
+            for c in range(5):
+                x0 = left + sum(col_w[:c]) + col_w[c] / 2
+                cells[(r, c)] = np.array([x0, top - r * row_h, 0])
+            for c, m in enumerate(row):
+                if len(m) or isinstance(m, (Tex, Text)):
+                    m.move_to(cells[(r, c)])
+        rule = Line([left, top - row_h / 2, 0], [right, top - row_h / 2, 0]).set_stroke(GREY_C, 2)
+        self.play(FadeIn(heads), ShowCreation(rule))
+        self.wait(0.3)
 
+        def mark(r, c, ok):
+            m = (check_mark() if ok else cross_mark()).scale(0.8).move_to(cells[(r, c)])
+            self.play(FadeIn(m, scale=1.5), run_time=0.35)
+            return m
+
+        def verdict(r, ok):
+            t = caption("부분공간" if ok else "아님", 22, DONE if ok else WARN).move_to(cells[(r, 4)])
+            self.play(FadeIn(t, UP), run_time=0.4)
+            return t
+
+        note = caption("", 22).next_to(p, DOWN, buff=0.2)
+
+        def say(text, color=DONE):
+            nonlocal note
+            new = caption(text, 22, color).next_to(p, DOWN, buff=0.2)
+            self.play(FadeTransform(note, new), run_time=0.35)
+            note = new
+
+        # 1. y = x
         line = Line(p.c2p(-3, -3), p.c2p(4, 4)).set_stroke(DONE, 3)
-        ll = Tex(R"S:\ y=x").set_color(DONE).scale(0.8).next_to(p.c2p(2.4, 2.4), DR, buff=0.1)
-        self.play(ShowCreation(line), FadeIn(ll))
-        origin = Dot(p.c2p(0, 0), color=DONE)
-        self.play(FadeIn(origin, scale=2))
-        marks = VGroup(*[check_mark().next_to(r, RIGHT, buff=0.3) for r in rules])
-        self.play(FadeIn(marks[0]))
-        a = arrow(p, (1, 1), ACCENT)
-        b = arrow(p, (2, 2), CALM, start=(1, 1))
-        s = arrow(p, (3, 3), DONE)
-        self.play(GrowArrow(a), GrowArrow(b))
-        self.play(GrowArrow(s), FadeIn(marks[1]))
-        self.play(FadeOut(VGroup(b, s)))
-        two = arrow(p, (-2, -2), DONE)
-        self.play(GrowArrow(two), FadeIn(marks[2]))
-        note = caption("원점을 지나는 직선은 부분공간", 24, DONE).next_to(p, DOWN, buff=0.25)
-        self.play(FadeIn(note, UP))
-        self.wait(1.0)
+        self.play(FadeIn(table[1][0]), ShowCreation(line))
+        o = Dot(p.c2p(0, 0), color=DONE)
+        self.play(FadeIn(o, scale=2)); mark(1, 1, True)
+        a = arrow(p, (1, 1), ACCENT); b = arrow(p, (3, 3), CALM, start=(1, 1)); s_ = arrow(p, (3, 3), DONE)
+        self.play(GrowArrow(a), GrowArrow(b)); self.play(GrowArrow(s_)); mark(1, 2, True)
+        self.play(FadeOut(VGroup(b, s_)))
+        t = arrow(p, (-2, -2), DONE)
+        self.play(GrowArrow(t)); mark(1, 3, True); verdict(1, True)
+        say("원점을 지나는 직선은 세 조건 통과")
+        self.wait(0.6)
+        self.play(FadeOut(VGroup(line, o, a, t)))
 
-        # 원점을 지나지 않는 직선
-        self.play(FadeOut(VGroup(a, two, line, ll, marks)))
+        # 2. y = x + 1.5
         line2 = Line(p.c2p(-3, -1.5), p.c2p(2.5, 4)).set_stroke(WARN, 3)
-        l2 = Tex(R"T:\ y=x+1.5").set_color(WARN).scale(0.8).next_to(p.c2p(-1.5, 0), DR, buff=0.1)
-        self.play(ShowCreation(line2), FadeIn(l2))
-        bad = cross_mark().next_to(rules[0], RIGHT, buff=0.3)
-        self.play(Flash(origin, color=WARN), FadeIn(bad))
-        note2 = caption("영벡터가 없으면 부분공간 아님", 24, WARN).move_to(note)
-        self.play(FadeTransform(note, note2))
-        self.wait(1.0)
+        self.play(FadeIn(table[2][0]), ShowCreation(line2))
+        o2 = Dot(p.c2p(0, 0), color=WARN)
+        self.play(Flash(o2, color=WARN)); mark(2, 1, False); verdict(2, False)
+        say("영벡터가 없으면 (1) 에서 끝", WARN)
+        self.wait(0.6)
+        self.play(FadeOut(line2))
 
-        hyper = Tex(R"x_1 + x_2 + \cdots + x_n = 0").set_color(DONE)
-        hyper.set_width(4.6).next_to(rules, DOWN, buff=0.8)
-        last = caption("예제 3-3 도 원점을 지남", 24, DONE).next_to(hyper, DOWN, buff=0.3)
-        self.play(Write(hyper))
-        self.play(FadeIn(last, UP))
+        # 3. 1사분면
+        quad = Polygon(p.c2p(0, 0), p.c2p(4, 0), p.c2p(4, 4), p.c2p(0, 4)).set_fill(CALM, 0.18).set_stroke(width=0)
+        self.play(FadeIn(table[3][0]), FadeIn(quad))
+        self.play(FadeIn(Dot(p.c2p(0, 0), color=DONE), scale=2)); mark(3, 1, True)
+        a3 = arrow(p, (2, 1), ACCENT); b3 = arrow(p, (3, 3), CALM, start=(2, 1)); s3 = arrow(p, (3, 3), DONE)
+        self.play(GrowArrow(a3), GrowArrow(b3)); self.play(GrowArrow(s3)); mark(3, 2, True)
+        self.play(FadeOut(VGroup(b3, s3)))
+        n3 = arrow(p, (-2, -1), WARN)
+        self.play(GrowArrow(n3)); mark(3, 3, False); verdict(3, False)
+        say("스칼라곱이 밖으로 나가면 (3) 탈락", WARN)
+        self.wait(0.6)
+        self.play(FadeOut(VGroup(quad, a3, n3)))
+
+        # 4. x축 ∪ y축
+        ax = Line(p.c2p(-3, 0), p.c2p(4, 0)).set_stroke(CALM, 5)
+        ay = Line(p.c2p(0, -3), p.c2p(0, 4)).set_stroke(CALM, 5)
+        self.play(FadeIn(table[4][0]), ShowCreation(ax), ShowCreation(ay))
+        mark(4, 1, True)
+        e1 = arrow(p, (2, 0), ACCENT)
+        self.play(GrowArrow(e1))
+        self.play(Transform(e1, arrow(p, (-2, 0), ACCENT))); mark(4, 3, True)
+        e2 = arrow(p, (0, 2), ACCENT); e12 = arrow(p, (2, 2), WARN)
+        self.play(Transform(e1, arrow(p, (2, 0), ACCENT)), GrowArrow(e2))
+        self.play(GrowArrow(e12)); mark(4, 2, False); verdict(4, False)
+        say("두 축의 합집합은 합에서 탈락", WARN)
+        self.wait(0.8)
+        self.play(FadeOut(VGroup(ax, ay, e1, e2, e12)))
+
+        # 예제 3-3 — 초평면
+        hyper = VGroup(
+            Tex(R"S=\{\mathbf{x}\in\mathbb{R}^n \mid x_1+\cdots+x_n=0\}").set_color(INK),
+            Tex(R"(1)\ 0+\cdots+0=0").set_color(DONE),
+            Tex(R"(2)\ \textstyle\sum(x_i+y_i)=\sum x_i+\sum y_i=0").set_color(DONE),
+            Tex(R"(3)\ \textstyle\sum \alpha x_i=\alpha\sum x_i=0").set_color(DONE),
+        ).arrange(DOWN, buff=0.22, aligned_edge=LEFT)
+        hyper.set_width(5.4).move_to(p).align_to(p, UP).shift(0.1 * DOWN)
+        hyper.add_background_rectangle(opacity=0.85, buff=0.15)
+        for line in hyper[1:]:
+            self.play(FadeIn(line, UP), run_time=0.45)
+        say("예제 3-3 도 세 조건 통과 · 부분공간")
+        self.wait(0.8)
+        say("(3) 에 α = -1 을 넣으면 역원", GREY_B)
         self.wait(2)
 
 
 class LinearCombination(InteractiveScene):
-    """정의 3-5 와 예제 3-4. 2a + 3b 를 성분으로 계산하고 코드 한 줄과 잇는다."""
+    """정의 3-5 와 예제 3-4. 스칼라 둘을 돌리면 합의 머리가 어디까지 가는지를 먼저 본다.
+
+    참고: legacy/_2016/eola/chapter2.py ShowVaryingLinearCombinations (3blue1brown).
+    두 벡터를 각각 늘린 뒤 이어 붙인 머리가 스칼라에 따라 움직이고, 지나간 자리에 점을
+    남긴다. 그다음 예제 3-4 의 값으로 성분 계산을 한 번 하고 코드 한 줄과 잇는다.
+    """
+    v = np.array([2.0, 1.0])
+    w = np.array([-1.0, 2.0])
+    pairs = [(1.5, 0.6), (0.7, 1.0), (-1.0, -0.8), (1.2, -0.5), (-0.8, 1.0), (0.5, 1.2)]
 
     def construct(self):
         head = slide_title("선형결합")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
         self.play(FadeIn(tag_under(head, "정의 3-5 · 예제 3-4")))
 
-        rule = Tex(R"a_1\mathbf{x}_1 + a_2\mathbf{x}_2 + \cdots + a_k\mathbf{x}_k").set_color(INK)
-        rule.set_width(6.0).move_to(2.1 * UP)
-        self.play(Write(rule), run_time=1.0)
+        p = plane((-4, 4, 1), (-3, 4, 1), 5.0)
+        p.to_edge(LEFT, buff=0.4).shift(0.5 * DOWN)
+        self.play(FadeIn(p))
+
+        v0 = arrow(p, tuple(self.v), ACCENT)
+        w0 = arrow(p, tuple(self.w), CALM)
+        vl = vlabel(v0, R"\mathbf{v}", ACCENT, DR)
+        wl = vlabel(w0, R"\mathbf{w}", CALM, UL)
+        self.play(GrowArrow(v0), FadeIn(vl), GrowArrow(w0), FadeIn(wl))
         self.wait(0.4)
 
-        a = col([1, 0, 3], ACCENT)
-        b = col([2, 1, 2], CALM)
-        expr = VGroup(Tex("2").set_color(DONE), a, Tex("+").set_color(INK),
-                      Tex("3").set_color(DONE), b).arrange(RIGHT, buff=0.3)
-        expr.move_to(0.1 * DOWN + 3.2 * LEFT)
-        self.play(FadeIn(expr))
-        self.wait(0.4)
+        ta, tb = ValueTracker(1.0), ValueTracker(1.0)
 
-        ta = col([2, 0, 6], ACCENT)
-        tb = col([6, 3, 6], CALM)
-        mid = VGroup(Tex("=").set_color(INK), ta, Tex("+").set_color(INK), tb).arrange(RIGHT, buff=0.3)
-        mid.next_to(expr, RIGHT, buff=0.3)
-        self.play(FadeIn(mid))
-        self.wait(0.4)
+        def sv():
+            return arrow(p, tuple(ta.get_value() * self.v), ACCENT)
 
-        out = col([8, 3, 12], DONE)
-        res = VGroup(Tex("=").set_color(INK), out).arrange(RIGHT, buff=0.3).next_to(mid, RIGHT, buff=0.3)
-        self.play(FadeIn(res))
-        self.play(ShowCreation(box(out, DONE, 0.15)))
-        self.wait(0.6)
+        def sw():
+            tip = ta.get_value() * self.v
+            return arrow(p, tuple(tip + tb.get_value() * self.w), CALM, start=tuple(tip))
 
-        line = code("print(\"2*a + 3*b = \", 2*a + 3*b)", 24)
-        line.to_edge(DOWN, buff=1.15)
-        shown = code("2*a + 3*b =  [ 8  3 12]", 22, GREY_B).next_to(line, DOWN, buff=0.3)
+        def ssum():
+            return arrow(p, tuple(ta.get_value() * self.v + tb.get_value() * self.w), DONE)
+
+        av = always_redraw(sv)
+        bw = always_redraw(sw)
+        total = always_redraw(ssum)
+        self.play(FadeOut(VGroup(v0, vl, w0, wl)))
+        self.add(av, bw, total)
+
+        na = DecimalNumber(1.0, num_decimal_places=1, color=ACCENT)
+        nb = DecimalNumber(1.0, num_decimal_places=1, color=CALM)
+        na.f_always.set_value(ta.get_value)
+        nb.f_always.set_value(tb.get_value)
+        formula = VGroup(na, Tex(R"\mathbf{v}").set_color(ACCENT), Tex("+").set_color(INK),
+                         nb, Tex(R"\mathbf{w}").set_color(CALM)).arrange(RIGHT, buff=0.18)
+        formula.scale(1.2).next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
+        formula.add_updater(lambda m: m.arrange(RIGHT, buff=0.18).scale(1.0))
+        self.play(FadeIn(formula))
+        note = caption("스칼라 둘을 돌리면 머리가 움직임", 24, DONE).next_to(p, DOWN, buff=0.25)
+        self.play(FadeIn(note, UP))
+
+        trail = VGroup()
+        self.add(trail)
+        for a_, b_ in self.pairs:
+            self.play(ta.animate.set_value(a_), tb.animate.set_value(b_), run_time=1.1)
+            trail.add(Dot(p.c2p(*(a_ * self.v + b_ * self.w)), radius=0.06, color=DONE))
+            self.wait(0.25)
+        rule = Tex(R"a\mathbf{v}+b\mathbf{w}").set_color(DONE).scale(1.1)
+        rule.next_to(formula, DOWN, buff=0.5).align_to(formula, LEFT)
+        self.play(Write(rule))
+        note2 = caption("닿는 점 전부가 생성집합", 24, GREY_B).move_to(note)
+        self.play(FadeTransform(note, note2))
+        self.wait(1.0)
+
+        # 예제 3-4 — 같은 일을 성분으로
+        formula.clear_updaters()
+        self.play(FadeOut(VGroup(formula, rule, note2, trail, av, bw, total)))
+        self.remove(av, bw, total)
+        ex = VGroup(
+            Tex(R"\mathbf{a}=(1,0,3),\ \mathbf{b}=(2,1,2)").set_color(INK),
+            Tex(R"2\mathbf{a}+3\mathbf{b}=(2,0,6)+(6,3,6)").set_color(INK),
+            Tex(R"=(8,\,3,\,12)").set_color(DONE),
+        ).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
+        ex.set_width(5.4).next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
+        for line in ex:
+            self.play(FadeIn(line, UP), run_time=0.5)
+            self.wait(0.25)
+        note3 = caption("성분마다 같은 계산", 24, DONE).move_to(note)
+        self.play(FadeIn(note3, UP))
+        line = code("print(\"2*a + 3*b = \", 2*a + 3*b)", 20)
+        line.next_to(ex, DOWN, buff=0.55).align_to(ex, LEFT)
+        shown = code("2*a + 3*b =  [ 8  3 12]", 19, GREY_B).next_to(line, DOWN, buff=0.22).align_to(line, LEFT)
         self.play(FadeIn(line, UP))
         self.play(FadeIn(shown, UP))
         self.wait(2)

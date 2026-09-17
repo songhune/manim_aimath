@@ -24,22 +24,22 @@
   "scene": "ClosedUnderOperations",
   "title": "벡터공간의 조건",
   "url": "https://songhune.github.io/manim_aimath/am_03/ClosedUnderOperations.html",
-  "slides": 18,
-  "kb": 1516
+  "slides": 39,
+  "kb": 5175
  },
  {
   "scene": "SubspaceLine",
   "title": "부분공간 판정법",
   "url": "https://songhune.github.io/manim_aimath/am_03/SubspaceLine.html",
-  "slides": 18,
-  "kb": 1823
+  "slides": 35,
+  "kb": 3155
  },
  {
   "scene": "LinearCombination",
   "title": "선형결합",
   "url": "https://songhune.github.io/manim_aimath/am_03/LinearCombination.html",
-  "slides": 9,
-  "kb": 1245
+  "slides": 20,
+  "kb": 2058
  },
  {
   "scene": "IndependenceCollinear",
