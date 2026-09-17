@@ -134,6 +134,166 @@ def cross_mark(color=WARN):
 # ─────────────────────────────────────────────────────────────
 # 3.1 벡터와 벡터공간
 # ─────────────────────────────────────────────────────────────
+# 도입 두 편. 정의 3-1 부터 성분 계산으로 들어가기 전에, 좌표평면에서 벡터가 무엇이고
+# 벡터공간이 무엇인지 그림으로 세운다.
+# 참고: legacy/_2016/eola/chapter1.py (3blue1brown, Essence of Linear Algebra)
+#   HowIWantYouToThinkAboutVectors · CoordinateSystemWalkthrough · ListsOfNumbersAddOn
+# 원본의 Pi creature 장면은 가져오지 않고, 좌표축·화살표·성분 상자만 물려받는다.
+X_COLOR = GREEN_C
+Y_COLOR = RED_C
+Z_COLOR = BLUE_C
+
+
+class VectorsOnCoordinatePlane(InteractiveScene):
+    """벡터 = 원점에서 시작하는 화살표 = 수의 목록. 좌표평면이 그 둘을 잇는다."""
+
+    def construct(self):
+        head = slide_title("좌표평면 위의 벡터")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        self.play(FadeIn(tag_under(head, "3.1 도입 · 정의 3-1 앞")))
+
+        p = plane((-5, 5, 1), (-3, 4, 1), 5.2)
+        p.to_edge(LEFT, buff=0.5).shift(0.55 * DOWN)
+        axes = VGroup(p.get_x_axis().copy(), p.get_y_axis().copy()).set_stroke(GREY_A, 3)
+
+        # 1. 화살표 하나 — 꼬리는 원점
+        v = arrow(p, (-2, 3), DONE)
+        self.play(GrowArrow(v))
+        tail = Dot(p.c2p(0, 0), color=WARN)
+        tl = caption("꼬리는 원점", 22, WARN).next_to(tail, DR, buff=0.12)
+        self.play(FadeIn(tail, scale=2), FadeIn(tl))
+        self.wait(0.6)
+        self.play(FadeOut(tl))
+
+        # 2. 좌표축과 격자
+        xl = Tex("x").set_color(GREY_A).next_to(p.c2p(5, 0), RIGHT, buff=0.1)
+        yl = Tex("y").set_color(GREY_A).next_to(p.c2p(0, 4), UP, buff=0.1)
+        self.play(ShowCreation(axes[0]), FadeIn(xl))
+        self.play(ShowCreation(axes[1]), FadeIn(yl))
+        unit = Brace(Line(p.c2p(0, 0), p.c2p(1, 0)), DOWN, buff=0.08).set_color(GREY_B)
+        one = Tex("1").set_color(GREY_B).scale(0.8).next_to(unit, DOWN, buff=0.08)
+        self.play(GrowFromCenter(unit), FadeIn(one))
+        self.wait(0.4)
+        self.play(FadeOut(unit), FadeOut(one), FadeIn(p), Animation(axes), Animation(v))
+        self.wait(0.3)
+
+        # 3. 성분 두 개
+        xline = Line(p.c2p(0, 0), p.c2p(-2, 0)).set_stroke(X_COLOR, 6)
+        yline = Line(p.c2p(-2, 0), p.c2p(-2, 3)).set_stroke(Y_COLOR, 6)
+        column = Matrix([["-2"], ["3"]], v_buff=0.55, bracket_h_buff=0.15)
+        column.get_entries()[0].set_color(X_COLOR)
+        column.get_entries()[1].set_color(Y_COLOR)
+        column.next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
+        self.play(FadeIn(column))
+        xn = caption("왼쪽으로 2", 22, X_COLOR).next_to(xline, DOWN, buff=0.1)
+        yn = caption("위로 3", 22, Y_COLOR).next_to(yline, LEFT, buff=0.1)
+        self.play(ShowCreation(xline), FadeIn(xn))
+        self.play(ShowCreation(yline), FadeIn(yn))
+        note = caption("화살표 하나 = 수 두 개", 24, DONE).next_to(column, DOWN, buff=0.5).align_to(column, LEFT)
+        self.play(FadeIn(note, UP))
+        self.wait(1.0)
+
+        # 4. 벡터 여럿과 그 목록
+        self.play(FadeOut(VGroup(xline, yline, xn, yn)))
+        others = [((1, 2), TEAL_B), ((2, -1), PURPLE_B), ((4, 0), PINK)]
+        arrows = VGroup(*[arrow(p, c, col) for c, col in others])
+        cols = VGroup(*[Matrix([[str(c[0])], [str(c[1])]], v_buff=0.55, bracket_h_buff=0.15).set_color(col)
+                        for c, col in others])
+        row = VGroup(column, *cols).arrange(RIGHT, buff=0.45)
+        row.next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
+        self.play(column.animate.move_to(row[0]))
+        for a, c in zip(arrows, cols):
+            self.play(GrowArrow(a), FadeIn(c), run_time=0.6)
+        note2 = caption("첫 수는 가로 · 둘째 수는 세로", 24, DONE).move_to(note).align_to(row, LEFT)
+        self.play(FadeTransform(note, note2))
+        self.wait(1.0)
+
+        # 5. 점으로 읽어도 같은 두 수
+        pt = Dot(p.c2p(-4, 2), color=WHITE)
+        ptl = Tex("(-4,\,2)").set_color(WHITE).scale(0.8).next_to(pt, DOWN, buff=0.1)
+        pa = arrow(p, (-4, 2), WHITE)
+        self.play(FadeIn(pt, scale=2), FadeIn(ptl))
+        self.play(GrowArrow(pa))
+        note3 = caption("점으로 읽어도 같은 두 수", 24, GREY_B).move_to(note2).align_to(row, LEFT)
+        self.play(FadeTransform(note2, note3))
+        self.wait(0.8)
+
+        # 6. 세 수, n 개의 수
+        three = Matrix([["2"], ["1"], ["3"]], v_buff=0.5, bracket_h_buff=0.15)
+        for k, col in enumerate((X_COLOR, Y_COLOR, Z_COLOR)):
+            three.get_entries()[k].set_color(col)
+        n_vec = Tex(R"(x_1,\,x_2,\,\ldots,\,x_n)").set_color(INK)
+        tail_g = VGroup(three, n_vec).arrange(RIGHT, buff=0.8)
+        tail_g.next_to(note3, DOWN, buff=0.6).align_to(row, LEFT)
+        self.play(FadeIn(three, UP))
+        last = caption("n 개의 수는 n 차원", 24, DONE)
+        last.next_to(tail_g, DOWN, buff=0.4).align_to(row, LEFT)
+        self.play(FadeIn(n_vec, UP))
+        self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class VectorSpaceAsPlane(InteractiveScene):
+    """좌표평면 전체가 벡터공간이다. 정의 3-3 의 목록은 이 그림의 성질을 적은 것이다."""
+
+    def construct(self):
+        head = slide_title("좌표평면이 곧 벡터공간")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        self.play(FadeIn(tag_under(head, "3.1 도입 · 정의 3-3 앞")))
+
+        p = plane((-4, 4, 1), (-3, 3, 1), 5.0)
+        p.to_edge(LEFT, buff=0.5).shift(0.55 * DOWN)
+        self.play(FadeIn(p))
+
+        # 1. 모든 화살표의 모임
+        rng = np.random.default_rng(3)
+        faint = VGroup(*[arrow(p, (float(x), float(y)), GREY_C)
+                         for x, y in rng.uniform(-3.5, 3.5, (14, 2))]).set_opacity(0.35)
+        self.play(FadeIn(faint, lag_ratio=0.05), run_time=1.2)
+        r2 = Tex(R"\mathbb{R}^2 = \{(x,\,y)\mid x,\,y\in\mathbb{R}\}").set_color(INK)
+        r2.set_width(5.2).next_to(p, RIGHT, buff=0.8).align_to(p, UP).shift(0.2 * DOWN)
+        self.play(Write(r2))
+        note = caption("평면의 화살표 전부가 한 집합", 24, GREY_B).next_to(p, DOWN, buff=0.25)
+        self.play(FadeIn(note, UP))
+        self.wait(0.8)
+
+        # 2. 더해도 늘려도 그 안
+        self.play(faint.animate.set_opacity(0.12))
+        x = arrow(p, (2, 1), ACCENT)
+        y = arrow(p, (-1, 2), CALM)
+        s = arrow(p, (1, 3), DONE)
+        ghost = DashedLine(p.c2p(2, 1), p.c2p(1, 3)).set_stroke(CALM, 2)
+        self.play(GrowArrow(x), GrowArrow(y))
+        self.play(ShowCreation(ghost), GrowArrow(s))
+        two = arrow(p, (-2, 4), DONE)
+        self.play(FadeOut(ghost), FadeOut(s), GrowArrow(two))
+        note2 = caption("더해도 늘려도 평면 안", 24, DONE).move_to(note)
+        self.play(FadeTransform(note, note2))
+        rules = VGroup(
+            Tex(R"\mathbf{x}+\mathbf{y}\in\mathbb{R}^2").set_color(DONE),
+            Tex(R"\alpha\mathbf{x}\in\mathbb{R}^2").set_color(DONE),
+        ).arrange(RIGHT, buff=0.8)
+        rules.next_to(r2, DOWN, buff=0.5).align_to(r2, LEFT)
+        self.play(FadeIn(rules, UP))
+        self.wait(1.0)
+
+        # 3. 같은 성질을 가진 다른 집합들
+        family = VGroup(
+            Tex(R"\mathbb{R}^3,\ \mathbb{R}^n").set_color(INK),
+            Tex(R"M_{m\times n}(\mathbb{R})").set_color(INK),
+            Tex(R"\{a_0+a_1x+\cdots+a_nx^n\}").set_color(INK),
+        ).arrange(DOWN, buff=0.28, aligned_edge=LEFT)
+        family.set_width(4.4).next_to(rules, DOWN, buff=0.55).align_to(r2, LEFT)
+        for line in family:
+            self.play(FadeIn(line, UP), run_time=0.5)
+        note3 = caption("행렬 · 다항식도 같은 성질", 24, GREY_B).next_to(family, DOWN, buff=0.35).align_to(r2, LEFT)
+        self.play(FadeIn(note3, UP))
+        self.wait(0.6)
+        last = caption("정의 3-3 은 이 성질의 목록", 24, DONE).move_to(note2)
+        self.play(FadeTransform(note2, last))
+        self.wait(2)
+
+
 class VectorOperations(InteractiveScene):
     """정의 3-1 · 3-2 와 예제 3-1. 그림은 2차원, 수는 예제의 3차원 값이다."""
 

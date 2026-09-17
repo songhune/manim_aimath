@@ -159,6 +159,7 @@ SECTIONS = {
         ("2.3 여러 가지 행렬", ["TransposeRules", "MatrixZoo"]),
     ],
     "am_03": [
+        ("3.1 도입 · 좌표평면", ["VectorsOnCoordinatePlane", "VectorSpaceAsPlane"]),
         ("3.1 벡터와 벡터공간", ["VectorOperations", "ClosedUnderOperations", "SubspaceLine",
                           "LinearCombination", "IndependenceCollinear", "SpanLineToPlane",
                           "BasisDimension", "VectorNorm", "TriangleInequality"]),

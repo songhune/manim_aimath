@@ -1,5 +1,19 @@
 [
  {
+  "scene": "VectorsOnCoordinatePlane",
+  "title": "좌표평면 위의 벡터",
+  "url": "https://songhune.github.io/manim_aimath/am_03/VectorsOnCoordinatePlane.html",
+  "slides": 23,
+  "kb": 1871
+ },
+ {
+  "scene": "VectorSpaceAsPlane",
+  "title": "좌표평면이 곧 벡터공간",
+  "url": "https://songhune.github.io/manim_aimath/am_03/VectorSpaceAsPlane.html",
+  "slides": 15,
+  "kb": 1887
+ },
+ {
   "scene": "VectorOperations",
   "title": "벡터의 합 · 차 · 스칼라곱",
   "url": "https://songhune.github.io/manim_aimath/am_03/VectorOperations.html",

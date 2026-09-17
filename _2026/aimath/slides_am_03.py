@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_03 (교재 Chapter 3 벡터공간과 내적) 영상 19편의 클릭 진행형 판.
+"""AM_03 (교재 Chapter 3 벡터공간과 내적) 영상 21편의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_03 --module _2026/aimath/slides_am_03.py
 
@@ -10,6 +10,8 @@ from _2026.aimath.slides_common import build
 from _2026.aimath import week04
 
 PAGES = build(globals(), [
+    ("VectorsOnCoordinatePlane", "좌표평면 위의 벡터"),
+    ("VectorSpaceAsPlane", "좌표평면이 곧 벡터공간"),
     ("VectorOperations", "벡터의 합 · 차 · 스칼라곱"),
     ("ClosedUnderOperations", "벡터공간의 조건"),
     ("SubspaceLine", "부분공간 판정법"),
