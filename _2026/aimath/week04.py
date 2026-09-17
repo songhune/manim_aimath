@@ -684,7 +684,8 @@ class LinearCombination(InteractiveScene):
         formula = VGroup(na, Tex(R"\mathbf{v}").set_color(ACCENT), Tex("+").set_color(INK),
                          nb, Tex(R"\mathbf{w}").set_color(CALM)).arrange(RIGHT, buff=0.18)
         formula.scale(1.2).next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
-        formula.add_updater(lambda m: m.arrange(RIGHT, buff=0.18).scale(1.0))
+        anchor = formula.get_left().copy()
+        formula.add_updater(lambda m: m.arrange(RIGHT, buff=0.18).next_to(anchor, RIGHT, buff=0))
         self.play(FadeIn(formula))
         note = caption("스칼라 둘을 돌리면 머리가 움직임", 24, DONE).next_to(p, DOWN, buff=0.25)
         self.play(FadeIn(note, UP))
