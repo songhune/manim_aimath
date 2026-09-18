@@ -581,27 +581,29 @@ class DeterminantZero(InteractiveScene):
 # 9. 행렬식 (3x3) — 사루스 법칙, 예제 2-4 의 행렬
 # ─────────────────────────────────────────────────────────────
 class Determinant3x3(InteractiveScene):
-    """앞의 두 열을 오른쪽에 베껴 두고 대각선 여섯 줄을 읽는다.
+    """사루스 법칙으로 한 번, 여인수 전개로 두 번(1행 · 2행) 같은 12 를 얻는다.
 
-    행렬은 예제 2-4(=예제 2-1 의 계수행렬)이고 det = 12 다. 그 12 가
-    예제 2-4 에서 구한 역행렬의 분모와 같다. 이 장의 매듭이 여기다.
+    행렬은 예제 2-4(=예제 2-1 의 계수행렬)이고 det = 12 다. 그 12 가 예제 2-4 에서 구한
+    역행렬의 분모와 같다. 여인수 전개는 행 하나 열 하나를 지운 2×2 행렬식에 바둑판 부호를
+    붙여 더하는 것이고, 0 이 있는 행으로 펼치면 항이 준다(2026-09-18 추가).
     """
+    A = [[1, 3, 2], [2, 2, 0], [-3, 1, 1]]
     wide = [[1, 3, 2, 1, 3], [2, 2, 0, 2, 2], [-3, 1, 1, -3, 1]]
-    downs = [(0, 2, 4, "1 \\cdot 2 \\cdot 1 = 2"),
-             (1, 3, 5, "3 \\cdot 0 \\cdot (-3) = 0"),
-             (2, 4, 6, "2 \\cdot 2 \\cdot 1 = 4")]
+
+    def minor(self, i, j):
+        return [[self.A[r][c] for c in range(3) if c != j] for r in range(3) if r != i]
 
     def construct(self):
         head = slide_title("3차 정방행렬의 행렬식")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
+        # ── 1. 사루스 법칙 ──────────────────────────────────
         m = mat(self.wide, WHITE, h_buff=0.85, v_buff=0.62)
         m.set_width(8.6).move_to(1.1 * UP)
         cols = m.get_columns()
         for col in cols[3:]:
             col.set_color(GREY_D)
         self.play(FadeIn(m))
-
         copied = caption("앞의 두 열을 베낌", 24, GREY_C)
         copied.next_to(VGroup(*cols[3:]), UP, buff=0.35)
         self.play(FadeIn(copied))
@@ -612,40 +614,117 @@ class Determinant3x3(InteractiveScene):
             for k in range(3):
                 r = k if direction > 0 else 2 - k
                 pts.append(m.get_rows()[r][start_col + k].get_center())
-            line = Line(pts[0], pts[2]).set_stroke(color, 4)
-            return line
+            return Line(pts[0], pts[2]).set_stroke(color, 4)
 
         down_lines = VGroup(*[diagonal(c, +1, DONE) for c in range(3)])
         up_lines = VGroup(*[diagonal(c, -1, WARN) for c in range(3)])
-
-        self.play(LaggedStartMap(ShowCreation, down_lines, lag_ratio=0.35),
-                  run_time=1.4)
-        down_sum = Tex(R"2 + 0 + 4 = 6").set_color(DONE)
-        down_sum.move_to(1.55 * DOWN).shift(3.3 * LEFT)
+        self.play(LaggedStartMap(ShowCreation, down_lines, lag_ratio=0.35), run_time=1.4)
+        down_sum = Tex(R"2 + 0 + 4 = 6").set_color(DONE).move_to(1.55 * DOWN).shift(3.3 * LEFT)
         self.play(Write(down_sum), run_time=0.9)
         self.wait(0.8)
-
-        self.play(LaggedStartMap(ShowCreation, up_lines, lag_ratio=0.35),
-                  run_time=1.4)
-        up_sum = Tex(R"-12 + 0 + 6 = -6").set_color(WARN)
-        up_sum.move_to(1.55 * DOWN).shift(3.3 * RIGHT)
+        self.play(LaggedStartMap(ShowCreation, up_lines, lag_ratio=0.35), run_time=1.4)
+        up_sum = Tex(R"-12 + 0 + 6 = -6").set_color(WARN).move_to(1.55 * DOWN).shift(3.3 * RIGHT)
         self.play(Write(up_sum), run_time=0.9)
         self.wait(0.8)
-
-        note = caption("아래 합에서 위 합을 뺀다", 26, GREY_B)
-        note.move_to(2.55 * DOWN)
+        note = caption("아래 합에서 위 합을 뺀다", 26, GREY_B).move_to(2.55 * DOWN)
         self.play(FadeIn(note, UP))
         self.wait(1.0)
-
-        result = Tex(R"\det A = 6 - (-6) = 12").set_color(DONE)
-        result.set_width(6.2).move_to(2.55 * DOWN)
+        result = Tex(R"\det A = 6 - (-6) = 12").set_color(DONE).set_width(6.2).move_to(2.55 * DOWN)
         self.play(FadeTransform(note, result), run_time=0.9)
         self.wait(1.2)
+        self.play(FadeOut(VGroup(down_lines, up_lines, copied, down_sum, up_sum, m, result)), run_time=0.8)
 
-        self.play(FadeOut(down_lines), FadeOut(up_lines), FadeOut(copied),
-                  FadeOut(down_sum), FadeOut(up_sum),
-                  FadeOut(m), FadeOut(result.copy()), run_time=0.8)
+        # ── 2. 여인수 전개 — 1행 ────────────────────────────
+        sub = caption("여인수 전개", 30, WHITE).next_to(head, DOWN, buff=0.3).align_to(head, LEFT)
+        self.play(FadeIn(sub))
+        A = mat(self.A, WHITE, h_buff=0.75, v_buff=0.6)
+        A.set_height(2.3).move_to(4.4 * LEFT + 0.55 * UP)
+        al = Tex("A").set_color(GREY_B).next_to(A, UP, buff=0.2)
+        self.play(FadeIn(A), FadeIn(al))
 
+        formula = Tex(R"\det A = a_{11}C_{11} + a_{12}C_{12} + a_{13}C_{13}").set_color(INK)
+        formula.set_width(6.6).to_edge(RIGHT, buff=0.6).align_to(A, UP).shift(0.1 * DOWN)
+        cof = Tex(R"C_{ij} = (-1)^{i+j} M_{ij}").set_color(INK)
+        cof.set_width(3.6).next_to(formula, DOWN, buff=0.35).align_to(formula, LEFT)
+        self.play(Write(formula), run_time=1.0)
+        self.play(FadeIn(cof, UP))
+        what = caption("행 하나 열 하나를 지운 2×2 행렬식", 22, GREY_B)
+        what.next_to(cof, DOWN, buff=0.25).align_to(formula, LEFT)
+        self.play(FadeIn(what, UP))
+        self.wait(0.8)
+
+        signs = Matrix([["+", "-", "+"], ["-", "+", "-"], ["+", "-", "+"]], h_buff=0.55, v_buff=0.45)
+        signs.set_color(GREY_B).set_height(1.6).next_to(A, DOWN, buff=0.45)
+        sl = caption("부호는 바둑판", 22, GREY_B).next_to(signs, DOWN, buff=0.2)
+        self.play(FadeIn(signs), FadeIn(sl))
+        self.wait(0.6)
+        self.play(FadeOut(what))
+
+        terms = VGroup()
+        term_texts = [R"+1\cdot(2\cdot1 - 0\cdot1) = 2",
+                      R"-3\cdot(2\cdot1 - 0\cdot(-3)) = -6",
+                      R"+2\cdot(2\cdot1 - 2\cdot(-3)) = 16"]
+        rows = A.get_rows()
+        for j in range(3):
+            a1j = rows[0][j]
+            mark = box(a1j, DONE, 0.08)
+            dim = VGroup(*[rows[r][c] for r in range(3) for c in range(3) if r == 0 or c == j])
+            dim_group = VGroup(*[e for e in dim if e is not a1j])
+            small = mat(self.minor(0, j), CALM, h_buff=0.6, v_buff=0.45).set_height(1.1)
+            small.next_to(A, RIGHT, buff=0.9).align_to(A, UP)
+            sm = Tex("M_{1%d}" % (j + 1)).set_color(CALM).scale(0.8).next_to(small, DOWN, buff=0.15)
+            term = Tex(term_texts[j]).set_color(DONE if j != 1 else WARN)
+            term.set_width(4.9)
+            if terms:
+                term.next_to(terms[-1], DOWN, buff=0.28).align_to(terms[0], LEFT)
+            else:
+                term.next_to(cof, DOWN, buff=0.6).align_to(formula, LEFT)
+            self.play(ShowCreation(mark), dim_group.animate.set_opacity(0.2), run_time=0.5)
+            self.play(FadeIn(small), FadeIn(sm), run_time=0.5)
+            self.play(FadeIn(term, UP), run_time=0.5)
+            terms.add(term)
+            self.wait(0.6)
+            self.play(FadeOut(mark), FadeOut(small), FadeOut(sm), dim_group.animate.set_opacity(1), run_time=0.35)
+        total = Tex(R"2 - 6 + 16 = 12").set_color(DONE)
+        total.set_width(3.4).next_to(terms, DOWN, buff=0.35).align_to(terms[0], LEFT)
+        self.play(Write(total))
+        same = caption("사루스와 같은 12", 24, DONE).next_to(total, RIGHT, buff=0.6)
+        self.play(FadeIn(same, UP))
+        self.wait(1.0)
+
+        # ── 3. 여인수 전개 — 0 이 있는 2행 ───────────────────
+        self.play(FadeOut(VGroup(terms, total, same, formula, cof)))
+        f2 = Tex(R"\det A = a_{21}C_{21} + a_{22}C_{22} + a_{23}C_{23}").set_color(INK)
+        f2.set_width(6.6).move_to(formula).align_to(formula, LEFT)
+        self.play(Write(f2), run_time=0.9)
+        rmark = box(rows[1], WARN, 0.1)
+        self.play(ShowCreation(rmark))
+        t2 = VGroup(
+            Tex(R"-2\cdot(3\cdot1 - 2\cdot1) = -2").set_color(WARN),
+            Tex(R"+2\cdot(1\cdot1 - 2\cdot(-3)) = 14").set_color(DONE),
+            Tex(R"-0\cdot(\cdots) = 0").set_color(GREY_B),
+        ).arrange(DOWN, buff=0.28, aligned_edge=LEFT)
+        t2.set_width(4.9).next_to(f2, DOWN, buff=0.6).align_to(f2, LEFT)
+        for line in t2:
+            self.play(FadeIn(line, UP), run_time=0.5)
+            self.wait(0.3)
+        zero = box(rows[1][2], GREY_B, 0.08)
+        self.play(ShowCreation(zero))
+        t2sum = Tex(R"-2 + 14 + 0 = 12").set_color(DONE)
+        t2sum.set_width(3.6).next_to(t2, DOWN, buff=0.35).align_to(t2, LEFT)
+        self.play(Write(t2sum))
+        c1 = caption("0 이 있는 행은 항이 줄어듦", 24, DONE).next_to(t2sum, RIGHT, buff=0.6)
+        self.play(FadeIn(c1, UP))
+        self.wait(0.8)
+        c2 = caption("어느 행 · 열로 펼쳐도 같은 값", 24, GREY_B).to_edge(DOWN, buff=0.45)
+        self.play(FadeIn(c2, UP))
+        self.wait(1.0)
+        c3 = caption("사루스는 3×3 까지, 전개는 n×n", 24, DONE).move_to(c2)
+        self.play(FadeTransform(c2, c3))
+        self.wait(1.2)
+
+        # ── 4. 예제 2-4 의 분모 ─────────────────────────────
+        self.play(FadeOut(VGroup(A, al, signs, sl, rmark, zero, f2, t2, t2sum, c1, c3, sub)), run_time=0.7)
         bridge = VGroup(
             Tex(R"\det A = 12").set_color(DONE),
             Tex(R"A^{-1} = \frac{1}{12}"
@@ -653,11 +732,9 @@ class Determinant3x3(InteractiveScene):
                 R"\end{bmatrix}"),
         ).arrange(RIGHT, buff=1.3)
         bridge.set_width(10.4).move_to(0.4 * UP)
-        self.play(Transform(result, bridge[0]), FadeIn(bridge[1], RIGHT),
-                  run_time=1.2)
-        same = caption("예제 2-4 의 분모와 같은 수", 28, DONE)
-        same.next_to(bridge, DOWN, buff=0.9)
-        self.play(FadeIn(same, UP))
+        self.play(FadeIn(bridge[0], RIGHT), FadeIn(bridge[1], RIGHT), run_time=1.2)
+        last = caption("예제 2-4 의 분모와 같은 수", 28, DONE).next_to(bridge, DOWN, buff=0.9)
+        self.play(FadeIn(last, UP))
         self.wait(2)
 
 

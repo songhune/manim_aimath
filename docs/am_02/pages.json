@@ -45,8 +45,8 @@
   "scene": "Determinant3x3",
   "title": "3차 정방행렬의 행렬식",
   "url": "https://songhune.github.io/manim_aimath/am_02/Determinant3x3.html",
-  "slides": 12,
-  "kb": 1900
+  "slides": 36,
+  "kb": 4091
  },
  {
   "scene": "DeterminantRules",
