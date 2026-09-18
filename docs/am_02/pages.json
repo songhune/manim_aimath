@@ -115,35 +115,35 @@
   "scene": "GoormHstack",
   "title": "np.hstack 과 첨가행렬",
   "url": "https://songhune.github.io/manim_aimath/am_02/GoormHstack.html",
-  "slides": 14,
-  "kb": 1634
+  "slides": 18,
+  "kb": 2307
  },
  {
   "scene": "GoormRrefSolve",
   "title": "rref 와 마지막 열",
   "url": "https://songhune.github.io/manim_aimath/am_02/GoormRrefSolve.html",
-  "slides": 13,
-  "kb": 1482
+  "slides": 19,
+  "kb": 2408
  },
  {
   "scene": "GoormMatrixPower",
   "title": "matrix_power 와 역행렬",
   "url": "https://songhune.github.io/manim_aimath/am_02/GoormMatrixPower.html",
-  "slides": 11,
-  "kb": 1508
+  "slides": 17,
+  "kb": 2189
  },
  {
   "scene": "GoormProductInverse",
   "title": "곱의 역행렬 코드",
   "url": "https://songhune.github.io/manim_aimath/am_02/GoormProductInverse.html",
-  "slides": 12,
-  "kb": 1662
+  "slides": 20,
+  "kb": 3330
  },
  {
   "scene": "GoormTriuTril",
   "title": "triu · tril 과 판별",
   "url": "https://songhune.github.io/manim_aimath/am_02/GoormTriuTril.html",
-  "slides": 12,
-  "kb": 1515
+  "slides": 20,
+  "kb": 3330
  }
 ]
