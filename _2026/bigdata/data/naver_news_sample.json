@@ -1,0 +1,49 @@
+{
+  "_설명": "네이버 검색 API 실제 응답 표본. 2026-09-20 호출, display=100 중 앞 3건만 남김. 인증키는 들어 있지 않다. manim 씬의 화면 값으로 쓴다.",
+  "query": "아시안컵",
+  "request_url": "https://openapi.naver.com/v1/search/news.json?query=%EC%95%84%EC%8B%9C%EC%95%88%EC%BB%B5&start=1&display=100",
+  "id_length": 20,
+  "secret_length": 10,
+  "ok": {
+    "status": 200,
+    "reason": "OK",
+    "items_received": 100,
+    "body": {
+      "lastBuildDate": "Sun, 20 Sep 2026 23:07:27 +0900",
+      "total": 382278,
+      "start": 1,
+      "display": 100,
+      "items": [
+        {
+          "title": "&quot;지난 경기는 못했는데&quot;...모레노 선택 받은 김민수, 대표팀 소집 앞두...",
+          "originallink": "https://www.interfootball.co.kr/news/articleView.html?idxno=694895",
+          "link": "https://m.sports.naver.com/wfootball/article/413/0000224122",
+          "description": "양현준은 아이치, 나고야 <b>아시안</b>게임 참가로 셀틱을 잠시 떠난 상황이다. 레인저스는 셀틱을 상대로 경기 주도권을 놓치지 않으며 승리를 거뒀다. 전반 14분 제임스 펜라이스의 슈팅을 시작으로 댄 닐과 라이언 나데리가... ",
+          "pubDate": "Sun, 20 Sep 2026 22:55:00 +0900"
+        },
+        {
+          "title": "이수민, <b>아시안</b>투어 양더 토너먼트 플레이어스 챔피언십 공동 39위",
+          "originallink": "https://www.mk.co.kr/article/12157681",
+          "link": "https://m.sports.naver.com/golf/article/009/0005738004",
+          "description": "이수민이 <b>아시안</b>투어 양더 토너먼트 플레이어스 챔피언십을 공동 39위로 마쳤다. 이수민은 20일 대만... <b>아시안</b>투어와 한국프로골프(KPGA) 투어를 병행 중인 이수민은 이번 대회 톱10에 도전했다. 둘쨰날 7언더파를... ",
+          "pubDate": "Sun, 20 Sep 2026 22:42:00 +0900"
+        },
+        {
+          "title": "[<b>아시안</b>게임] '이현중 27점' 한국농구, 일본 완파하고 12년 만에 우승…...",
+          "originallink": "https://www.smartbizn.com/news/articleView.html?idxno=154382",
+          "link": "https://www.smartbizn.com/news/articleView.html?idxno=154382",
+          "description": "대한민국 남자농구가 <b>아시안</b>게임 결승에서 일본을 꺾고 12년 만에, 통산 5번째 금메달을 따냈다. 원정대회... 한국(FIBA 랭킹 57위)은 20일 일본 나고야의 아이치 인터내셔널 아레나에서 열린 2026 아이치 나고야 <b>아시안</b>... ",
+          "pubDate": "Sun, 20 Sep 2026 22:26:00 +0900"
+        }
+      ]
+    }
+  },
+  "no_header": {
+    "status": 401,
+    "reason": "Unauthorized",
+    "body": {
+      "errorMessage": "Not Exist Client ID : Authentication failed. (인증에 실패했습니다.)",
+      "errorCode": "024"
+    }
+  }
+}

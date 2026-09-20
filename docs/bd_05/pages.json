@@ -1,0 +1,37 @@
+[
+ {
+  "scene": "RequestUrlAssembly",
+  "title": "요청 URL 조립",
+  "url": "https://songhune.github.io/manim_aimath/bd_05/RequestUrlAssembly.html",
+  "slides": 13,
+  "kb": 2198
+ },
+ {
+  "scene": "HeaderAndStatus",
+  "title": "인증 헤더와 상태 코드",
+  "url": "https://songhune.github.io/manim_aimath/bd_05/HeaderAndStatus.html",
+  "slides": 10,
+  "kb": 1793
+ },
+ {
+  "scene": "JsonToRecord",
+  "title": "응답에서 항목 고르기",
+  "url": "https://songhune.github.io/manim_aimath/bd_05/JsonToRecord.html",
+  "slides": 13,
+  "kb": 2717
+ },
+ {
+  "scene": "PagingLoop",
+  "title": "100건씩 수집",
+  "url": "https://songhune.github.io/manim_aimath/bd_05/PagingLoop.html",
+  "slides": 4,
+  "kb": 1640
+ },
+ {
+  "scene": "MonthlyCollection",
+  "title": "월별 수집",
+  "url": "https://songhune.github.io/manim_aimath/bd_05/MonthlyCollection.html",
+  "slides": 3,
+  "kb": 2928
+ }
+]
