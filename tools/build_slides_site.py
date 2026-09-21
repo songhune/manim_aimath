@@ -73,6 +73,7 @@ CHAPTER_TITLE = {
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ps1_02": "Chapter 2 · Probability",
     "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
+    "ps1_04": "Chapter 4 · Mathematical Expectation",
 }
 
 
@@ -209,6 +210,19 @@ SECTIONS = {
          ["JointDistributionGrid", "Example314Pens", "Example315DriveIn", "MarginalAsRowSums",
           "ConditionalDistributionSlice", "Example319Spectrum", "Example320Rectangle",
           "IndependenceProductCheck", "Example322ShelfLife"]),
+    ],
+    "ps1_04": [
+        ("4.1 Mean of a Random Variable",
+         ["ExpectedValueAsBalance", "Example41Components", "Example42Salesperson", "Example43DeviceLife",
+          "ExpectationOfFunction", "Example44CarWash", "Example45FourXPlus3", "Example46TableXY", "Example47RatioYX"]),
+        ("4.2 Variance and Covariance of Random Variables",
+         ["VarianceAsSpread", "Example48TwoCompanies", "Example49Defectives", "Example410WaterDemand",
+          "Example411LinearDiscrete", "Example412LinearContinuous", "CovarianceSign", "CorrelationScale",
+          "Example413Covariance", "Example415Correlation"]),
+        ("4.3 Means and Variances of Linear Combinations of Random Variables",
+         ["LinearShiftScale", "VarianceOfSum", "Example417418Rework", "Example419ShiftSquare",
+          "Example420Drink", "Example421Independent", "Example422423Variance"]),
+        ("4.4 Chebyshev's Theorem", ["ChebyshevBand", "Example427Chebyshev"]),
     ],
 }
 

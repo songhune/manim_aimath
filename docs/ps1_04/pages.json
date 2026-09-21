@@ -1,0 +1,198 @@
+[
+ {
+  "scene": "ExpectedValueAsBalance",
+  "title": "Expected Value",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/ExpectedValueAsBalance.html",
+  "slides": 5,
+  "kb": 2131
+ },
+ {
+  "scene": "Example41Components",
+  "title": "Example 4.1",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example41Components.html",
+  "slides": 7,
+  "kb": 2791
+ },
+ {
+  "scene": "Example42Salesperson",
+  "title": "Example 4.2",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example42Salesperson.html",
+  "slides": 5,
+  "kb": 2955
+ },
+ {
+  "scene": "Example43DeviceLife",
+  "title": "Example 4.3",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example43DeviceLife.html",
+  "slides": 6,
+  "kb": 1714
+ },
+ {
+  "scene": "ExpectationOfFunction",
+  "title": "Expected Value of g(X)",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/ExpectationOfFunction.html",
+  "slides": 6,
+  "kb": 2367
+ },
+ {
+  "scene": "Example44CarWash",
+  "title": "Example 4.4",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example44CarWash.html",
+  "slides": 6,
+  "kb": 2586
+ },
+ {
+  "scene": "Example45FourXPlus3",
+  "title": "Example 4.5",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example45FourXPlus3.html",
+  "slides": 6,
+  "kb": 1593
+ },
+ {
+  "scene": "Example46TableXY",
+  "title": "Example 4.6",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example46TableXY.html",
+  "slides": 7,
+  "kb": 1799
+ },
+ {
+  "scene": "Example47RatioYX",
+  "title": "Example 4.7",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example47RatioYX.html",
+  "slides": 7,
+  "kb": 1988
+ },
+ {
+  "scene": "VarianceAsSpread",
+  "title": "Variance",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/VarianceAsSpread.html",
+  "slides": 8,
+  "kb": 2167
+ },
+ {
+  "scene": "Example48TwoCompanies",
+  "title": "Example 4.8",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example48TwoCompanies.html",
+  "slides": 6,
+  "kb": 3292
+ },
+ {
+  "scene": "Example49Defectives",
+  "title": "Example 4.9",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example49Defectives.html",
+  "slides": 4,
+  "kb": 2173
+ },
+ {
+  "scene": "Example410WaterDemand",
+  "title": "Example 4.10",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example410WaterDemand.html",
+  "slides": 6,
+  "kb": 1821
+ },
+ {
+  "scene": "Example411LinearDiscrete",
+  "title": "Example 4.11",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example411LinearDiscrete.html",
+  "slides": 6,
+  "kb": 2278
+ },
+ {
+  "scene": "Example412LinearContinuous",
+  "title": "Example 4.12",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example412LinearContinuous.html",
+  "slides": 8,
+  "kb": 1923
+ },
+ {
+  "scene": "CovarianceSign",
+  "title": "Covariance",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/CovarianceSign.html",
+  "slides": 8,
+  "kb": 2061
+ },
+ {
+  "scene": "CorrelationScale",
+  "title": "Correlation Coefficient",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/CorrelationScale.html",
+  "slides": 4,
+  "kb": 1674
+ },
+ {
+  "scene": "Example413Covariance",
+  "title": "Example 4.13",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example413Covariance.html",
+  "slides": 6,
+  "kb": 2542
+ },
+ {
+  "scene": "Example415Correlation",
+  "title": "Example 4.15",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example415Correlation.html",
+  "slides": 5,
+  "kb": 2415
+ },
+ {
+  "scene": "LinearShiftScale",
+  "title": "Linear Combinations",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/LinearShiftScale.html",
+  "slides": 5,
+  "kb": 1749
+ },
+ {
+  "scene": "VarianceOfSum",
+  "title": "Variance of aX + bY",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/VarianceOfSum.html",
+  "slides": 4,
+  "kb": 1407
+ },
+ {
+  "scene": "Example417418Rework",
+  "title": "Examples 4.17, 4.18",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example417418Rework.html",
+  "slides": 5,
+  "kb": 2447
+ },
+ {
+  "scene": "Example419ShiftSquare",
+  "title": "Example 4.19",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example419ShiftSquare.html",
+  "slides": 5,
+  "kb": 2025
+ },
+ {
+  "scene": "Example420Drink",
+  "title": "Example 4.20",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example420Drink.html",
+  "slides": 6,
+  "kb": 1975
+ },
+ {
+  "scene": "Example421Independent",
+  "title": "Example 4.21",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example421Independent.html",
+  "slides": 6,
+  "kb": 1787
+ },
+ {
+  "scene": "Example422423Variance",
+  "title": "Examples 4.22, 4.23",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example422423Variance.html",
+  "slides": 5,
+  "kb": 1985
+ },
+ {
+  "scene": "ChebyshevBand",
+  "title": "Chebyshev's Theorem",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/ChebyshevBand.html",
+  "slides": 5,
+  "kb": 1571
+ },
+ {
+  "scene": "Example427Chebyshev",
+  "title": "Example 4.27",
+  "url": "https://songhune.github.io/manim_aimath/ps1_04/Example427Chebyshev.html",
+  "slides": 6,
+  "kb": 1924
+ }
+]

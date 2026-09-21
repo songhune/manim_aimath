@@ -76,6 +76,40 @@ PS1_03_INSERT = [
 ]
 PS1_03_ANCHORS = {name: after + 1 for after, names in PS1_03_INSERT for name in names}
 
+# PS1_04 (Chapter 4, week05.py, 2026-09-21) 삽입표. 원본은 도구/레이아웃_정리_PS1_04.py 로 정리한 62장.
+# 7차(9/22) 는 4.1–4.2 분산 = 원본 1–32, 8차(9/29) 는 4.2 공분산–4.4 = 원본 33–62.
+PS1_04_INSERT = [
+    (2, ["ExpectedValueAsBalance"]),          # 3 = 정의 4.1
+    (4, ["Example41Components"]),             # 4 = 예제 4.1 문제, 5 = 풀이
+    (6, ["Example42Salesperson"]),            # 6 = 예제 4.2 문제, 7 = 풀이
+    (8, ["Example43DeviceLife"]),             # 8 = 예제 4.3 문제, 9 = 풀이
+    (9, ["ExpectationOfFunction"]),           # 10 = 정리 4.1
+    (11, ["Example44CarWash"]),               # 11 = 예제 4.4 문제, 12 = 풀이
+    (13, ["Example45FourXPlus3"]),            # 13 = 예제 4.5 문제, 14 = 풀이
+    (16, ["Example46TableXY"]),               # 16 = 예제 4.6 문제, 17 = 풀이
+    (18, ["Example47RatioYX"]),               # 18 = 예제 4.7 문제, 19 = 풀이
+    (19, ["VarianceAsSpread"]),               # 20 = 정의 4.3 · 정리 4.2
+    (22, ["Example48TwoCompanies"]),          # 22 = 예제 4.8 문제, 23·24 = 풀이 A·B
+    (25, ["Example49Defectives"]),            # 25 = 예제 4.9 문제, 26 = 풀이
+    (27, ["Example410WaterDemand"]),          # 27 = 예제 4.10 문제, 28 = 풀이
+    (29, ["Example411LinearDiscrete"]),       # 29 = 예제 4.11 문제, 30 = 풀이
+    (31, ["Example412LinearContinuous"]),     # 31 = 예제 4.12 문제, 32 = 풀이
+    (32, ["CovarianceSign"]),                 # 33 = 정의 4.4 · 정리 4.4
+    (33, ["CorrelationScale"]),               # 34 = 정의 4.5
+    (35, ["Example413Covariance"]),           # 35 = 예제 4.13 문제, 36 = 풀이
+    (37, ["Example415Correlation"]),          # 37 = 예제 4.15 문제, 38 = 풀이
+    (40, ["LinearShiftScale"]),               # 41 = 정리 4.5 · 4.6
+    (42, ["VarianceOfSum"]),                  # 43 = 정리 4.9
+    (45, ["Example417418Rework"]),            # 45 = 예제 4.17 문제, 46 = 풀이 (4.18 은 47·48)
+    (49, ["Example419ShiftSquare"]),          # 49 = 예제 4.19 문제, 50 = 풀이
+    (51, ["Example420Drink"]),                # 51 = 예제 4.20 문제, 52 = 풀이
+    (53, ["Example421Independent"]),          # 53 = 예제 4.21 문제, 54 = 풀이
+    (55, ["Example422423Variance"]),          # 55 = 예제 4.22 문제, 56 = 풀이 (4.23 은 57·58)
+    (58, ["ChebyshevBand"]),                  # 59 = 정리 4.10
+    (60, ["Example427Chebyshev"]),            # 60 = 예제 4.27 문제, 61 = 풀이
+]
+PS1_04_ANCHORS = {name: after + 1 for after, names in PS1_04_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -227,6 +261,22 @@ JOBS = [
         place="before",
         insert=PS1_03_INSERT,
         anchors=PS1_03_ANCHORS,
+    ),
+
+    dict(
+        # PS1_04 (week05.py, 2026-09-21). 개념 영상은 정의·정리 슬라이드 앞, 예제 영상은 문제 다음(풀이 앞).
+        src="PS1_04_restyled.pptx",
+        dst="PS1_04_restyled_영상.pptx",
+        place="before",
+        insert=PS1_04_INSERT,
+        anchors=PS1_04_ANCHORS,
+    ),
+    dict(
+        src="PS1_04_restyled_한글.pptx",
+        dst="PS1_04_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_04_INSERT,
+        anchors=PS1_04_ANCHORS,
     ),
 ]
 
