@@ -59,8 +59,8 @@
   "scene": "BasisDimension",
   "title": "기저와 차원",
   "url": "https://songhune.github.io/manim_aimath/am_03/BasisDimension.html",
-  "slides": 12,
-  "kb": 1380
+  "slides": 22,
+  "kb": 2588
  },
  {
   "scene": "VectorNorm",

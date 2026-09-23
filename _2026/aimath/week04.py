@@ -886,53 +886,119 @@ class SpanLineToPlane(InteractiveScene):
 
 
 class BasisDimension(InteractiveScene):
-    """정의 3-8 · 3-9 와 예제 3-8 · 3-9.
+    """정의 3-8 · 3-9 와 예제 3-8 · 3-9 를 3차원 공간에서.
 
-    생성하면서 독립이면 기저, 기저의 원소 수가 차원이다. 예제 3-9 는 셋째 벡터가
-    앞 둘의 합이라 종속이고, 그래서 생성하는 공간의 차원이 2 다.
+    앞 두 벡터가 만드는 평면을 깔아 두고 셋째 벡터가 그 평면 밖으로 나가는지(3-8, 기저)
+    평면 안에 눕는지(3-9, 셋째 = 앞 둘의 합, 차원 2)를 본다. 카메라는 축 중심으로 천천히 돈다.
     """
+    v1 = (1, 1, 0)
+    v2 = (0, 1, 1)
+    v3 = (1, 0, 1)
+    v3_dep = (1, 2, 1)
 
     def construct(self):
         head = slide_title("기저와 차원")
+        head.fix_in_frame()
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
-        self.play(FadeIn(tag_under(head, "정의 3-8 · 3-9 · 예제 3-8 · 3-9")))
+        tag = tag_under(head, "정의 3-8 · 3-9 · 예제 3-8 · 3-9")
+        tag.fix_in_frame()
+        self.play(FadeIn(tag))
 
-        rule = VGroup(caption("생성", 26, ACCENT), Tex("+").set_color(INK),
-                      caption("선형독립", 26, CALM), Tex(R"\Rightarrow").set_color(INK),
-                      caption("기저", 26, DONE)).arrange(RIGHT, buff=0.35)
-        rule.move_to(2.2 * UP)
+        rule = VGroup(caption("생성", 24, ACCENT), Tex("+").set_color(INK),
+                      caption("선형독립", 24, CALM), Tex(R"\Rightarrow").set_color(INK),
+                      caption("기저", 24, DONE)).arrange(RIGHT, buff=0.3)
+        rule.to_edge(RIGHT, buff=0.6).shift(2.3 * UP)
+        rule.fix_in_frame()
         self.play(FadeIn(rule, UP))
-        self.wait(0.5)
 
-        vs = VGroup(col([1, 1, 0], INK), col([0, 1, 1], INK), col([1, 0, 1], INK))
-        vs.arrange(RIGHT, buff=0.7).move_to(0.3 * DOWN + 3.3 * LEFT)
-        lab = Tex(R"S").set_color(INK).next_to(vs, LEFT, buff=0.4)
-        self.play(FadeIn(vs), FadeIn(lab))
-        good = VGroup(
-            Tex(R"a+c=0,\ a+b=0,\ b+c=0\ \Rightarrow\ a=b=c=0").set_color(CALM),
+        ax = ThreeDAxes(x_range=(-1, 3, 1), y_range=(-1, 4, 1), z_range=(-1, 3, 1),
+                        width=4.6, height=4.6, depth=4.4,
+                        axis_config=dict(stroke_color=GREY_B, stroke_width=2, include_tip=True))
+        ax.move_to(ORIGIN)
+        labels = VGroup(Tex("x"), Tex("y"), Tex("z")).set_color(GREY_B)
+        labels[0].next_to(ax.x_axis.get_end(), RIGHT, buff=0.1)
+        labels[1].next_to(ax.y_axis.get_end(), UP, buff=0.1)
+        labels[2].next_to(ax.z_axis.get_end(), OUT, buff=0.1)
+        for lab in labels:
+            lab.rotate(PI / 2, RIGHT)
+        self.frame.reorient(-40, 64, 0, center=(1.9, 0.4, -0.3), height=9.8)
+        self.play(FadeIn(ax), FadeIn(labels))
+        self.frame.add_updater(lambda f, dt: f.increment_theta(0.04 * dt))
+
+        def arr3(end, color, start=(0, 0, 0)):
+            m = Arrow(ax.c2p(*start), ax.c2p(*end), buff=0, thickness=5).set_color(color)
+            m.set_stroke(color, 2)
+            return m
+
+        def span_plane(u, w, color):
+            pts = []
+            for a_, b_ in ((-0.5, -0.5), (1.8, -0.5), (1.8, 1.8), (-0.5, 1.8)):
+                pts.append(ax.c2p(*[a_ * u[k] + b_ * w[k] for k in range(3)]))
+            poly = Polygon(*pts).set_fill(color, 0.22).set_stroke(color, 1, opacity=0.5)
+            return poly
+
+        panel = VGroup(
+            Tex(R"\mathbf{v}_1=(1,1,0)").set_color(ACCENT),
+            Tex(R"\mathbf{v}_2=(0,1,1)").set_color(CALM),
+            Tex(R"\mathbf{v}_3=(1,0,1)").set_color(PURPLE_B),
+            Tex(R"a\mathbf{v}_1+b\mathbf{v}_2+c\mathbf{v}_3=\mathbf{0}\ \Rightarrow\ a=b=c=0").set_color(INK),
             Tex(R"\dim(\mathbb{R}^3)=3").set_color(DONE),
-        ).arrange(DOWN, buff=0.35, aligned_edge=LEFT)
-        good.set_width(5.6).next_to(vs, RIGHT, buff=0.8)
-        self.play(FadeIn(good[0], UP))
-        self.play(FadeIn(good[1], UP))
-        note = caption("독립인 세 벡터 · R³ 의 기저", 24, DONE).to_edge(DOWN, buff=1.5)
-        self.play(FadeIn(note, UP))
+        ).arrange(DOWN, buff=0.28, aligned_edge=LEFT)
+        panel.set_width(4.6).to_edge(RIGHT, buff=0.5).shift(0.2 * UP)
+        panel.fix_in_frame()
+
+        cap = caption("예제 3-8 · 세 벡터", 24, GREY_B).to_edge(DOWN, buff=0.45)
+        cap.fix_in_frame()
+        self.play(FadeIn(cap))
+
+        def say(text, color=DONE):
+            nonlocal cap
+            new = caption(text, 24, color).to_edge(DOWN, buff=0.45)
+            new.fix_in_frame()
+            self.play(FadeTransform(cap, new), run_time=0.4)
+            cap = new
+
+        a1 = arr3(self.v1, ACCENT); a2 = arr3(self.v2, CALM); a3 = arr3(self.v3, PURPLE_B)
+        self.play(GrowArrow(a1), FadeIn(panel[0]))
+        self.play(GrowArrow(a2), FadeIn(panel[1]))
+        plane = span_plane(self.v1, self.v2, CALM)
+        self.play(FadeIn(plane))
+        say("앞의 둘이 만드는 평면", CALM)
+        self.wait(0.6)
+        self.play(GrowArrow(a3), FadeIn(panel[2]))
+        say("셋째는 평면 밖 · 선형독립", PURPLE_B)
+        self.wait(0.6)
+        self.play(FadeIn(panel[3], UP))
+        self.wait(0.5)
+        self.play(FadeIn(panel[4], UP))
+        say("독립인 셋이 공간을 채움 · 기저", DONE)
         self.wait(1.2)
 
-        # 예제 3-9
-        self.play(FadeOut(VGroup(good, note)))
-        third = col([1, 2, 1], WARN).move_to(vs[2])
-        self.play(FadeTransform(vs[2], third))
-        vs.remove(vs[2])
-        eq = Tex(R"(1,2,1) = (1,1,0)+(0,1,1)").set_color(WARN)
-        eq.set_width(5.0).next_to(third, RIGHT, buff=0.8).shift(0.4 * UP)
+        # 예제 3-9 — 셋째가 앞 둘의 합
+        self.play(FadeOut(VGroup(panel[3], panel[4])))
+        p3 = Tex(R"\mathbf{v}_3=(1,2,1)").set_color(WARN)
+        p3.set_height(panel[2].get_height()).move_to(panel[2]).align_to(panel, LEFT)
+        p3.fix_in_frame()
+        dep = arr3(self.v3_dep, WARN)
+        self.play(FadeTransform(a3, dep), FadeTransform(panel[2], p3))
+        say("예제 3-9 · 셋째를 (1, 2, 1) 로", WARN)
+        self.wait(0.5)
+        ghost = arr3(self.v3_dep, CALM, start=self.v1)
+        ghost.set_opacity(0.6)
+        self.play(GrowArrow(ghost))
+        eq = Tex(R"(1,2,1)=(1,1,0)+(0,1,1)").set_color(WARN)
+        eq.set_width(4.2).next_to(p3, DOWN, buff=0.4).align_to(panel, LEFT)
+        eq.fix_in_frame()
         self.play(Write(eq))
-        dim = Tex(R"\dim(\mathrm{span}(S)) = 2").set_color(DONE)
-        dim.next_to(eq, DOWN, buff=0.45).align_to(eq, LEFT)
-        self.play(FadeIn(dim, UP))
-        note2 = caption("셋째는 앞 둘의 합 · 종속", 24, WARN).move_to(note)
-        self.play(FadeIn(note2, UP))
+        say("셋째가 평면 안 · 선형종속", WARN)
+        self.wait(0.8)
+        dim2 = Tex(R"\dim(\mathrm{span}(S))=2").set_color(DONE)
+        dim2.set_width(3.2).next_to(eq, DOWN, buff=0.4).align_to(panel, LEFT)
+        dim2.fix_in_frame()
+        self.play(FadeIn(dim2, UP))
+        say("셋이 평면 하나만 채움 · 차원 2", DONE)
         self.wait(2)
+        self.frame.clear_updaters()
 
 
 class VectorNorm(InteractiveScene):
