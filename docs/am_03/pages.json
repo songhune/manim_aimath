@@ -38,8 +38,8 @@
   "scene": "LinearCombination",
   "title": "선형결합",
   "url": "https://songhune.github.io/manim_aimath/am_03/LinearCombination.html",
-  "slides": 20,
-  "kb": 2055
+  "slides": 28,
+  "kb": 3163
  },
  {
   "scene": "IndependenceCollinear",

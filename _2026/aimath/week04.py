@@ -645,8 +645,11 @@ class LinearCombination(InteractiveScene):
 
     def construct(self):
         head = slide_title("선형결합")
+        head.fix_in_frame()
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
-        self.play(FadeIn(tag_under(head, "정의 3-5 · 예제 3-4")))
+        tag = tag_under(head, "정의 3-5 · 예제 3-4")
+        tag.fix_in_frame()
+        self.play(FadeIn(tag))
 
         p = plane((-4, 4, 1), (-3, 4, 1), 5.0)
         p.to_edge(LEFT, buff=0.4).shift(0.5 * DOWN)
@@ -703,27 +706,79 @@ class LinearCombination(InteractiveScene):
         self.play(FadeTransform(note, note2))
         self.wait(1.0)
 
-        # 예제 3-4 — 같은 일을 성분으로
+        # 예제 3-4 — 같은 일을 3차원 공간에서. a = (1,0,3), b = (2,1,2), 2a + 3b = (8,3,12)
         formula.clear_updaters()
-        self.play(FadeOut(VGroup(formula, rule, note2, trail, av, bw, total)))
+        self.play(FadeOut(VGroup(formula, rule, note2, trail, av, bw, total, p)))
         self.remove(av, bw, total)
-        ex = VGroup(
-            Tex(R"\mathbf{a}=(1,0,3),\ \mathbf{b}=(2,1,2)").set_color(INK),
-            Tex(R"2\mathbf{a}+3\mathbf{b}=(2,0,6)+(6,3,6)").set_color(INK),
-            Tex(R"=(8,\,3,\,12)").set_color(DONE),
-        ).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
-        ex.set_width(5.4).next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
-        for line in ex:
-            self.play(FadeIn(line, UP), run_time=0.5)
-            self.wait(0.25)
-        note3 = caption("성분마다 같은 계산", 24, DONE).move_to(note)
-        self.play(FadeIn(note3, UP))
-        line = code("print(\"2*a + 3*b = \", 2*a + 3*b)", 20)
-        line.next_to(ex, DOWN, buff=0.55).align_to(ex, LEFT)
-        shown = code("2*a + 3*b =  [ 8  3 12]", 19, GREY_B).next_to(line, DOWN, buff=0.22).align_to(line, LEFT)
-        self.play(FadeIn(line, UP))
-        self.play(FadeIn(shown, UP))
+
+        ax = ThreeDAxes(x_range=(0, 9, 1), y_range=(0, 4, 1), z_range=(0, 13, 1),
+                        width=6.0, height=2.6, depth=5.4,
+                        axis_config=dict(stroke_color=GREY_B, stroke_width=2, include_tip=True))
+        ax.move_to(ORIGIN)
+        labels = VGroup(Tex("x"), Tex("y"), Tex("z")).set_color(GREY_B)
+        labels[0].next_to(ax.x_axis.get_end(), RIGHT, buff=0.1)
+        labels[1].next_to(ax.y_axis.get_end(), UP, buff=0.1)
+        labels[2].next_to(ax.z_axis.get_end(), OUT, buff=0.1).rotate(PI / 2, RIGHT)
+        labels[1].rotate(PI / 2, RIGHT)
+        labels[0].rotate(PI / 2, RIGHT)
+        # 카메라는 제 중심을 축으로 돈다. 축을 중심 가까이 두어야 회전해도 그림이 흐르지 않는다.
+        self.frame.reorient(-35, 66, 0, center=(1.7, 0.3, -0.5), height=9.6)
+        self.play(FadeIn(ax), FadeIn(labels))
+
+        def arr3(start, end, color):
+            m = Arrow(ax.c2p(*start), ax.c2p(*end), buff=0, thickness=5).set_color(color)
+            m.set_stroke(color, 2)
+            return m
+
+        panel = VGroup(
+            Tex(R"\mathbf{a}=(1,0,3)").set_color(ACCENT),
+            Tex(R"\mathbf{b}=(2,1,2)").set_color(CALM),
+            Tex(R"2\mathbf{a}=(2,0,6)").set_color(ACCENT),
+            Tex(R"3\mathbf{b}=(6,3,6)").set_color(CALM),
+            Tex(R"2\mathbf{a}+3\mathbf{b}=(8,3,12)").set_color(DONE),
+        ).arrange(DOWN, buff=0.3, aligned_edge=LEFT)
+        panel.set_width(3.9).to_edge(RIGHT, buff=0.5).shift(0.5 * UP)
+        panel.fix_in_frame()
+        cap = caption("예제 3-4 · 3차원의 두 벡터", 24, GREY_B).to_edge(DOWN, buff=0.45)
+        cap.fix_in_frame()
+        self.play(FadeIn(cap))
+
+        a3 = arr3((0, 0, 0), (1, 0, 3), ACCENT)
+        b3 = arr3((0, 0, 0), (2, 1, 2), CALM)
+        self.play(GrowArrow(a3), FadeIn(panel[0]))
+        self.play(GrowArrow(b3), FadeIn(panel[1]))
+        self.frame.add_updater(lambda f, dt: f.increment_theta(0.04 * dt))
+        self.wait(0.8)
+
+        # 늘리고 이어 붙인다
+        a2 = arr3((0, 0, 0), (2, 0, 6), ACCENT)
+        self.play(Transform(a3, a2), FadeIn(panel[2]), run_time=0.9)
+        cap2 = caption("늘리기 · 같은 직선 위", 24, ACCENT).move_to(cap); cap2.fix_in_frame()
+        self.play(FadeTransform(cap, cap2)); cap = cap2
+        self.wait(0.5)
+        b3s = arr3((2, 0, 6), (8, 3, 12), CALM)
+        self.play(Transform(b3, b3s), FadeIn(panel[3]), run_time=0.9)
+        cap3 = caption("3b 를 2a 의 머리에 잇기", 24, CALM).move_to(cap); cap3.fix_in_frame()
+        self.play(FadeTransform(cap, cap3)); cap = cap3
+        self.wait(0.5)
+        total3 = arr3((0, 0, 0), (8, 3, 12), DONE)
+        tip = Dot(ax.c2p(8, 3, 12), color=DONE, radius=0.07)
+        drop = DashedLine(ax.c2p(8, 3, 12), ax.c2p(8, 3, 0)).set_stroke(GREY_B, 2)
+        foot = DashedLine(ax.c2p(8, 3, 0), ax.c2p(8, 0, 0)).set_stroke(GREY_B, 2)
+        self.play(GrowArrow(total3), FadeIn(tip), FadeIn(panel[4]))
+        self.play(ShowCreation(drop), ShowCreation(foot))
+        cap4 = caption("머리가 닿는 점이 선형결합", 24, DONE).move_to(cap); cap4.fix_in_frame()
+        self.play(FadeTransform(cap, cap4)); cap = cap4
+        self.wait(1.2)
+
+        line = code("print(\"2*a + 3*b = \", 2*a + 3*b)", 19)
+        shown = code("2*a + 3*b =  [ 8  3 12]", 18, GREY_B)
+        codes = VGroup(line, shown).arrange(DOWN, buff=0.2, aligned_edge=LEFT)
+        codes.next_to(panel, DOWN, buff=0.5).align_to(panel, LEFT)
+        codes.fix_in_frame()
+        self.play(FadeIn(codes, UP))
         self.wait(2)
+        self.frame.clear_updaters()
 
 
 class IndependenceCollinear(InteractiveScene):
