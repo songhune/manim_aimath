@@ -1042,44 +1042,88 @@ class VectorNorm(InteractiveScene):
 
 
 class TriangleInequality(InteractiveScene):
-    """예제 3-11. 두 변의 합이 남은 변보다 짧을 수 없다."""
+    """예제 3-11 을 3차원 공간에서. x, 머리에 이은 y, 원점에서 x+y 가 삼각형을 이룬다.
+
+    두 변을 돌아가는 길(√6 + √2)이 지름길(√10)보다 길다. 카메라는 축 중심으로 천천히 돈다.
+    """
+    x = (1, -1, 2)
+    y = (0, 1, 1)
+    s = (1, 0, 3)
 
     def construct(self):
         head = slide_title("삼각부등식")
+        head.fix_in_frame()
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
-        self.play(FadeIn(tag_under(head, "정리 3-3 (3) · 예제 3-11")))
+        tag = tag_under(head, "정리 3-3 (3) · 예제 3-11")
+        tag.fix_in_frame()
+        self.play(FadeIn(tag))
 
-        p = plane((-1, 5, 1), (-1, 4, 1), 4.6)
-        p.to_edge(LEFT, buff=0.5).shift(0.55 * DOWN)
-        self.play(FadeIn(p))
-
-        x = arrow(p, (3, 1), ACCENT)
-        y = arrow(p, (4, 3), CALM, start=(3, 1))
-        s = arrow(p, (4, 3), DONE)
-        xl = vlabel(x, R"\mathbf{x}", ACCENT, DOWN)
-        yl = Tex(R"\mathbf{y}").set_color(CALM).scale(0.9).next_to(y, RIGHT, buff=0.1)
-        sl = Tex(R"\mathbf{x}+\mathbf{y}").set_color(DONE).scale(0.9).next_to(s.get_center(), UL, buff=0.1)
-        self.play(GrowArrow(x), FadeIn(xl))
-        self.play(GrowArrow(y), FadeIn(yl))
-        self.play(GrowArrow(s), FadeIn(sl))
-        rule = Tex(R"\Vert \mathbf{x}+\mathbf{y}\Vert  \le \Vert \mathbf{x}\Vert  + \Vert \mathbf{y}\Vert ").set_color(DONE)
-        rule.next_to(p, RIGHT, buff=0.9).align_to(p, UP).shift(0.2 * DOWN)
+        rule = Tex(R"\Vert \mathbf{x}+\mathbf{y}\Vert \le \Vert \mathbf{x}\Vert + \Vert \mathbf{y}\Vert").set_color(DONE)
+        rule.set_width(4.4).to_edge(RIGHT, buff=0.6).shift(2.2 * UP)
+        rule.fix_in_frame()
         self.play(Write(rule))
-        note = caption("지름길이 돌아가는 길보다 짧음", 24, DONE).next_to(p, DOWN, buff=0.25)
-        self.play(FadeIn(note, UP))
-        self.wait(1.0)
 
-        lines = VGroup(
-            Tex(R"\mathbf{x}=(1,-1,2),\ \mathbf{y}=(0,1,1),\ \mathbf{x}+\mathbf{y}=(1,0,3)").set_color(INK),
-            Tex(R"\Vert \mathbf{x}\Vert =\sqrt{6},\quad \Vert \mathbf{y}\Vert =\sqrt{2},\quad \Vert \mathbf{x}+\mathbf{y}\Vert =\sqrt{10}").set_color(INK),
-            Tex(R"\sqrt{10}\approx 3.16 \ \le\ \sqrt{6}+\sqrt{2}\approx 3.86").set_color(DONE),
-        ).arrange(DOWN, buff=0.4, aligned_edge=LEFT)
-        lines.set_width(5.8).next_to(rule, DOWN, buff=0.6).align_to(rule, LEFT)
-        for line in lines:
-            self.play(FadeIn(line, UP), run_time=0.6)
-            self.wait(0.3)
-        self.play(ShowCreation(box(lines[2], DONE, 0.12)))
+        ax = ThreeDAxes(x_range=(-1, 2, 1), y_range=(-1, 2, 1), z_range=(0, 4, 1),
+                        width=3.6, height=3.6, depth=4.6,
+                        axis_config=dict(stroke_color=GREY_B, stroke_width=2, include_tip=True))
+        ax.move_to(ORIGIN)
+        labels = VGroup(Tex("x"), Tex("y"), Tex("z")).set_color(GREY_B)
+        labels[0].next_to(ax.x_axis.get_end(), RIGHT, buff=0.1)
+        labels[1].next_to(ax.y_axis.get_end(), UP, buff=0.1)
+        labels[2].next_to(ax.z_axis.get_end(), OUT, buff=0.1)
+        for lab in labels:
+            lab.rotate(PI / 2, RIGHT)
+        self.frame.reorient(-40, 66, 0, center=(1.9, 0.4, -0.2), height=9.8)
+        self.play(FadeIn(ax), FadeIn(labels))
+        self.frame.add_updater(lambda f, dt: f.increment_theta(0.04 * dt))
+
+        def arr3(end, color, start=(0, 0, 0)):
+            m = Arrow(ax.c2p(*start), ax.c2p(*end), buff=0, thickness=5).set_color(color)
+            m.set_stroke(color, 2)
+            return m
+
+        panel = VGroup(
+            Tex(R"\mathbf{x}=(1,-1,2),\ \Vert\mathbf{x}\Vert=\sqrt{6}").set_color(ACCENT),
+            Tex(R"\mathbf{y}=(0,1,1),\ \Vert\mathbf{y}\Vert=\sqrt{2}").set_color(CALM),
+            Tex(R"\mathbf{x}+\mathbf{y}=(1,0,3),\ \Vert\mathbf{x}+\mathbf{y}\Vert=\sqrt{10}").set_color(DONE),
+            Tex(R"\sqrt{10}\approx 3.16\ \le\ \sqrt{6}+\sqrt{2}\approx 3.86").set_color(DONE),
+        ).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
+        panel.set_width(5.0).to_edge(RIGHT, buff=0.5).shift(0.2 * DOWN)
+        panel.fix_in_frame()
+
+        cap = caption("예제 3-11 · 두 벡터", 24, GREY_B).to_edge(DOWN, buff=0.45)
+        cap.fix_in_frame()
+        self.play(FadeIn(cap))
+
+        def say(text, color=DONE):
+            nonlocal cap
+            new = caption(text, 24, color).to_edge(DOWN, buff=0.45)
+            new.fix_in_frame()
+            self.play(FadeTransform(cap, new), run_time=0.4)
+            cap = new
+
+        xa = arr3(self.x, ACCENT)
+        ya = arr3(self.s, CALM, start=self.x)
+        sa = arr3(self.s, DONE)
+        self.play(GrowArrow(xa), FadeIn(panel[0]))
+        self.play(GrowArrow(ya), FadeIn(panel[1]))
+        say("y 를 x 의 머리에 잇기", CALM)
+        self.wait(0.5)
+        self.play(GrowArrow(sa), FadeIn(panel[2]))
+        face = Polygon(ax.c2p(0, 0, 0), ax.c2p(*self.x), ax.c2p(*self.s))
+        face.set_fill(DONE, 0.18).set_stroke(width=0)
+        self.play(FadeIn(face))
+        say("세 화살표가 공간의 삼각형", DONE)
+        self.wait(0.8)
+        self.play(FadeIn(panel[3], UP))
+        mark = box(panel[3], DONE, 0.12)
+        mark.fix_in_frame()
+        self.play(ShowCreation(mark))
+        say("지름길이 돌아가는 길보다 짧음", DONE)
+        self.wait(1.0)
+        say("3차원에서도 같은 부등식", GREY_B)
         self.wait(2)
+        self.frame.clear_updaters()
 
 
 # ─────────────────────────────────────────────────────────────

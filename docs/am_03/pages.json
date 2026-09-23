@@ -73,8 +73,8 @@
   "scene": "TriangleInequality",
   "title": "삼각부등식",
   "url": "https://songhune.github.io/manim_aimath/am_03/TriangleInequality.html",
-  "slides": 10,
-  "kb": 1546
+  "slides": 15,
+  "kb": 1964
  },
  {
   "scene": "InnerProduct",
