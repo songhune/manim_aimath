@@ -202,7 +202,8 @@ SECTIONS = {
     ],
     "ml_03": [
         ("3-1 k-최근접 이웃 회귀 · 확률적 해석", ["PerchAsRandomVariable", "ConditionalExpectation",
-                                          "NeighborCountAndVariance"]),
+                                          "LeastSquaresPrediction", "ResidualAndConditionalSpread",
+                                          "NeighborCountAndVariance", "DistributionView"]),
     ],
     "ps1_02": [
         ("2.1 Sample Space", ["SampleSpace"]),

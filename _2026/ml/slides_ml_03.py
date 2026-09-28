@@ -12,5 +12,8 @@ from _2026.ml import ml_week04
 PAGES = build(globals(), [
     ("PerchAsRandomVariable", "농어 표본과 확률변수"),
     ("ConditionalExpectation", "조건부 기댓값과 k-최근접 이웃"),
+    ("LeastSquaresPrediction", "최소제곱과 조건부 기댓값"),
+    ("ResidualAndConditionalSpread", "잔차와 조건부 분산"),
     ("NeighborCountAndVariance", "이웃 수 k 와 조건부 분산"),
+    ("DistributionView", "분포 관점: 평균·중앙값·분위수"),
 ], (ml_week04,))

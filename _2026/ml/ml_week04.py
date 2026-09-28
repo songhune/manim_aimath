@@ -381,3 +381,251 @@ class NeighborCountAndVariance(InteractiveScene):
         narrow = label("k 작음: 들쭉날쭉, 분산 큼", 26, MUTED).next_to(wide, DOWN, buff=0.2)
         self.play(FadeIn(wide), FadeIn(narrow))
         self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 슬라이드 (9) ~ (13) 의 논증을 그림으로: 최소제곱, 잔차와 조건부 분산 띠, 분포 관점
+# ─────────────────────────────────────────────────────────────
+def neighbor_sd(length, k):
+    """k − 1 로 나눈 이웃 무게의 표본 표준편차. k = 1 이면 0."""
+    if k < 2:
+        return 0.0
+    return float(TRAIN_W[neighbors(length, k)].std(ddof=1))
+
+
+def neighbor_stat(length, k, stat):
+    ys = TRAIN_W[neighbors(length, k)]
+    if stat == "mean":
+        return float(ys.mean())
+    if stat == "median":
+        return float(np.median(ys))
+    return float(np.quantile(ys, 0.9))
+
+
+def stat_curve(axes, k, stat, color, x_min=8.0, x_max=52.0, step=0.1):
+    xs = np.arange(x_min, x_max + 1e-9, step)
+    pts = [axes.c2p(x, neighbor_stat(x, k, stat)) for x in xs]
+    return VMobject().set_points_as_corners(pts).set_stroke(color, 3)
+
+
+class LeastSquaresPrediction(InteractiveScene):
+    """예측값 a 를 움직이면 이웃 세 마리의 제곱오차 넓이가 변하고, a = 이웃 평균에서 그 평균이 가장 작다.
+
+    슬라이드 (9) 「회귀의 확률적 정의」 바로 앞에 둔다. E[(W − a)² | L ≈ x] 의 최소가 조건부 기댓값이다.
+    """
+    focus = 30.0
+    k = 3
+    unit = 0.011          # 1 g 을 화면 몇 단위로 그릴지 (정사각형 한 변)
+
+    def construct(self):
+        head = slide_title("최소제곱과 조건부 기댓값")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        idx = neighbors(self.focus, self.k)
+        ys = np.sort(TRAIN_W[idx])
+        mean = float(ys.mean())
+
+        line = NumberLine(x_range=(200, 400, 50), width=7.0, include_numbers=True, font_size=22)
+        line.move_to(LEFT * 3.1 + DOWN * 2.4)
+        line_tag = note("이웃 무게 (g)", 22).next_to(line, DOWN, buff=0.35)
+        dots = VGroup()
+        levels = {}
+        for w in ys:
+            b = int(w // 10)
+            lv = levels.get(b, 0)
+            levels[b] = lv + 1
+            dots.add(Dot(line.n2p(w) + UP * (0.16 + lv * 0.18), radius=0.08).set_fill(WARN, 0.95).set_stroke(width=0))
+        cond_tag = Tex(R"P(W \mid L \approx %d):\ \tfrac{1}{3}" % self.focus, font_size=34).set_color(WARN)
+        cond_tag.next_to(line, UP, buff=2.4).align_to(line, LEFT)
+        self.play(ShowCreation(line), FadeIn(line_tag), LaggedStartMap(FadeIn, dots, lag_ratio=0.2), FadeIn(cond_tag))
+        self.wait()
+
+        # 예측값 a: 삼각형. 이웃마다 |w - a| 를 한 변으로 하는 정사각형 = 제곱오차
+        a = ValueTracker(230.0)
+        marker = Triangle().set_fill(MEAN_COLOR, 1).set_stroke(width=0).set_height(0.22)
+        marker.add_updater(lambda m: m.move_to(line.n2p(a.get_value()) + DOWN * 0.18))
+        a_tag = always_redraw(lambda: Tex(R"a = %d" % round(a.get_value()), font_size=32)
+                              .set_color(MEAN_COLOR).next_to(marker, DOWN, buff=0.1))
+
+        def squares():
+            """이웃마다 a 까지의 거리를 밑변으로 하고, 그 거리를 한 변으로 하는 정사각형 = 제곱오차."""
+            g = VGroup()
+            for j, w in enumerate(ys):
+                av = a.get_value()
+                base = Line(line.n2p(av), line.n2p(w)).set_stroke(CALM, 4)
+                base.shift(UP * (0.5 + 0.55 * j))
+                side = abs(w - av) * self.unit
+                sq = Square(side_length=max(side, 1e-3)).set_fill(CALM, 0.3).set_stroke(CALM, 1.5)
+                sq.move_to(base.get_center(), aligned_edge=DOWN)
+                g.add(base, sq)
+            return g
+        boxes = always_redraw(squares)
+        self.play(FadeIn(marker), FadeIn(a_tag))
+        self.add(boxes)
+        sq_tag = Tex(R"(w_i - a)^2", font_size=30).set_color(CALM).next_to(cond_tag, RIGHT, buff=0.6)
+        self.play(FadeIn(sq_tag))
+        self.wait()
+
+        # 오른쪽: a 에 따른 제곱오차 평균
+        # manimlib 은 y 축을 x = 0 자리에 두므로, a 대신 a - 200 을 좌표로 쓰고 눈금 글자만 200 ~ 360 으로 단다
+        OFF = 200
+        axes = Axes(x_range=(0, 160, 40), y_range=(0, 6000, 2000), width=4.6, height=3.4,
+                    axis_config=dict(stroke_width=2, include_tip=False))
+        axes.to_edge(RIGHT, buff=0.6).shift(DOWN * 0.6)
+        for v in range(0, 161, 40):
+            axes.x_axis.add(Tex(str(v + OFF), font_size=20).next_to(axes.c2p(v, 0), DOWN, buff=0.12))
+        axes.y_axis.add_numbers(range(2000, 6001, 2000), font_size=20)
+        x_tag = note("a (g)", 22).next_to(axes.x_axis, DOWN, buff=0.1)
+        y_tag = Tex(R"\hat{E}[(W - a)^2 \mid L \approx %d]" % self.focus, font_size=28).set_color(INK)
+        y_tag.next_to(axes.y_axis, UP, buff=0.1).align_to(axes.y_axis, LEFT)
+
+        def mse(t):
+            return float(np.mean((ys - t) ** 2))
+        curve = axes.get_graph(lambda t: mse(t + OFF), x_range=(0, 160)).set_stroke(ACCENT, 3)
+        point = Dot(radius=0.09).set_fill(MEAN_COLOR, 1)
+        point.add_updater(lambda m: m.move_to(axes.c2p(a.get_value() - OFF, mse(a.get_value()))))
+        self.play(ShowCreation(axes), FadeIn(x_tag), FadeIn(y_tag))
+        self.play(ShowCreation(curve), FadeIn(point))
+        self.wait()
+
+        self.play(a.animate.set_value(320.0), run_time=3.0, rate_func=linear)
+        self.play(a.animate.set_value(mean), run_time=2.0, rate_func=smooth)
+        best = Tex(R"a^* = \hat{E}[W \mid L \approx %d] = %s" % (self.focus, fmt(mean)), font_size=34)
+        best.set_color(MEAN_COLOR).move_to(UP * 2.35 + RIGHT * 0.6)
+        min_line = DashedLine(axes.c2p(mean - OFF, 0), axes.c2p(mean - OFF, mse(mean))).set_stroke(MEAN_COLOR, 2)
+        self.play(ShowCreation(min_line), FadeIn(best))
+        self.wait(2)
+
+
+class ResidualAndConditionalSpread(InteractiveScene):
+    """회귀 함수 위의 잔차 ε 와, 위치마다 달라지는 조건부 표준편차 띠 f̂ ± σ̂.
+
+    슬라이드 (11) 「회귀 함수와 잔차」·(12) 「조건부 분산의 추정」 바로 앞에 둔다.
+    """
+    k = 5
+    residual_ids = (3, 9, 20, 27, 33, 38)      # 잔차를 그릴 훈련 샘플 (정렬한 길이 순서에서 고른 자리)
+    probes = (20.0, 38.0)
+
+    def construct(self):
+        head = slide_title("잔차와 조건부 분산")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        axes = perch_axes()
+        axes.to_edge(LEFT, buff=0.7).shift(DOWN * 0.6)
+        tags = axis_tags(axes)
+        dots = train_dots(axes)
+        curve = knn_curve(axes, self.k)
+        self.play(ShowCreation(axes), FadeIn(tags), LaggedStartMap(FadeIn, dots, lag_ratio=0.02))
+        self.play(ShowCreation(curve), run_time=1.5)
+        curve_tag = Tex(R"\hat{f}_{%d}(x)" % self.k, font_size=34).set_color(MEAN_COLOR)
+        curve_tag.next_to(axes.c2p(46, knn_predict(46, self.k)), UP, buff=0.2)
+        self.play(FadeIn(curve_tag))
+        self.wait()
+
+        # 잔차: 점에서 곡선까지의 세로 선분
+        order = np.argsort(TRAIN_L)
+        segs = VGroup()
+        for j in self.residual_ids:
+            i = order[j]
+            top, bottom = TRAIN_W[i], knn_predict(TRAIN_L[i], self.k)
+            seg = Line(axes.c2p(TRAIN_L[i], bottom), axes.c2p(TRAIN_L[i], top)).set_stroke(WARN, 3)
+            segs.add(seg)
+        eps_tag = Tex(R"\varepsilon_i = w_i - \hat{f}(x_i)", font_size=34).set_color(WARN)
+        eps_tag.move_to(RIGHT * 4.4 + UP * 2.2)
+        self.play(LaggedStartMap(ShowCreation, segs, lag_ratio=0.15), FadeIn(eps_tag))
+        zero = Tex(R"E[\varepsilon \mid L] = 0", font_size=30).set_color(INK).next_to(eps_tag, DOWN, buff=0.25)
+        self.play(FadeIn(zero))
+        self.wait()
+
+        # 조건부 표준편차 띠: f̂ ± σ̂ (k − 1 로 나눔). 위치마다 폭이 다르다
+        self.play(FadeOut(segs))
+        xs = np.arange(8.0, 52.0 + 1e-9, 0.1)
+        upper = [axes.c2p(x, knn_predict(x, self.k) + neighbor_sd(x, self.k)) for x in xs]
+        lower = [axes.c2p(x, max(0.0, knn_predict(x, self.k) - neighbor_sd(x, self.k))) for x in xs]
+        band = VMobject().set_points_as_corners(upper + lower[::-1] + [upper[0]])
+        band.set_fill(CALM, 0.25).set_stroke(width=0)
+        band_tag = Tex(R"\hat{f}_{%d}(x) \pm \hat{\sigma}(x)" % self.k, font_size=34).set_color(CALM)
+        band_tag.next_to(zero, DOWN, buff=0.45)
+        sd_def = Tex(R"\hat{\sigma}^2(x) = \tfrac{1}{k-1}\sum_{i \in N_k(x)} (w_i - \hat{f}_k(x))^2",
+                     font_size=26).set_color(CALM).next_to(band_tag, DOWN, buff=0.25)
+        self.play(FadeIn(band), FadeIn(band_tag))
+        self.play(FadeIn(sd_def))
+        self.wait()
+
+        # 좁은 곳과 넓은 곳을 재 본다
+        below = sd_def
+        for x in self.probes:
+            sd = neighbor_sd(x, self.k)
+            m = knn_predict(x, self.k)
+            bar = Line(axes.c2p(x, m - sd), axes.c2p(x, m + sd)).set_stroke(WARN, 5)
+            t = Tex(R"\hat{\sigma}(%d) = %s" % (x, fmt(sd)), font_size=30).set_color(WARN)
+            t.next_to(below, DOWN, buff=0.3).align_to(band_tag, LEFT)
+            below = t
+            self.play(ShowCreation(bar), FadeIn(t), run_time=0.8)
+        self.wait(2)
+
+
+class DistributionView(InteractiveScene):
+    """같은 이웃(k = 10)에서 평균·중앙값·90% 분위수를 읽고, 각각을 x 마다 이어 세 곡선으로 그린다.
+
+    슬라이드 (13) 「분포 관점」 바로 앞에 둔다.
+    """
+    focus = 30.0
+    k = 10
+
+    def construct(self):
+        head = slide_title("분포 관점: 평균·중앙값·분위수")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+
+        axes = perch_axes()
+        axes.to_edge(LEFT, buff=0.7).shift(DOWN * 0.6)
+        tags = axis_tags(axes)
+        dots = train_dots(axes)
+        self.play(ShowCreation(axes), FadeIn(tags), LaggedStartMap(FadeIn, dots, lag_ratio=0.02))
+
+        idx = neighbors(self.focus, self.k)
+        ys = np.sort(TRAIN_W[idx])
+        focus_line = DashedLine(axes.c2p(self.focus, 0), axes.c2p(self.focus, 1200)).set_stroke(WARN, 2)
+        rings = VGroup(*[Circle(radius=0.14).set_stroke(WARN, 3).move_to(dots[i]) for i in idx])
+        k_tag = Tex(R"k = %d,\ L \approx %d" % (self.k, self.focus), font_size=34).set_color(WARN)
+        k_tag.next_to(focus_line, UP, buff=0.08)
+        self.play(ShowCreation(focus_line), FadeIn(k_tag), LaggedStartMap(ShowCreation, rings, lag_ratio=0.1))
+
+        # 오른쪽: 이웃 무게의 점그림과 세 통계량
+        line = NumberLine(x_range=(100, 900, 200), width=4.6, include_numbers=True, font_size=20)
+        line.move_to(RIGHT * 4.4 + DOWN * 1.9)
+        cdots = VGroup()
+        levels = {}
+        for w in ys:
+            b = int(w // 40)
+            lv = levels.get(b, 0)
+            levels[b] = lv + 1
+            cdots.add(Dot(line.n2p(w) + UP * (0.15 + lv * 0.17), radius=0.075).set_fill(WARN, 0.95).set_stroke(width=0))
+        self.play(ShowCreation(line), *[TransformFromCopy(dots[i], d) for i, d in zip(idx, cdots)])
+
+        stats = [("mean", MEAN_COLOR, R"\text{mean}"), ("median", CALM, R"\text{median}"), ("q90", ACCENT, R"q_{0.9}")]
+        marks = VGroup()
+        for j, (stat, color, name) in enumerate(stats):
+            v = neighbor_stat(self.focus, self.k, stat)
+            ln = DashedLine(line.n2p(v), line.n2p(v) + UP * 1.6).set_stroke(color, 3)
+            t = Tex(R"%s = %s" % (name, fmt(v)), font_size=28).set_color(color)
+            t.next_to(line, UP, buff=1.75 + 0.42 * j).align_to(line, LEFT).shift(RIGHT * (0.2 + 1.5 * j))
+            marks.add(VGroup(ln, t))
+            self.play(ShowCreation(ln), FadeIn(t), run_time=0.7)
+        self.wait()
+
+        # 세 통계량을 x 마다 이으면 세 곡선: 회귀·중앙값 회귀·분위수 회귀
+        curves = VGroup()
+        for stat, color, name in stats:
+            c = stat_curve(axes, self.k, stat, color)
+            curves.add(c)
+        labels = VGroup(
+            label("평균 곡선: 회귀 예측", 24, MEAN_COLOR),
+            label("중앙값 곡선: 강건 회귀", 24, CALM),
+            label("90% 분위수 곡선: 예측 상한", 24, ACCENT),
+        ).arrange(DOWN, aligned_edge=LEFT, buff=0.18)
+        labels.move_to(RIGHT * 4.4 + UP * 2.0)
+        self.play(FadeOut(rings), FadeOut(k_tag), FadeOut(focus_line))
+        for c, t in zip(curves, labels):
+            self.play(ShowCreation(c), FadeIn(t), run_time=1.3)
+        self.wait(2)
