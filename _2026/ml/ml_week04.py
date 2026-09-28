@@ -354,11 +354,16 @@ class NeighborCountAndVariance(InteractiveScene):
             new_rings = VGroup(*[Circle(radius=0.14).set_stroke(WARN, 3).move_to(dots[i]) for i in idx])
             new_curve = knn_curve(axes, k)
             cmean = knn_predict(self.focus, k)
-            csd = float(TRAIN_W[idx].std())
+            # 조건부 표준편차는 k - 1 로 나눈 표본 표준편차. k = 1 이면 정의되지 않는다
+            if k > 1:
+                sd_tex = Tex(R"\hat{\sigma}_{W \mid L \approx %d} = %s"
+                             % (self.focus, fmt(float(TRAIN_W[idx].std(ddof=1)))), font_size=32)
+            else:
+                sd_tex = Tex(R"\hat{\sigma}_{W \mid L \approx %d}:\ k - 1 = 0" % self.focus, font_size=32)
             rows = VGroup(
                 Tex(R"k = %d" % k, font_size=44).set_color(WARN),
-                Tex(R"E[W \mid L \approx %d] = %s" % (self.focus, fmt(cmean)), font_size=32).set_color(MEAN_COLOR),
-                Tex(R"\sigma_{W \mid L \approx %d} = %s" % (self.focus, fmt(csd)), font_size=32).set_color(CALM),
+                Tex(R"\hat{f}_{%d}(%d) = %s" % (k, self.focus, fmt(cmean)), font_size=32).set_color(MEAN_COLOR),
+                sd_tex.set_color(CALM),
             ).arrange(DOWN, aligned_edge=LEFT, buff=0.3)
             rows.move_to(RIGHT * 4.4 + UP * 0.8)
             if curve is None:
@@ -372,7 +377,7 @@ class NeighborCountAndVariance(InteractiveScene):
             rings, curve, table = new_rings, new_curve, rows
             self.wait(1.5)
 
-        wide = label("k 큼: 매끈하고 치우침", 26, MUTED).move_to(RIGHT * 4.4 + DOWN * 1.4)
+        wide = label("k 큼: 매끈, 편향 증가", 26, MUTED).move_to(RIGHT * 4.4 + DOWN * 1.4)
         narrow = label("k 작음: 들쭉날쭉, 분산 큼", 26, MUTED).next_to(wide, DOWN, buff=0.2)
         self.play(FadeIn(wide), FadeIn(narrow))
         self.wait(2)
