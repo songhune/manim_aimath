@@ -1,0 +1,23 @@
+[
+ {
+  "scene": "PerchAsRandomVariable",
+  "title": "농어 표본과 확률변수",
+  "url": "https://songhune.github.io/manim_aimath/ml_03/PerchAsRandomVariable.html",
+  "slides": 15,
+  "kb": 2827
+ },
+ {
+  "scene": "ConditionalExpectation",
+  "title": "조건부 기댓값과 k-최근접 이웃",
+  "url": "https://songhune.github.io/manim_aimath/ml_03/ConditionalExpectation.html",
+  "slides": 16,
+  "kb": 2197
+ },
+ {
+  "scene": "NeighborCountAndVariance",
+  "title": "이웃 수 k 와 조건부 분산",
+  "url": "https://songhune.github.io/manim_aimath/ml_03/NeighborCountAndVariance.html",
+  "slides": 10,
+  "kb": 1677
+ }
+]

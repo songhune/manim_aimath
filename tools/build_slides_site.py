@@ -36,7 +36,7 @@ SITE = "https://songhune.github.io/manim_aimath"
 # ── 과목·장 메타 ─────────────────────────────────────────────────────
 # 장 이름의 앞머리(am, ps1)로 과목을 가른다. 새 장을 넣을 때 CHAPTER_TITLE 과
 # SECTIONS 두 곳만 채우면 목차가 따라 만들어진다.
-COURSE_OF_PREFIX = {"am": "aimath", "ps1": "probstat", "bd": "bigdata"}
+COURSE_OF_PREFIX = {"am": "aimath", "ps1": "probstat", "bd": "bigdata", "ml": "ml"}
 
 COURSE = {
     "aimath": {
@@ -49,6 +49,14 @@ COURSE = {
     },
     "bigdata": {
         "title": "빅데이터개론및분석",
+        "sub": "아주대학교 2026-2",
+        "how": "영상 하나를 동작 단위로 끊어 둔 페이지다. → 또는 스페이스(화면의 화살표 클릭)로 "
+               "다음 단계, ←로 앞 단계. F를 누르면 전체 화면이다.",
+        "steps": "단계",
+        "back": "다른 장 보기",
+    },
+    "ml": {
+        "title": "기계학습기초",
         "sub": "아주대학교 2026-2",
         "how": "영상 하나를 동작 단위로 끊어 둔 페이지다. → 또는 스페이스(화면의 화살표 클릭)로 "
                "다음 단계, ←로 앞 단계. F를 누르면 전체 화면이다.",
@@ -71,6 +79,7 @@ CHAPTER_TITLE = {
     "am_02": "Chapter 02 · 가우스-조르당 소거법과 여러 가지 행렬",
     "am_03": "Chapter 03 · 벡터공간과 내적",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
+    "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
     "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
     "ps1_04": "Chapter 4 · Mathematical Expectation",
@@ -191,6 +200,10 @@ SECTIONS = {
                                    "JsonToRecord", "PagingLoop"]),
         ("5.2 공공데이터 API 기반 크롤링", ["MonthlyCollection"]),
     ],
+    "ml_03": [
+        ("3-1 k-최근접 이웃 회귀 · 확률적 해석", ["PerchAsRandomVariable", "ConditionalExpectation",
+                                          "NeighborCountAndVariance"]),
+    ],
     "ps1_02": [
         ("2.1 Sample Space", ["SampleSpace"]),
         ("2.2 Events", ["EventsAndSetOps"]),
@@ -257,7 +270,7 @@ def write_root_index():
     docs = ROOT / "docs"
     chapters = sorted(p.name for p in docs.iterdir() if p.is_dir() and (p / "index.html").exists())
     blocks = []
-    for key in ("aimath", "bigdata", "probstat"):
+    for key in ("aimath", "bigdata", "ml", "probstat"):
         mine = [c for c in chapters if course_of(c) == key]
         if not mine:
             continue
