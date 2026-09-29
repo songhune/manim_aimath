@@ -1,0 +1,86 @@
+[
+ {
+  "scene": "LinearTransformationIntro",
+  "title": "선형변환이란",
+  "url": "https://songhune.github.io/manim_aimath/am_04/LinearTransformationIntro.html",
+  "slides": 14,
+  "kb": 4181
+ },
+ {
+  "scene": "NonlinearExamples",
+  "title": "선형인 것과 아닌 것",
+  "url": "https://songhune.github.io/manim_aimath/am_04/NonlinearExamples.html",
+  "slides": 12,
+  "kb": 3216
+ },
+ {
+  "scene": "ColumnsAreImages",
+  "title": "표준행렬의 열",
+  "url": "https://songhune.github.io/manim_aimath/am_04/ColumnsAreImages.html",
+  "slides": 12,
+  "kb": 4910
+ },
+ {
+  "scene": "StandardMatrixFromPair",
+  "title": "표준행렬 구하기",
+  "url": "https://songhune.github.io/manim_aimath/am_04/StandardMatrixFromPair.html",
+  "slides": 12,
+  "kb": 1622
+ },
+ {
+  "scene": "ReflectionTransform",
+  "title": "반사변환",
+  "url": "https://songhune.github.io/manim_aimath/am_04/ReflectionTransform.html",
+  "slides": 12,
+  "kb": 3122
+ },
+ {
+  "scene": "RotationTransform",
+  "title": "회전변환",
+  "url": "https://songhune.github.io/manim_aimath/am_04/RotationTransform.html",
+  "slides": 14,
+  "kb": 6090
+ },
+ {
+  "scene": "CompositeTransform",
+  "title": "합성변환의 표준행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_04/CompositeTransform.html",
+  "slides": 12,
+  "kb": 6363
+ },
+ {
+  "scene": "InverseTransform",
+  "title": "역변환",
+  "url": "https://songhune.github.io/manim_aimath/am_04/InverseTransform.html",
+  "slides": 10,
+  "kb": 5079
+ },
+ {
+  "scene": "OrthogonalOperator",
+  "title": "직교연산자",
+  "url": "https://songhune.github.io/manim_aimath/am_04/OrthogonalOperator.html",
+  "slides": 12,
+  "kb": 4854
+ },
+ {
+  "scene": "ColumnSpaceNullSpace",
+  "title": "열공간 · 행공간 · 영공간",
+  "url": "https://songhune.github.io/manim_aimath/am_04/ColumnSpaceNullSpace.html",
+  "slides": 16,
+  "kb": 2337
+ },
+ {
+  "scene": "RankAndKernel",
+  "title": "랭크와 영공간",
+  "url": "https://songhune.github.io/manim_aimath/am_04/RankAndKernel.html",
+  "slides": 12,
+  "kb": 3633
+ },
+ {
+  "scene": "RankNullityTheorem",
+  "title": "랭크 정리",
+  "url": "https://songhune.github.io/manim_aimath/am_04/RankNullityTheorem.html",
+  "slides": 19,
+  "kb": 2348
+ }
+]

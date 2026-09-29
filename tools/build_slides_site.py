@@ -78,6 +78,7 @@ CHAPTER_TITLE = {
     "am_01": "Chapter 01 · 연립선형방정식과 행렬",
     "am_02": "Chapter 02 · 가우스-조르당 소거법과 여러 가지 행렬",
     "am_03": "Chapter 03 · 벡터공간과 내적",
+    "am_04": "Chapter 04 · 선형변환과 랭크 정리",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
@@ -194,6 +195,12 @@ SECTIONS = {
                         "OrthogonalPythagoras", "ProjectionOntoVector", "InnerProductFamily",
                         "HammingManhattan"]),
         ("3.3 벡터의 미분", ["Gradient", "Jacobian", "HessianLaplacian"]),
+    ],
+    "am_04": [
+        ("4.1 선형변환", ["LinearTransformationIntro", "NonlinearExamples", "ColumnsAreImages",
+                       "StandardMatrixFromPair", "ReflectionTransform", "RotationTransform",
+                       "CompositeTransform", "InverseTransform", "OrthogonalOperator"]),
+        ("4.2 랭크 정리", ["ColumnSpaceNullSpace", "RankAndKernel", "RankNullityTheorem"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",
