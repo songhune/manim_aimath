@@ -1,44 +1,16 @@
 [
  {
-  "scene": "PerchAsRandomVariable",
-  "title": "농어 표본과 확률변수",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/PerchAsRandomVariable.html",
-  "slides": 15,
-  "kb": 2827
+  "scene": "RandomVariableToVariance",
+  "title": "확률변수·분포·기댓값·분산",
+  "url": "https://songhune.github.io/manim_aimath/ml_03/RandomVariableToVariance.html",
+  "slides": 35,
+  "kb": 4433
  },
  {
-  "scene": "ConditionalExpectation",
-  "title": "조건부 기댓값과 k-최근접 이웃",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/ConditionalExpectation.html",
-  "slides": 16,
-  "kb": 2197
- },
- {
-  "scene": "LeastSquaresPrediction",
-  "title": "최소제곱과 조건부 기댓값",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/LeastSquaresPrediction.html",
-  "slides": 9,
-  "kb": 1481
- },
- {
-  "scene": "ResidualAndConditionalSpread",
-  "title": "잔차와 조건부 분산",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/ResidualAndConditionalSpread.html",
-  "slides": 11,
-  "kb": 1510
- },
- {
-  "scene": "NeighborCountAndVariance",
-  "title": "이웃 수 k 와 조건부 분산",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/NeighborCountAndVariance.html",
-  "slides": 10,
-  "kb": 1659
- },
- {
-  "scene": "DistributionView",
-  "title": "분포 관점: 평균·중앙값·분위수",
-  "url": "https://songhune.github.io/manim_aimath/ml_03/DistributionView.html",
-  "slides": 10,
-  "kb": 1635
+  "scene": "ConditionalToKNN",
+  "title": "조건부 기댓값과 k-최근접 이웃 회귀",
+  "url": "https://songhune.github.io/manim_aimath/ml_03/ConditionalToKNN.html",
+  "slides": 58,
+  "kb": 6429
  }
 ]

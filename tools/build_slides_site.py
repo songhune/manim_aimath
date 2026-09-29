@@ -201,9 +201,7 @@ SECTIONS = {
         ("5.2 공공데이터 API 기반 크롤링", ["MonthlyCollection"]),
     ],
     "ml_03": [
-        ("3-1 k-최근접 이웃 회귀 · 확률적 해석", ["PerchAsRandomVariable", "ConditionalExpectation",
-                                          "LeastSquaresPrediction", "ResidualAndConditionalSpread",
-                                          "NeighborCountAndVariance", "DistributionView"]),
+        ("3-1 k-최근접 이웃 회귀 · 확률적 해석", ["RandomVariableToVariance", "ConditionalToKNN"]),
     ],
     "ps1_02": [
         ("2.1 Sample Space", ["SampleSpace"]),
