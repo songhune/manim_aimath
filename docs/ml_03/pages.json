@@ -4,13 +4,13 @@
   "title": "확률변수·분포·기댓값·분산",
   "url": "https://songhune.github.io/manim_aimath/ml_03/RandomVariableToVariance.html",
   "slides": 35,
-  "kb": 4433
+  "kb": 4533
  },
  {
   "scene": "ConditionalToKNN",
   "title": "조건부 기댓값과 k-최근접 이웃 회귀",
   "url": "https://songhune.github.io/manim_aimath/ml_03/ConditionalToKNN.html",
-  "slides": 58,
-  "kb": 6429
+  "slides": 63,
+  "kb": 7328
  }
 ]

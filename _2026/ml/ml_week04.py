@@ -58,11 +58,11 @@ def train_split(seed=42, test_ratio=0.25):
     n = len(PERCH_LENGTH)
     n_test = int(np.ceil(n * test_ratio))
     perm = np.random.RandomState(seed).permutation(n)
-    train = perm[n_test:]
-    return PERCH_LENGTH[train], PERCH_WEIGHT[train]
+    train, test = perm[n_test:], perm[:n_test]
+    return PERCH_LENGTH[train], PERCH_WEIGHT[train], PERCH_LENGTH[test], PERCH_WEIGHT[test]
 
 
-TRAIN_L, TRAIN_W = train_split()
+TRAIN_L, TRAIN_W, TEST_L, TEST_W = train_split()
 N = len(TRAIN_L)
 
 # 1부의 작은 예: 치토 6마리가 잡은 물고기 수와 낚싯대 크기
@@ -226,7 +226,7 @@ class RandomVariableToVariance(PartScene):
         icons, tags = toy_crowd()
         Group(icons, tags).move_to(UP * 1.6)
         box = SurroundingRectangle(Group(icons, tags), buff=0.25).set_stroke(MUTED, 2).round_corners(0.15)
-        box_tag = label("표본공간 S: 치토 6마리", 26).next_to(box, UP, buff=0.2)
+        box_tag = label("표본공간(sample space) S", 26).next_to(box, UP, buff=0.2)
         self.play(LaggedStartMap(FadeIn, icons, lag_ratio=0.1), FadeIn(box), FadeIn(box_tag))
         self.wait(0.8)
         rv = VGroup(Tex(R"X", font_size=44), label("= 잡은 물고기 수", 28, MEAN_COLOR)).arrange(RIGHT, buff=0.2)
@@ -241,7 +241,8 @@ class RandomVariableToVariance(PartScene):
         self.play(ShowCreation(line), FadeIn(line_tag))
         dots = stacked_dots(line, TOY_X.astype(float), 1.0, 0.09, ACCENT, base=0.18)
         self.play(*[TransformFromCopy(tags[d.src_index], d) for d in dots], run_time=1.2)
-        def_tag = label("확률변수: 원소 → 실수 하나", 26).next_to(line, UP, buff=1.1).align_to(line, LEFT)
+        def_tag = VGroup(label("확률변수(random variable)", 26), Tex(R"X : S \to \mathbb{R}", font_size=34).set_color(INK))
+        def_tag.arrange(RIGHT, buff=0.4).next_to(line, UP, buff=1.1).align_to(line, LEFT)
         self.play(FadeIn(def_tag))
         self.wait(1.5)
         self.toy = Group(icons, tags, box, box_tag, rv)
@@ -297,7 +298,7 @@ class RandomVariableToVariance(PartScene):
         tri = balance_marker(axes.c2p(mu, 0) + DOWN * 0.05)
         mu_tex = Tex(R"\mu = E[X] = \textstyle\sum_x x f(x) = %s" % fmt(mu, 2), font_size=34).set_color(MEAN_COLOR)
         mu_tex.move_to(RIGHT * 4.0 + UP * 2.0)
-        mu_note = label("균형점", 24, MEAN_COLOR).next_to(tri, DOWN, buff=0.3)
+        mu_note = label("균형점(balance point)", 24, MEAN_COLOR).next_to(tri, DOWN, buff=0.3)
         self.play(FadeIn(tri), FadeIn(mu_note), FadeIn(mu_tex))
         self.wait(1.2)
 
@@ -323,7 +324,7 @@ class RandomVariableToVariance(PartScene):
             m.shift(rng.uniform(-0.03, 0.03, 3) * np.array([1, 1, 0]))
         box = SurroundingRectangle(icons, buff=0.25).set_stroke(MUTED, 2).round_corners(0.15)
         Group(box, icons).move_to(LEFT * 3.9 + DOWN * 0.3)
-        box_tag = label("농어 훈련 세트 42마리", 26).next_to(box, UP, buff=0.2)
+        box_tag = label("훈련 세트(training set) 42마리", 26).next_to(box, UP, buff=0.2)
         self.play(LaggedStartMap(FadeIn, icons, lag_ratio=0.02, run_time=1.4), FadeIn(box), FadeIn(box_tag))
         rv = VGroup(Tex(R"W", font_size=48), label("= 농어의 무게", 28, MEAN_COLOR)).arrange(RIGHT, buff=0.2)
         rv[0].set_color(MEAN_COLOR)
@@ -375,7 +376,7 @@ class RandomVariableToVariance(PartScene):
             labels.add(Tex(R"\tfrac{%d}{42}" % c, font_size=22).set_color(ACCENT).next_to(bar, UP, buff=0.05))
         self.play(FadeOut(dots), LaggedStartMap(FadeIn, bars, lag_ratio=0.08), run_time=1.0)
         self.play(LaggedStartMap(FadeIn, labels, lag_ratio=0.08))
-        hist_tag = label("경험분포: 확률 히스토그램", 26).next_to(prob, DOWN, buff=0.35).align_to(prob, LEFT)
+        hist_tag = label("경험분포(empirical distribution)", 26).next_to(prob, DOWN, buff=0.35).align_to(prob, LEFT)
         self.play(FadeIn(hist_tag))
         self.wait(1.5)
 
@@ -408,11 +409,11 @@ class RandomVariableToVariance(PartScene):
         mean_tex.next_to(mean_line, UP, buff=0.08).align_to(axes.c2p(52, 0), RIGHT)
         self.play(ShowCreation(axes), FadeIn(tags), LaggedStartMap(FadeIn, dots, lag_ratio=0.02))
         self.play(ShowCreation(mean_line), FadeIn(mean_tex))
-        pred_tag = label("길이를 모를 때의 예측값", 26, MEAN_COLOR).move_to(RIGHT * 4.4 + UP * 1.8)
+        pred_tag = label("L 없이 하는 예측(prediction)", 26, MEAN_COLOR).move_to(RIGHT * 4.4 + UP * 1.8)
         self.play(FadeIn(pred_tag))
         self.wait(1.0)
         next_tex = Tex(R"E[W \mid L = x]", font_size=40).set_color(WARN).move_to(RIGHT * 4.4 + DOWN * 0.2)
-        next_tag = label("길이를 알 때: 2편", 26, WARN).next_to(next_tex, DOWN, buff=0.25)
+        next_tag = label("조건부 기댓값: 2편", 26, WARN).next_to(next_tex, DOWN, buff=0.25)
         focus = DashedLine(axes.c2p(30, 0), axes.c2p(30, 1200)).set_stroke(WARN, 2)
         self.play(ShowCreation(focus), FadeIn(next_tex), FadeIn(next_tag))
         self.wait(2)
@@ -446,7 +447,7 @@ class ConditionalToKNN(PartScene):
     def part_conditional_probability(self):
         icons, tags = toy_crowd(0.56)
         Group(icons, tags).move_to(UP * 1.9 + LEFT * 2.8)
-        legend = VGroup(label("낚싯대 작음: S = 0", 22, CALM), label("낚싯대 큼: S = 1", 22, WARN)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
+        legend = VGroup(label("S = 0: 낚싯대 작음", 22, CALM), label("S = 1: 낚싯대 큼", 22, WARN)).arrange(DOWN, aligned_edge=LEFT, buff=0.12)
         legend.next_to(Group(icons, tags), RIGHT, buff=0.7)
         self.play(LaggedStartMap(FadeIn, icons, lag_ratio=0.1), LaggedStartMap(FadeIn, tags, lag_ratio=0.1), FadeIn(legend))
         self.wait(1.0)
@@ -584,7 +585,7 @@ class ConditionalToKNN(PartScene):
         min_line = DashedLine(axes.c2p(self.mu_big - OFF, 0), axes.c2p(self.mu_big - OFF, mse(self.mu_big))).set_stroke(MEAN_COLOR, 2)
         self.play(ShowCreation(min_line), FadeIn(best))
         reg = Tex(R"f^*(x) = E[Y \mid X = x]", font_size=34).set_color(MEAN_COLOR).next_to(best, DOWN, buff=0.25)
-        reg_tag = label("회귀 함수", 24, MEAN_COLOR).next_to(reg, DOWN, buff=0.12)
+        reg_tag = label("회귀 함수(regression function)", 24, MEAN_COLOR).next_to(reg, DOWN, buff=0.12)
         self.play(FadeIn(reg), FadeIn(reg_tag))
         self.wait(1.5)
         for m in (boxes, marker, a_tag, point):
@@ -613,7 +614,7 @@ class ConditionalToKNN(PartScene):
         self.play(ShowCreation(focus_line), FadeIn(focus_tag))
         idx = neighbors(self.focus, self.k)
         rings = VGroup(*[Circle(radius=0.14).set_stroke(WARN, 3).move_to(dots[i]) for i in idx])
-        near_tag = label("가장 가까운 3마리 = 조건부 표본", 24, WARN).move_to(RIGHT * 4.3 + UP * 2.3)
+        near_tag = label("N₃(x): 조건부 표본(conditional sample)", 24, WARN).move_to(RIGHT * 4.3 + UP * 2.3)
         self.play(LaggedStartMap(ShowCreation, rings, lag_ratio=0.2), FadeIn(near_tag))
         self.wait(0.8)
 
@@ -631,7 +632,7 @@ class ConditionalToKNN(PartScene):
         cmean_tex.next_to(line, DOWN, buff=0.45).to_edge(RIGHT, buff=0.35)
         self.play(ShowCreation(cmean_line), FadeIn(cmean_tex))
         pred = Triangle().set_fill(MEAN_COLOR, 1).set_stroke(width=0).set_height(0.22).move_to(axes.c2p(self.focus, cmean))
-        pred_tag = label("k-최근접 이웃 예측", 22, MEAN_COLOR).next_to(pred, RIGHT, buff=0.15)
+        pred_tag = label("k-NN 예측(prediction)", 22, MEAN_COLOR).next_to(pred, RIGHT, buff=0.15)
         self.play(TransformFromCopy(cmean_line, pred), FadeIn(pred_tag))
         self.wait(1.5)
         self.axes, self.dots, self.mean_line, self.mean_tex = axes, dots, mean_line, mean_tex
@@ -665,7 +666,7 @@ class ConditionalToKNN(PartScene):
         self.play(ell.animate.set_value(50.0), run_time=1.5, rate_func=linear)
         far_tex = Tex(R"\hat{f}_3(50) = %s" % fmt(knn_predict(50.0, self.k), 2), font_size=32).set_color(WARN)
         far_tex.next_to(curve_tag, DOWN, buff=0.35)
-        far_tag = label("범위 밖: 이웃이 그대로", 24, WARN).next_to(far_tex, DOWN, buff=0.15)
+        far_tag = label("범위 밖(extrapolation): 이웃 고정", 24, WARN).next_to(far_tex, DOWN, buff=0.15)
         self.play(FadeIn(far_tex), FadeIn(far_tag))
         self.wait(1.5)
         # 자취(TracedPath)는 자체 updater 로 점을 계속 더하므로 지우기 전에 멈춘다 (점 개수가 어긋나면 broadcast 오류)
@@ -686,10 +687,16 @@ class ConditionalToKNN(PartScene):
             i = order[j]
             segs.add(Line(axes.c2p(TRAIN_L[i], knn_predict(TRAIN_L[i], self.k)),
                           axes.c2p(TRAIN_L[i], TRAIN_W[i])).set_stroke(WARN, 3))
-        eps_tag = Tex(R"\varepsilon_i = w_i - \hat{f}(x_i)", font_size=34).set_color(WARN).move_to(RIGHT * 4.4 + UP * 2.2)
-        self.play(LaggedStartMap(ShowCreation, segs, lag_ratio=0.15), FadeIn(eps_tag))
-        zero = Tex(R"E[\varepsilon \mid L] = 0", font_size=30).set_color(INK).next_to(eps_tag, DOWN, buff=0.25)
-        self.play(FadeIn(zero))
+        err_tag = VGroup(label("오차(error)", 24, MUTED), Tex(R"\varepsilon = W - f(L),\ E[\varepsilon \mid L] = 0", font_size=30).set_color(MUTED))
+        err_tag.arrange(DOWN, aligned_edge=LEFT, buff=0.1).move_to(RIGHT * 4.4 + UP * 2.3)
+        err_note = label("참 f: 관측 불가", 22, MUTED).next_to(err_tag, DOWN, buff=0.12).align_to(err_tag, LEFT)
+        self.play(FadeIn(err_tag), FadeIn(err_note))
+        self.wait(1.2)
+        eps_tag = VGroup(label("잔차(residual)", 24, WARN), Tex(R"e_i = w_i - \hat{f}(x_i)", font_size=30).set_color(WARN))
+        eps_tag.arrange(DOWN, aligned_edge=LEFT, buff=0.1).next_to(err_note, DOWN, buff=0.4).align_to(err_tag, LEFT)
+        res_note = label("추정 f̂: 관측 가능", 22, WARN).next_to(eps_tag, DOWN, buff=0.12).align_to(err_tag, LEFT)
+        self.play(LaggedStartMap(ShowCreation, segs, lag_ratio=0.15), FadeIn(eps_tag), FadeIn(res_note))
+        zero = VGroup(err_tag, err_note, res_note)
         self.wait(1.5)
 
         self.play(FadeOut(segs))
@@ -717,6 +724,41 @@ class ConditionalToKNN(PartScene):
         self.wait(1.5)
         self.play(FadeOut(band), FadeOut(band_tag), FadeOut(sd_def), FadeOut(bars), FadeOut(eps_tag), FadeOut(zero),
                   FadeOut(curve), run_time=0.6)
+        self.part_r2()
+
+    # 2-6b 결정계수: 테스트 세트에서 평균까지의 편차(SST)와 잔차(SSE)
+    def part_r2(self):
+        axes, dots = self.axes, self.dots
+        k = 5
+        curve = knn_curve(axes, k)
+        tdots = VGroup(*[Dot(axes.c2p(x, w), radius=0.075).set_fill(WARN, 1).set_stroke(WHITE, 1)
+                         for x, w in zip(TEST_L, TEST_W)])
+        test_tag = label("테스트 세트(test set) 14마리", 24, WARN).move_to(RIGHT * 4.4 + UP * 2.3)
+        self.play(dots.animate.set_opacity(0.35), LaggedStartMap(FadeIn, tdots, lag_ratio=0.08), FadeIn(test_tag))
+        ybar = float(TEST_W.mean())
+        ybar_line = DashedLine(axes.c2p(0, ybar), axes.c2p(55, ybar)).set_stroke(MUTED, 2)
+        sst_segs = VGroup(*[Line(axes.c2p(x, ybar), axes.c2p(x, w)).set_stroke(MUTED, 3) for x, w in zip(TEST_L, TEST_W)])
+        sst = float(((TEST_W - ybar) ** 2).sum())
+        sst_tex = Tex(R"\mathrm{SST} = \sum (w_i - \bar{w})^2 = %d" % round(sst), font_size=28).set_color(MUTED)
+        sst_tex.next_to(test_tag, DOWN, buff=0.3).align_to(test_tag, LEFT)
+        self.play(ShowCreation(ybar_line), LaggedStartMap(ShowCreation, sst_segs, lag_ratio=0.05), FadeIn(sst_tex))
+        self.wait(1.2)
+        pred = np.array([knn_predict(x, k) for x in TEST_L])
+        sse_segs = VGroup(*[Line(axes.c2p(x, p), axes.c2p(x, w)).set_stroke(WARN, 3) for x, w, p in zip(TEST_L, TEST_W, pred)])
+        sse = float(((TEST_W - pred) ** 2).sum())
+        sse_tex = Tex(R"\mathrm{SSE} = \sum (w_i - \hat{f}_5(x_i))^2 = %d" % round(sse), font_size=28).set_color(WARN)
+        sse_tex.next_to(sst_tex, DOWN, buff=0.25).align_to(test_tag, LEFT)
+        self.play(FadeOut(sst_segs), FadeOut(ybar_line), ShowCreation(curve), run_time=1.0)
+        self.play(LaggedStartMap(ShowCreation, sse_segs, lag_ratio=0.05), FadeIn(sse_tex))
+        self.wait(1.0)
+        r2_tex = Tex(R"R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}} = \frac{\mathrm{SSR}}{\mathrm{SST}} = %s" % fmt(1 - sse / sst, 4),
+                     font_size=32).set_color(MEAN_COLOR)
+        r2_tex.next_to(sse_tex, DOWN, buff=0.4).align_to(test_tag, LEFT)
+        r2_tag = label("결정계수(coefficient of determination)", 22, MEAN_COLOR).next_to(r2_tex, DOWN, buff=0.12).align_to(test_tag, LEFT)
+        self.play(FadeIn(r2_tex), FadeIn(r2_tag))
+        self.wait(2)
+        self.play(FadeOut(tdots), FadeOut(sse_segs), FadeOut(curve), FadeOut(test_tag), FadeOut(sst_tex), FadeOut(sse_tex),
+                  FadeOut(r2_tex), FadeOut(r2_tag), dots.animate.set_opacity(0.9), run_time=0.6)
 
     # 2-7 이웃 수 k: 조건이 넓어지면 곡선이 매끈해지고 값이 치우친다
     def part_k(self):
@@ -748,8 +790,8 @@ class ConditionalToKNN(PartScene):
                 new_rings, new_curve = rings, curve
             rings, curve, table = new_rings, new_curve, rows
             self.wait(1.5)
-        wide = label("k 큼: 매끈, 편향 증가", 26, MUTED).move_to(RIGHT * 4.4 + DOWN * 1.4)
-        narrow = label("k 작음: 들쭉날쭉, 분산 큼", 26, MUTED).next_to(wide, DOWN, buff=0.2)
+        wide = label("k ↑: bias ↑, variance ↓", 26, MUTED).move_to(RIGHT * 4.4 + DOWN * 1.4)
+        narrow = label("k ↓: bias ↓, variance ↑", 26, MUTED).next_to(wide, DOWN, buff=0.2)
         self.play(FadeIn(wide), FadeIn(narrow))
         self.wait(1.5)
         self.play(FadeOut(curve), FadeOut(rings), FadeOut(table), FadeOut(wide), FadeOut(narrow), FadeOut(focus_tag),
@@ -781,9 +823,9 @@ class ConditionalToKNN(PartScene):
 
         curves = VGroup(*[stat_curve(axes, k, stat, color) for stat, color, _ in stats])
         labels = VGroup(
-            label("평균 곡선: 회귀 예측", 24, MEAN_COLOR),
-            label("중앙값 곡선: 강건 회귀", 24, CALM),
-            label("90% 분위수 곡선: 예측 상한", 24, ACCENT),
+            label("mean: regression", 24, MEAN_COLOR),
+            label("median: robust regression", 24, CALM),
+            label("q₀.₉: quantile regression", 24, ACCENT),
         ).arrange(DOWN, aligned_edge=LEFT, buff=0.18).move_to(RIGHT * 4.4 + UP * 2.0)
         self.play(FadeOut(rings), FadeOut(k_tag), FadeOut(focus_line))
         for c, t in zip(curves, labels):
