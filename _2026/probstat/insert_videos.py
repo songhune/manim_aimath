@@ -110,6 +110,26 @@ PS1_04_INSERT = [
 ]
 PS1_04_ANCHORS = {name: after + 1 for after, names in PS1_04_INSERT for name in names}
 
+# PS1_05 (Chapter 5, week06.py, 2026-10-01) 삽입표. 원본은 도구/레이아웃_정리_PS1_05.py 로 정리한 64장.
+# 9차(10/2) 는 5.2 이항 · 다항, 5.3 초기하 = 원본 1–41, 10차(10/6) 는 5.4 음이항 · 기하, 5.5 포아송 = 원본 42–64.
+# 이 장은 예제 스무 개를 다 그리지 않는다(사용자 결정). 개념 8편 + 표 읽기 · 근사 · 판정 예제 5편이다.
+PS1_05_INSERT = [
+    (3, ["BernoulliToBinomial"]),             # 4 = 이항분포 정의 (3 = 베르누이 과정, 여덟 결과)
+    (9, ["Example52TableA1"]),                # 9 = 예제 5.2 문제, 10 = 표 A.1, 11 = 풀이
+    (14, ["BinomialMeanVariance"]),           # 15 = 정리 5.1
+    (18, ["Example55Chebyshev"]),             # 18 = 예제 5.5 문제, 19 = 풀이
+    (24, ["SamplingWithoutReplacement"]),     # 25 = 초기하 도입 (복원 · 비복원)
+    (26, ["Example58Acceptance"]),            # 26 = 예제 5.8 문제, 27 = 풀이
+    (37, ["Example512BinomialApproximation"]),  # 37 = 예제 5.12 문제, 38 = 풀이
+    (41, ["NegativeBinomialWaiting"]),        # 42 = 음이항분포 정의
+    (43, ["Example514Playoffs"]),             # 43 = 예제 5.14 문제, 44 = 풀이
+    (44, ["GeometricFirstSuccess"]),          # 45 = 기하분포 정의 · 정리 5.3
+    (50, ["PoissonCounts"]),                  # 51 = 포아송분포 정의 · 표 A.2
+    (51, ["BinomialToPoisson"]),              # 52 = 정리 5.4 · 5.5
+    (56, ["Example517518Table"]),             # 56 = 예제 5.17 문제, 57 = 풀이 (5.18 은 58·59 — 한 영상이 둘을 겸한다)
+]
+PS1_05_ANCHORS = {name: after + 1 for after, names in PS1_05_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -277,6 +297,22 @@ JOBS = [
         place="before",
         insert=PS1_04_INSERT,
         anchors=PS1_04_ANCHORS,
+    ),
+
+    dict(
+        # PS1_05 (week06.py, 2026-10-01). 개념 영상은 정의·정리 슬라이드 앞, 예제 영상은 문제 다음(풀이 앞).
+        src="PS1_05_restyled.pptx",
+        dst="PS1_05_restyled_영상.pptx",
+        place="before",
+        insert=PS1_05_INSERT,
+        anchors=PS1_05_ANCHORS,
+    ),
+    dict(
+        src="PS1_05_restyled_한글.pptx",
+        dst="PS1_05_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_05_INSERT,
+        anchors=PS1_05_ANCHORS,
     ),
 ]
 
