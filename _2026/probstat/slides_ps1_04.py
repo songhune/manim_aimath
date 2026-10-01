@@ -39,7 +39,7 @@ PAGES = [
     ("Example413Covariance", "Example 4.13"),
     ("Example415Correlation", "Example 4.15"),
     ("LinearShiftScale", "Linear Combinations"),
-    ("VarianceOfSum", "Variance of aX + bY"),
+    ("VarianceOfSum", "Variance of aX + bY + c"),
     ("Example417418Rework", "Examples 4.17, 4.18"),
     ("Example419ShiftSquare", "Example 4.19"),
     ("Example420Drink", "Example 4.20"),

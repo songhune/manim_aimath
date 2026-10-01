@@ -141,10 +141,10 @@
  },
  {
   "scene": "VarianceOfSum",
-  "title": "Variance of aX + bY",
+  "title": "Variance of aX + bY + c",
   "url": "https://songhune.github.io/manim_aimath/ps1_04/VarianceOfSum.html",
-  "slides": 4,
-  "kb": 1407
+  "slides": 17,
+  "kb": 4915
  },
  {
   "scene": "Example417418Rework",

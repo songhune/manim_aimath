@@ -35,7 +35,7 @@ insert_videos.py 의 PS1_04_INSERT 와 같다. "N 앞" 은 개념 영상, "N 뒤
     Example413Covariance           35 뒤    예제 4.13
     Example415Correlation          37 뒤    예제 4.15 (4.16 은 39·40, 예제 4.14 가 덱에 없어 영상 없음)
     LinearShiftScale               41 앞    정리 4.5 · 4.6 (E(aX+b) = aμ + b)
-    VarianceOfSum                  43 앞    정리 4.9 (Var(aX+bY) 의 교차항, 독립이면 0)
+    VarianceOfSum                  43 앞    정리 4.9 (Var(aX+bY+c) 를 정의에서 다섯 단계로 유도, 따름 셋 — 2026-10-02 다시 씀)
     Example417418Rework            45 뒤    예제 4.17 (4.18 은 47·48 — 한 영상이 둘을 겸한다)
     Example419ShiftSquare          49 뒤    예제 4.19
     Example420Drink                51 뒤    예제 4.20
@@ -1577,45 +1577,141 @@ class LinearShiftScale(InteractiveScene):
 # C6. 선형결합의 분산 — 슬라이드 42 (정리 4.9) 앞
 # ─────────────────────────────────────────────────────────────
 class VarianceOfSum(InteractiveScene):
-    """σ²_{aX+bY} 의 교차항 2abσ_XY. 독립이면 0. b = −1 이어도 (−1)² = 1 이라 빼기도 더해진다.
-    상수는 퍼짐을 바꾸지 않고, a 배는 a² 배."""
+    """정리 4.9 를 분산의 정의에서 한 줄씩 유도한다 (2026-10-02 다시 씀. 결과 식과 따름만 보이던 판이 어렵다는 지적).
+    W = aX + bY + c 로 두고 ① Var(W) = E[{W − E(W)}²] ② E(W) = aμ_X + bμ_Y + c ③ 편차에서 c 가 지워져
+    a(X − μ_X) + b(Y − μ_Y) ④ (A + B)² 전개 ⑤ 항마다 E 를 취하면 Var(X) · Cov(X, Y) · Var(Y).
+    끝에 따름 셋: 독립이면 교차항이 0, X − Y 도 더해진다((−1)² = 1), 상수를 더해도 그대로.
+    화면은 Var · Cov 로 쓰고, 맨 끝에 교재 표기(σ²_{aX+bY+c})를 같은 식으로 한 번 보인다."""
 
     def construct(self):
-        head = slide_title("Variance of aX + bY")
+        head = slide_title("Variance of aX + bY + c")
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
 
-        main = Tex(R"\sigma^2_{aX + bY} = a^2\sigma_X^2 + b^2\sigma_Y^2 + 2ab\,\sigma_{XY}",
-                   t2c={R"2ab\,\sigma_{XY}": WARN}).scale(0.95).move_to([0, 1.9, 0])
-        self.play(Write(main), run_time=1.2)
-        brace = Brace(main[R"2ab\,\sigma_{XY}"], DOWN, buff=0.1).set_color(WARN)
-        cross = label("the cross term", 24, WARN).next_to(brace, DOWN, buff=0.1)
-        self.play(GrowFromCenter(brace), FadeIn(cross))
+        goal = Tex(R"\mathrm{Var}(aX + bY + c) = a^2\,\mathrm{Var}(X) + b^2\,\mathrm{Var}(Y) + 2ab\,\mathrm{Cov}(X, Y)")
+        goal.scale(0.66).set_color(MEAN_COLOR).next_to(head[1], DOWN, buff=0.3).to_edge(LEFT, buff=0.6)
+        thm = note("Theorem 4.9", 22, GREY_B).next_to(goal, RIGHT, buff=0.4)
+        self.play(Write(goal), FadeIn(thm), run_time=1.4)
         self.wait(0.8)
 
-        # 독립이면 교차항이 0
-        ind = label("independent: cross term 0", 24, CALM).move_to([-3.6, 0.2, 0])
-        ind_f = column([
-            R"\sigma_{XY} = 0 \ \Rightarrow\ \sigma^2_{aX + bY} = a^2\sigma_X^2 + b^2\sigma_Y^2",
-        ], ind, scale=0.62, gap=0.25).align_to(ind, LEFT)
-        self.play(FadeIn(ind), Write(ind_f[0]))
-        self.wait(0.8)
+        steps, steps_box, focus = steps_panel(["1. definition of variance", "2. mean of W", "3. c cancels",
+                                               "4. expand the square", "5. E term by term"],
+                                              pos=(4.85, 0.45, 0), size=22)
+        self.play(FadeIn(steps_box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        self.wait(0.6)
 
-        # 빼기도 더해진다
-        trap = label("minus still adds", 24, MEAN_COLOR).next_to(ind_f, DOWN, buff=0.45).align_to(ind, LEFT)
-        trap_f = column([
-            R"a = 1,\ b = -1:\quad \sigma^2_{X - Y} = 1^2\sigma_X^2 + (-1)^2\sigma_Y^2 = \sigma_X^2 + \sigma_Y^2",
-        ], trap, scale=0.62, gap=0.25).align_to(ind, LEFT)
-        self.play(FadeIn(trap), Write(trap_f[0]))
-        self.play(FlashAround(trap_f[0], color=MEAN_COLOR, buff=0.1))
-        self.wait(0.8)
+        X0 = -6.5                                   # 식의 왼쪽 끝
 
-        # 상수와 배수
-        sh = label("shift: spread unchanged", 24, GREY_B).next_to(trap_f, DOWN, buff=0.45).align_to(ind, LEFT)
-        sh_f = Tex(R"\sigma^2_{X + c} = \sigma_X^2").scale(0.62).set_color(INK).next_to(sh, RIGHT, buff=0.5)
-        sc = label("scale: spread times a²", 24, GREY_B).next_to(sh, DOWN, buff=0.3).align_to(ind, LEFT)
-        sc_f = Tex(R"\sigma^2_{aX} = a^2\sigma_X^2").scale(0.62).set_color(INK).next_to(sc, RIGHT, buff=0.5)
-        self.play(FadeIn(sh), Write(sh_f))
-        self.play(FadeIn(sc), Write(sc_f))
+        def line(tex, y, color=INK, scale=0.66, **kw):
+            m = Tex(tex, **kw).scale(scale).set_color(color)
+            m.move_to([0, y, 0]).align_to([X0, 0, 0], LEFT)
+            return m
+
+        # ── 1. 분산의 정의에서 시작한다
+        self.play(focus(0))
+        wdef = line(R"W = aX + bY + c", 1.5, GREY_B)
+        l1 = line(R"\mathrm{Var}(W) = E\big[\{W - E(W)\}^2\big]", 0.8)
+        self.play(FadeIn(wdef))
+        self.play(Write(l1), run_time=1.2)
+        dist = note("squared distance from the mean", 22, GREY_B).next_to(l1, RIGHT, buff=0.4)
+        self.play(FadeIn(dist))
+        self.wait(1.0)
+
+        # ── 2. 합의 평균: 상수 c 도 평균에 그대로 들어간다
+        self.play(focus(1))
+        l2 = line(R"E(W) = aE(X) + bE(Y) + c = a\mu_X + b\mu_Y + c", 0.05)
+        self.play(Write(l2), run_time=1.4)
+        self.wait(1.0)
+
+        # ── 3. 편차를 쓰면 c 가 지워진다
+        self.play(focus(2))
+        l3 = line(R"W - E(W) = aX + bY + {c} - (a\mu_X + b\mu_Y + {c})", -0.75, t2c={"{c}": WARN})
+        self.play(Write(l3), run_time=1.4)
+        self.wait(0.5)
+        cs = l3["{c}"]
+        cuts = VGroup(*[Line(m.get_corner(DL) + 0.06 * DL, m.get_corner(UR) + 0.06 * UR).set_stroke(WARN, 3) for m in cs])
+        self.play(ShowCreation(cuts), run_time=0.6)
+        l4 = line(R"= a(X - \mu_X) + b(Y - \mu_Y)", -1.5,
+                  t2c={R"a(X - \mu_X)": ACCENT, R"b(Y - \mu_Y)": CALM})
+        l4.align_to(l3[R"="], LEFT)
+        gone = label("shift moves the mean too", 22, WARN).next_to(l4, RIGHT, buff=0.5)
+        self.play(Write(l4), run_time=1.2)
+        self.play(FadeIn(gone))
+        self.wait(1.4)
+
+        # ── 4. 제곱을 편다
+        self.play(focus(3))
+        dev = VGroup(Tex(R"W - E(W) =").scale(0.66).set_color(INK),
+                     Tex(R"a(X - \mu_X)").scale(0.66).set_color(ACCENT),
+                     Tex(R"+").scale(0.66).set_color(INK),
+                     Tex(R"b(Y - \mu_Y)").scale(0.66).set_color(CALM)).arrange(RIGHT, buff=0.12)
+        dev.move_to([0, 1.5, 0]).align_to([X0, 0, 0], LEFT)
+        self.play(FadeOut(VGroup(wdef, l1, dist, l2, l3, cuts, gone)), run_time=0.5)
+        self.play(FadeTransform(l4, dev), run_time=0.8)
+        arrow = Tex(R"=").scale(0.6).set_color(GREY_B).next_to(dev, RIGHT, buff=0.25)
+        ab = VGroup(Tex("A").scale(0.66).set_color(ACCENT), Tex("+").scale(0.66).set_color(GREY_B),
+                    Tex("B").scale(0.66).set_color(CALM)).arrange(RIGHT, buff=0.12).next_to(arrow, RIGHT, buff=0.25)
+        self.play(FadeIn(arrow), FadeIn(ab))
+        l5 = VGroup(Tex(R"(A + B)^2 =").scale(0.66).set_color(INK), Tex(R"A^2").scale(0.66).set_color(ACCENT),
+                    Tex(R"+\ 2AB").scale(0.66).set_color(WARN), Tex(R"+").scale(0.66).set_color(INK),
+                    Tex(R"B^2").scale(0.66).set_color(CALM)).arrange(RIGHT, buff=0.12)
+        l5.move_to([0, 0.75, 0]).align_to([X0, 0, 0], LEFT)
+        self.play(Write(l5), run_time=1.2)
+        self.wait(0.8)
+        l6 = VGroup(Tex(R"\{W - E(W)\}^2 =").scale(0.6).set_color(INK),
+                    Tex(R"a^2(X - \mu_X)^2").scale(0.6).set_color(ACCENT),
+                    Tex(R"+\ 2ab(X - \mu_X)(Y - \mu_Y)").scale(0.6).set_color(WARN),
+                    Tex(R"+").scale(0.6).set_color(INK),
+                    Tex(R"b^2(Y - \mu_Y)^2").scale(0.6).set_color(CALM)).arrange(RIGHT, buff=0.12)
+        l6.move_to([0, -0.05, 0]).align_to([X0, 0, 0], LEFT)
+        self.play(Write(l6), run_time=1.8)
+        self.wait(1.2)
+
+        # ── 5. 항마다 E 를 취한다: 분산 · 공분산 · 분산
+        self.play(focus(4))
+        p0 = Tex(R"\mathrm{Var}(W) =").scale(0.6).set_color(INK)
+        p1 = Tex(R"a^2 E\big[(X - \mu_X)^2\big]").scale(0.6).set_color(ACCENT)
+        p2 = Tex(R"+\ 2ab\,E\big[(X - \mu_X)(Y - \mu_Y)\big]").scale(0.6).set_color(WARN)
+        plus = Tex(R"+").scale(0.6).set_color(INK)
+        p3 = Tex(R"b^2 E\big[(Y - \mu_Y)^2\big]").scale(0.6).set_color(CALM)
+        l7 = VGroup(p0, p1, p2, plus, p3).arrange(RIGHT, buff=0.14)
+        l7.move_to([0, -1.25, 0]).align_to([X0, 0, 0], LEFT)
+        lin = note("E is linear", 22, GREY_B).next_to(l7, UP, buff=0.12).align_to(p1, LEFT)
+        self.play(FadeIn(p0), FadeIn(lin))
+        for p in (p1, p2, VGroup(plus, p3)):
+            self.play(Write(p), run_time=0.9)
+        self.wait(0.8)
+        names = [(p1, R"\mathrm{Var}(X)", ACCENT), (p2, R"\mathrm{Cov}(X, Y)", WARN), (p3, R"\mathrm{Var}(Y)", CALM)]
+        tags = VGroup()
+        for part, tex, color in names:
+            br = Brace(part, DOWN, buff=0.08).set_color(color)
+            tg = Tex(tex).scale(0.62).set_color(color).next_to(br, DOWN, buff=0.1)
+            tags.add(VGroup(br, tg))
+            self.play(GrowFromCenter(br), FadeIn(tg), run_time=0.7)
+            self.wait(0.4)
+        l8 = line(R"\mathrm{Var}(W) = a^2\,\mathrm{Var}(X) + 2ab\,\mathrm{Cov}(X, Y) + b^2\,\mathrm{Var}(Y)", -3.3, MEAN_COLOR)
+        self.play(Write(l8), run_time=1.4)
+        self.play(FlashAround(goal, color=MEAN_COLOR, buff=0.1), FlashAround(l8, color=MEAN_COLOR, buff=0.1))
+        self.wait(1.6)
+
+        # ── 따름: 독립이면 교차항이 없다, 빼도 더해진다, 상수는 사라진다
+        self.play(FadeOut(VGroup(dev, arrow, ab, l5, l6, l7, lin, tags, l8, steps, steps_box)), run_time=0.6)
+        k1 = label("independent: covariance 0", 24, CALM).move_to([0, 1.35, 0]).align_to([X0, 0, 0], LEFT)
+        f1 = line(R"\mathrm{Var}(aX + bY + c) = a^2\,\mathrm{Var}(X) + b^2\,\mathrm{Var}(Y)", 0.75)
+        k2 = label("minus still adds", 24, MEAN_COLOR).move_to([0, -0.1, 0]).align_to([X0, 0, 0], LEFT)
+        f2 = line(R"\mathrm{Var}(X - Y) = \mathrm{Var}(X) + (-1)^2\,\mathrm{Var}(Y) = \mathrm{Var}(X) + \mathrm{Var}(Y)", -0.7,
+                  t2c={R"(-1)^2": MEAN_COLOR})
+        k3 = label("adding c changes nothing", 24, WARN).move_to([0, -1.55, 0]).align_to([X0, 0, 0], LEFT)
+        f3 = line(R"\mathrm{Var}(X + c) = \mathrm{Var}(X)", -2.15)
+        self.play(FadeIn(k1), Write(f1), run_time=1.2)
+        self.wait(1.0)
+        self.play(FadeIn(k2), Write(f2), run_time=1.4)
+        self.play(FlashAround(f2[R"(-1)^2"], color=MEAN_COLOR, buff=0.08))
+        self.wait(1.0)
+        self.play(FadeIn(k3), Write(f3), run_time=1.0)
+        self.wait(1.0)
+        book = line(R"\sigma^2_{aX + bY + c} = a^2\sigma_X^2 + b^2\sigma_Y^2 + 2ab\,\sigma_{XY}", -3.2, GREY_B)
+        book_tag = note("same theorem, textbook notation", 22, GREY_B).next_to(book, RIGHT, buff=0.5)
+        self.play(FadeIn(book), FadeIn(book_tag))
         self.wait(2)
 
 
