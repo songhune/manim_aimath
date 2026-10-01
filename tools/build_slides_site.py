@@ -84,6 +84,7 @@ CHAPTER_TITLE = {
     "ps1_02": "Chapter 2 · Probability",
     "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
     "ps1_04": "Chapter 4 · Mathematical Expectation",
+    "ps1_05": "Chapter 5 · Some Discrete Probability Distributions",
 }
 
 
@@ -242,6 +243,16 @@ SECTIONS = {
          ["LinearShiftScale", "VarianceOfSum", "Example417418Rework", "Example419ShiftSquare",
           "Example420Drink", "Example421Independent", "Example422423Variance"]),
         ("4.4 Chebyshev's Theorem", ["ChebyshevBand", "Example427Chebyshev"]),
+    ],
+    "ps1_05": [
+        ("5.2 Binomial and Multinomial Distributions",
+         ["BernoulliToBinomial", "Example52TableA1", "BinomialMeanVariance", "Example55Chebyshev"]),
+        ("5.3 Hypergeometric Distribution",
+         ["SamplingWithoutReplacement", "Example58Acceptance", "Example512BinomialApproximation"]),
+        ("5.4 Negative Binomial and Geometric Distributions",
+         ["NegativeBinomialWaiting", "Example514Playoffs", "GeometricFirstSuccess"]),
+        ("5.5 Poisson Distribution and the Poisson Process",
+         ["PoissonCounts", "BinomialToPoisson", "Example517518Table"]),
     ],
 }
 
