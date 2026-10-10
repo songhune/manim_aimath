@@ -130,6 +130,27 @@ PS1_05_INSERT = [
 ]
 PS1_05_ANCHORS = {name: after + 1 for after, names in PS1_05_INSERT for name in names}
 
+# PS1_06 (Chapter 6, week07.py, 2026-10-10) 삽입표. 원본은 도구/레이아웃_정리_PS1_06.py 로 정리한 88장.
+# 12차(10/16) 는 6.1 균등 · 6.2–6.4 정규 · 6.5 정규근사 = 원본 1–48, 13차(10/27) 는 6.6 감마 · 지수 – 6.10 = 원본 49–88.
+# 예제 스물넷을 다 그리지 않는다(사용자 결정). 개념 8편 + 표 읽기 · 꼬리 · 역방향 · 연속성 보정 · 대기 시간 예제 6편.
+PS1_06_INSERT = [
+    (2, ["UniformDensity"]),                  # 3 = 6.1 연속균등분포 정의
+    (5, ["NormalCurveShape"]),                # 6 = 6.2 정규분포 정의
+    (11, ["StandardizeToZ"]),                 # 12 = 6.3 넓이 · 표준화 (13 = 정의 6.1)
+    (14, ["Example62TableA3"]),               # 14 = 예제 6.2 문제, 15 = 풀이
+    (25, ["Example67Battery"]),               # 25 = 예제 6.7 문제, 26 = 풀이
+    (29, ["Example69Bearings"]),              # 29 = 예제 6.9 문제, 30 = 풀이
+    (37, ["Example613Grades"]),               # 37 = 예제 6.13 문제, 38 = 풀이
+    (40, ["NormalApproximatesBinomial"]),     # 41 = 정리 6.3
+    (46, ["Example615Recovery"]),             # 46 = 예제 6.15 문제, 47 = 풀이
+    (49, ["GammaFamily"]),                    # 50 = 감마분포 정의
+    (52, ["PoissonToExponential"]),           # 53 = 포아송 과정과의 관계
+    (59, ["MemorylessExponential"]),          # 60 = 무기억성
+    (63, ["Example618Calls"]),                # 63 = 예제 6.18 문제, 64 = 풀이
+    (75, ["LognormalFromNormal"]),            # 76 = 로그정규분포 정의
+]
+PS1_06_ANCHORS = {name: after + 1 for after, names in PS1_06_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -313,6 +334,21 @@ JOBS = [
         place="before",
         insert=PS1_05_INSERT,
         anchors=PS1_05_ANCHORS,
+    ),
+    dict(
+        # PS1_06 (week07.py, 2026-10-10). 개념 영상은 정의 슬라이드 앞, 예제 영상은 문제 다음(풀이 앞).
+        src="PS1_06_restyled.pptx",
+        dst="PS1_06_restyled_영상.pptx",
+        place="before",
+        insert=PS1_06_INSERT,
+        anchors=PS1_06_ANCHORS,
+    ),
+    dict(
+        src="PS1_06_restyled_한글.pptx",
+        dst="PS1_06_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_06_INSERT,
+        anchors=PS1_06_ANCHORS,
     ),
 ]
 

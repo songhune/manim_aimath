@@ -85,6 +85,7 @@ CHAPTER_TITLE = {
     "ps1_03": "Chapter 3 · Random Variables and Probability Distributions",
     "ps1_04": "Chapter 4 · Mathematical Expectation",
     "ps1_05": "Chapter 5 · Some Discrete Probability Distributions",
+    "ps1_06": "Chapter 6 · Some Continuous Probability Distributions",
 }
 
 
@@ -253,6 +254,17 @@ SECTIONS = {
          ["NegativeBinomialWaiting", "Example514Playoffs", "GeometricFirstSuccess"]),
         ("5.5 Poisson Distribution and the Poisson Process",
          ["PoissonCounts", "BinomialToPoisson", "Example517518Table"]),
+    ],
+    "ps1_06": [
+        ("6.1 Continuous Uniform Distribution", ["UniformDensity"]),
+        ("6.2 Normal Distribution", ["NormalCurveShape"]),
+        ("6.3 Areas under the Normal Curve", ["StandardizeToZ", "Example62TableA3"]),
+        ("6.4 Applications of the Normal Distribution",
+         ["Example67Battery", "Example69Bearings", "Example613Grades"]),
+        ("6.5 Normal Approximation to the Binomial", ["NormalApproximatesBinomial", "Example615Recovery"]),
+        ("6.6 Gamma and Exponential Distributions",
+         ["GammaFamily", "PoissonToExponential", "MemorylessExponential", "Example618Calls"]),
+        ("6.9 Lognormal Distribution", ["LognormalFromNormal"]),
     ],
 }
 

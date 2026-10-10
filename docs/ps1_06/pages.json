@@ -1,0 +1,100 @@
+[
+ {
+  "scene": "UniformDensity",
+  "title": "Continuous Uniform Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/UniformDensity.html",
+  "slides": 6,
+  "kb": 1541
+ },
+ {
+  "scene": "NormalCurveShape",
+  "title": "Normal Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/NormalCurveShape.html",
+  "slides": 4,
+  "kb": 1786
+ },
+ {
+  "scene": "StandardizeToZ",
+  "title": "Areas under the Normal Curve",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/StandardizeToZ.html",
+  "slides": 5,
+  "kb": 1901
+ },
+ {
+  "scene": "Example62TableA3",
+  "title": "Example 6.2",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example62TableA3.html",
+  "slides": 6,
+  "kb": 2378
+ },
+ {
+  "scene": "Example67Battery",
+  "title": "Example 6.7",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example67Battery.html",
+  "slides": 4,
+  "kb": 1853
+ },
+ {
+  "scene": "Example69Bearings",
+  "title": "Example 6.9",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example69Bearings.html",
+  "slides": 4,
+  "kb": 2719
+ },
+ {
+  "scene": "Example613Grades",
+  "title": "Example 6.13",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example613Grades.html",
+  "slides": 4,
+  "kb": 2386
+ },
+ {
+  "scene": "NormalApproximatesBinomial",
+  "title": "Normal Approximation to the Binomial",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/NormalApproximatesBinomial.html",
+  "slides": 6,
+  "kb": 1961
+ },
+ {
+  "scene": "Example615Recovery",
+  "title": "Example 6.15",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example615Recovery.html",
+  "slides": 4,
+  "kb": 3422
+ },
+ {
+  "scene": "GammaFamily",
+  "title": "Gamma Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/GammaFamily.html",
+  "slides": 5,
+  "kb": 1574
+ },
+ {
+  "scene": "PoissonToExponential",
+  "title": "Poisson Process and Exponential",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/PoissonToExponential.html",
+  "slides": 5,
+  "kb": 1507
+ },
+ {
+  "scene": "MemorylessExponential",
+  "title": "Memoryless Property",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/MemorylessExponential.html",
+  "slides": 4,
+  "kb": 1662
+ },
+ {
+  "scene": "Example618Calls",
+  "title": "Example 6.18",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/Example618Calls.html",
+  "slides": 7,
+  "kb": 1971
+ },
+ {
+  "scene": "LognormalFromNormal",
+  "title": "Lognormal Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_06/LognormalFromNormal.html",
+  "slides": 4,
+  "kb": 1454
+ }
+]
