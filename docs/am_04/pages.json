@@ -14,6 +14,13 @@
   "kb": 3216
  },
  {
+  "scene": "BrokenArrowProblem",
+  "title": "보충 · 부러진 화살 문제",
+  "url": "https://songhune.github.io/manim_aimath/am_04/BrokenArrowProblem.html",
+  "slides": 19,
+  "kb": 3610
+ },
+ {
   "scene": "ColumnsAreImages",
   "title": "표준행렬의 열",
   "url": "https://songhune.github.io/manim_aimath/am_04/ColumnsAreImages.html",
@@ -82,5 +89,26 @@
   "url": "https://songhune.github.io/manim_aimath/am_04/RankNullityTheorem.html",
   "slides": 19,
   "kb": 2348
+ },
+ {
+  "scene": "ReflectRotateOrder",
+  "title": "반사와 회전의 순서",
+  "url": "https://songhune.github.io/manim_aimath/am_04/ReflectRotateOrder.html",
+  "slides": 14,
+  "kb": 7730
+ },
+ {
+  "scene": "TransformationGallery",
+  "title": "표준행렬 읽기",
+  "url": "https://songhune.github.io/manim_aimath/am_04/TransformationGallery.html",
+  "slides": 18,
+  "kb": 7687
+ },
+ {
+  "scene": "RowSpaceNullSpace",
+  "title": "행공간과 영공간의 직교",
+  "url": "https://songhune.github.io/manim_aimath/am_04/RowSpaceNullSpace.html",
+  "slides": 13,
+  "kb": 4302
  }
 ]

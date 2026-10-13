@@ -28,6 +28,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 PY = Path(sys.executable)
 MANIM_SLIDES = PY.parent / ("manim-slides.exe" if os.name == "nt" else "manim-slides")
+if not MANIM_SLIDES.exists():
+    # pip --user 로 깔면 Scripts 가 파이썬 옆이 아니라 AppData/Roaming 아래에 생긴다 (Windows, 2026-10-13).
+    import shutil
+    MANIM_SLIDES = Path(shutil.which("manim-slides") or MANIM_SLIDES)
 STAGE = Path(os.environ.get("MANIM_STAGE_SLIDES", Path(tempfile.gettempdir()) / "manim_songhune_slides"))
 SLIDES_DIR = STAGE / "slides"
 VIDEO_DIR = STAGE / "video"
@@ -79,6 +83,7 @@ CHAPTER_TITLE = {
     "am_02": "Chapter 02 · 가우스-조르당 소거법과 여러 가지 행렬",
     "am_03": "Chapter 03 · 벡터공간과 내적",
     "am_04": "Chapter 04 · 선형변환과 랭크 정리",
+    "am_05": "Chapter 05 · 고윳값과 케일리-해밀턴 정리",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
@@ -196,13 +201,19 @@ SECTIONS = {
         ("3.2 벡터의 내적", ["InnerProduct", "InnerProductCosine", "CauchySchwarz",
                         "OrthogonalPythagoras", "ProjectionOntoVector", "InnerProductFamily",
                         "HammingManhattan"]),
-        ("3.3 벡터의 미분", ["Gradient", "Jacobian", "HessianLaplacian"]),
+        ("3.3 벡터의 미분", ["Gradient", "Jacobian", "CosineOnUnitCircle", "HessianLaplacian"]),
     ],
     "am_04": [
-        ("4.1 선형변환", ["LinearTransformationIntro", "NonlinearExamples", "ColumnsAreImages",
+        ("4.1 선형변환", ["LinearTransformationIntro", "NonlinearExamples", "BrokenArrowProblem", "ColumnsAreImages",
                        "StandardMatrixFromPair", "ReflectionTransform", "RotationTransform",
-                       "CompositeTransform", "InverseTransform", "OrthogonalOperator"]),
-        ("4.2 랭크 정리", ["ColumnSpaceNullSpace", "RankAndKernel", "RankNullityTheorem"]),
+                       "CompositeTransform", "ReflectRotateOrder", "InverseTransform", "OrthogonalOperator",
+                       "TransformationGallery"]),
+        ("4.2 랭크 정리", ["ColumnSpaceNullSpace", "RowSpaceNullSpace", "RankAndKernel", "RankNullityTheorem"]),
+    ],
+    "am_05": [
+        ("5.1 고윳값과 고유벡터", ["EigenvectorIntro", "CharacteristicEquation", "TriangularEigen",
+                           "Eigenspace", "EigenPowers", "DetTraceFromEigen"]),
+        ("5.2 케일리-해밀턴 정리", ["CayleyHamiltonCollapse", "CayleyHamiltonUse"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",

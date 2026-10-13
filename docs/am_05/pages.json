@@ -1,0 +1,58 @@
+[
+ {
+  "scene": "EigenvectorIntro",
+  "title": "고유벡터란",
+  "url": "https://songhune.github.io/manim_aimath/am_05/EigenvectorIntro.html",
+  "slides": 15,
+  "kb": 5924
+ },
+ {
+  "scene": "CharacteristicEquation",
+  "title": "특성방정식",
+  "url": "https://songhune.github.io/manim_aimath/am_05/CharacteristicEquation.html",
+  "slides": 11,
+  "kb": 6545
+ },
+ {
+  "scene": "TriangularEigen",
+  "title": "삼각행렬의 고윳값",
+  "url": "https://songhune.github.io/manim_aimath/am_05/TriangularEigen.html",
+  "slides": 10,
+  "kb": 1680
+ },
+ {
+  "scene": "Eigenspace",
+  "title": "고유공간",
+  "url": "https://songhune.github.io/manim_aimath/am_05/Eigenspace.html",
+  "slides": 17,
+  "kb": 4538
+ },
+ {
+  "scene": "EigenPowers",
+  "title": "고윳값의 성질",
+  "url": "https://songhune.github.io/manim_aimath/am_05/EigenPowers.html",
+  "slides": 15,
+  "kb": 7709
+ },
+ {
+  "scene": "DetTraceFromEigen",
+  "title": "행렬식과 대각합",
+  "url": "https://songhune.github.io/manim_aimath/am_05/DetTraceFromEigen.html",
+  "slides": 9,
+  "kb": 4265
+ },
+ {
+  "scene": "CayleyHamiltonCollapse",
+  "title": "케일리-해밀턴 정리",
+  "url": "https://songhune.github.io/manim_aimath/am_05/CayleyHamiltonCollapse.html",
+  "slides": 16,
+  "kb": 3327
+ },
+ {
+  "scene": "CayleyHamiltonUse",
+  "title": "케일리-해밀턴 정리의 쓰임",
+  "url": "https://songhune.github.io/manim_aimath/am_05/CayleyHamiltonUse.html",
+  "slides": 14,
+  "kb": 1780
+ }
+]
