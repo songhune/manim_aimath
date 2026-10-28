@@ -1,7 +1,7 @@
 """AI기초수학 — 교재 Chapter 4 선형변환과 랭크 정리.
 
 강의자료 `AI기초수학/강의자료_restyled/CHAPTER 04_선형변환과 랭크 정리.pptx` 의
-4.1 선형변환 · 4.2 랭크 정리에 붙는 보조 영상 12편.
+4.1 선형변환 · 4.2 랭크 정리에 붙는 보조 영상 13편.
 수는 교재 정의 4-1~4-11 과 예제 4-1~4-15 의 값을 그대로 쓴다.
 파일 이름은 앞 장과 같은 규칙이다(week04 = CH03, week05 = CH04).
 
@@ -199,6 +199,163 @@ class NonlinearExamples(GridScene):
         self.add_foreground_mobject(why)
         self.play(FadeIn(why, UP))
         self.wait(2)
+
+
+class BrokenArrowProblem(InteractiveScene):
+    """보충. 1995학년도 성균관대 본고사 수학 문제(영화 '부러진 화살'의 발단)를 계수 대입으로 푼다.
+
+    문제: 영벡터가 아닌 a, b, c 가 모든 실수 x, y, z 에 대해 ‖xa+yb+zc‖ ≥ ‖xa‖+‖yb‖ 를 만족하면
+    a⊥b, b⊥c, c⊥a 임을 보여라. T(x,y,z) = xa+yb+zc 는 계수 벡터를 넣는 선형변환이고 조건은
+    모든 입력에서 성립해야 한다. (1,1,0) 을 넣으면 ‖a+b‖ ≥ ‖a‖+‖b‖ 인데 삼각부등식은 ≤ 이라
+    등호만 남고, 그것은 b 가 a 와 같은 방향일 때다. (1,-1,0) 을 넣으면 반대 방향이어야 한다.
+    둘이 함께 서는 것은 b = 0 뿐이므로 전제를 만족하는 벡터가 없다. 제곱해서 보면
+    a·b ≥ ‖a‖‖b‖ 와 -a·b ≥ ‖a‖‖b‖ 를 더해 0 ≥ 2‖a‖‖b‖ 다.
+    """
+    a_len = 1.5
+    a_angle = 20 * DEGREES
+
+    def construct(self):
+        head = slide_title("보충 · 부러진 화살 문제")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        self.play(FadeIn(tag_under(head, "1995년 성균관대 본고사 수학")))
+
+        # 왼쪽 — 문제와 풀이를 한 줄씩 쌓는다
+        prob = Tex(R"\lVert x\mathbf{a}+y\mathbf{b}+z\mathbf{c}\rVert \ \ge\ \lVert x\mathbf{a}\rVert +\lVert y\mathbf{b}\rVert ").set_color(INK)
+        cond = Tex(R"x,\,y,\,z\in\mathbb{R},\qquad \mathbf{a},\,\mathbf{b},\,\mathbf{c}\ne\mathbf{0}").set_color(GREY_B)
+        goal = Tex(R"\Rightarrow\quad \mathbf{a}\perp\mathbf{b},\ \ \mathbf{b}\perp\mathbf{c},\ \ \mathbf{c}\perp\mathbf{a}").set_color(GREY_B)
+        trans = Tex(R"T(x,y,z)=x\mathbf{a}+y\mathbf{b}+z\mathbf{c}").set_color(CALM)
+        in_a = Tex(R"T(1,1,0):\quad \lVert \mathbf{a}+\mathbf{b}\rVert \ \ge\ \lVert \mathbf{a}\rVert +\lVert \mathbf{b}\rVert ").set_color(DONE)
+        in_b = Tex(R"T(1,-1,0):\quad \lVert \mathbf{a}-\mathbf{b}\rVert \ \ge\ \lVert \mathbf{a}\rVert +\lVert \mathbf{b}\rVert ").set_color(WARN)
+        squared = Tex(R"\mathbf{a}\cdot\mathbf{b}\ \ge\ \lVert \mathbf{a}\rVert \lVert \mathbf{b}\rVert ,\qquad -\mathbf{a}\cdot\mathbf{b}\ \ge\ \lVert \mathbf{a}\rVert \lVert \mathbf{b}\rVert ").set_color(INK)
+        added = Tex(R"0\ \ge\ 2\,\lVert \mathbf{a}\rVert \lVert \mathbf{b}\rVert  \quad\Rightarrow\quad \lVert \mathbf{a}\rVert \,\lVert \mathbf{b}\rVert =0").set_color(WARN)
+        lines = VGroup(prob, cond, goal, trans, in_a, in_b, squared, added)
+        for line in lines:
+            line.scale(0.76)
+        cond.scale(0.85)
+        goal.scale(0.85)
+        lines.arrange(DOWN, buff=0.27, aligned_edge=LEFT)
+        lines.to_edge(LEFT, buff=0.6).shift(0.3 * DOWN)
+
+        def say(text, color=GREY_B, old=None):
+            new = caption(text, 24, color)
+            new.to_edge(DOWN, buff=0.45).align_to(prob, LEFT)
+            if old is None:
+                self.play(FadeIn(new, UP), run_time=0.5)
+            else:
+                self.play(FadeOut(old), FadeIn(new, UP), run_time=0.5)
+            return new
+
+        self.play(Write(prob), run_time=1.2)
+        self.play(FadeIn(cond, UP), run_time=0.6)
+        note = say("모든 실수 계수에서 성립")
+        self.play(FadeIn(goal, UP), run_time=0.6)
+        self.wait(1.0)
+        self.play(FadeIn(trans, UP))
+        note = say("계수를 넣는 선형변환", CALM, note)
+        self.wait(0.8)
+
+        # 오른쪽 위 — a 는 고정, b 는 a 의 머리에 이어 돌린다
+        p = plane(x_range=(-1, 3, 1), y_range=(-1, 2, 1), height=3.6)
+        p.to_edge(RIGHT, buff=0.5).shift(0.75 * UP)
+        theta = ValueTracker(100 * DEGREES)
+        radius = ValueTracker(1.2)
+
+        def unit(angle):
+            return np.array([np.cos(angle), np.sin(angle)])
+
+        a_vec = self.a_len * unit(self.a_angle)
+
+        def b_vec():
+            return radius.get_value() * unit(self.a_angle + theta.get_value())
+
+        def tip(v):
+            return p.c2p(v[0], v[1])
+
+        def normal(v):
+            """v 를 왼쪽으로 90도 돌린 단위벡터 (화면 좌표)."""
+            n = np.array([-v[1], v[0], 0.0])
+            return n / max(get_norm(n), 1e-6)
+
+        def shifted_arrow(v, color, gap):
+            """원점에서 v 까지의 화살표를 옆으로 조금 비켜 그린다. 한 직선에 겹칠 때 구별된다."""
+            off = gap * normal(v)
+            return Arrow(tip((0, 0)) + off, tip(v) + off, buff=0, thickness=4).set_color(color)
+
+        a_arrow = arrow(p, a_vec, ACCENT)
+        a_lab = Tex(R"\mathbf{a}").scale(0.75).set_color(ACCENT)
+        a_lab.move_to(tip(a_vec / 2) - 0.3 * normal(a_vec))
+        b_side = always_redraw(lambda: arrow(p, a_vec + b_vec(), X_COLOR, start=a_vec))
+        b_lab = Tex(R"\mathbf{b}").scale(0.75).set_color(X_COLOR)
+        b_lab.add_updater(lambda m: m.move_to(tip(a_vec + b_vec() / 2) - 0.3 * normal(b_vec())))
+        self.play(FadeIn(p), GrowArrow(a_arrow), FadeIn(a_lab))
+        self.play(FadeIn(b_side), FadeIn(b_lab))
+
+        # 오른쪽 아래 — 길이를 나타내는 막대 둘과 기준선
+        x0 = p.get_left()[0] + 0.9
+        y1 = p.get_bottom()[1] - 0.8
+        y2 = y1 - 0.6
+        k = (p.get_right()[0] - x0) / (self.a_len + 1.2)
+
+        def bar(y, value, color):
+            return Line([x0, y, 0], [x0 + k * value, y, 0]).set_stroke(color, 10)
+
+        sum_bar = always_redraw(lambda: bar(y1, get_norm(a_vec + b_vec()), DONE))
+        diff_bar = always_redraw(lambda: bar(y2, get_norm(a_vec - b_vec()), WARN))
+
+        def target_x():
+            return x0 + k * (self.a_len + radius.get_value())
+
+        target = always_redraw(lambda: Line([target_x(), y1 + 0.3, 0], [target_x(), y2 - 0.3, 0]).set_stroke(WHITE, 3))
+        target_lab = Tex(R"\lVert\mathbf{a}\rVert+\lVert\mathbf{b}\rVert").scale(0.6).set_color(WHITE)
+        target_lab.add_updater(lambda m: m.move_to([target_x() - 0.55, y1 + 0.52, 0]))
+        sum_bar_lab = Tex(R"\lVert\mathbf{a}+\mathbf{b}\rVert").scale(0.6).set_color(DONE).next_to([x0, y1, 0], LEFT, buff=0.15)
+        diff_bar_lab = Tex(R"\lVert\mathbf{a}-\mathbf{b}\rVert").scale(0.6).set_color(WARN).next_to([x0, y2, 0], LEFT, buff=0.15)
+
+        # (1,1,0) — 같은 방향일 때만 등호
+        sum_arrow = always_redraw(lambda: shifted_arrow(a_vec + b_vec(), DONE, 0.1))
+        self.play(FadeIn(in_a, UP))
+        self.play(FadeIn(sum_arrow), FadeIn(sum_bar), FadeIn(sum_bar_lab), FadeIn(target), FadeIn(target_lab))
+        note = say("삼각부등식은 ≤ · 남는 것은 등호", GREY_B, note)
+        self.wait(1.0)
+        self.play(theta.animate.set_value(0), run_time=2.0)
+        note = say("같은 방향일 때만 등호", DONE, note)
+        self.wait(1.0)
+
+        # (1,-1,0) — 반대 방향일 때만 등호
+        nb_side = always_redraw(lambda: arrow(p, a_vec - b_vec(), X_COLOR, start=a_vec).set_opacity(0.55))
+        nb_lab = Tex(R"-\mathbf{b}").scale(0.75).set_color(X_COLOR).set_opacity(0.8)
+        nb_lab.add_updater(lambda m: m.move_to(tip(a_vec - b_vec() / 2) - 0.3 * normal(b_vec())))
+        diff_arrow = always_redraw(lambda: shifted_arrow(a_vec - b_vec(), WARN, -0.1))
+        self.play(FadeIn(in_b, UP))
+        self.play(theta.animate.set_value(100 * DEGREES), run_time=1.2)
+        self.play(FadeIn(nb_side), FadeIn(nb_lab), FadeIn(diff_arrow), FadeIn(diff_bar), FadeIn(diff_bar_lab))
+        self.wait(0.6)
+        self.play(theta.animate.set_value(PI), run_time=2.0)
+        note = say("반대 방향일 때만 등호", WARN, note)
+        self.wait(1.0)
+
+        # 한 바퀴를 돌려도 두 막대가 함께 기준선에 닿지 않는다
+        self.play(theta.animate.set_value(TAU + 100 * DEGREES), run_time=3.6)
+        note = say("두 조건이 함께 설 수 없음", WARN, note)
+        self.wait(0.6)
+        self.play(FadeIn(squared, UP))
+        self.play(Write(added), run_time=1.0)
+        self.wait(0.8)
+
+        # b 를 영벡터로 줄이면 둘 다 선다 — 전제가 금지한 경우다
+        self.play(radius.animate.set_value(0.04), run_time=2.0)
+        b_lab.clear_updaters()
+        nb_lab.clear_updaters()
+        zero = Tex(R"\mathbf{b}=\mathbf{0}").scale(0.75).set_color(WARN).next_to(tip(a_vec), UR, buff=0.12)
+        self.remove(b_side, nb_side)
+        self.play(FadeOut(b_lab), FadeOut(nb_lab), FadeIn(zero), run_time=0.5)
+        note = say("b = 0 일 때만 둘 다 성립", WARN, note)
+        self.wait(1.2)
+
+        strike = Line(goal.get_left(), goal.get_right()).set_stroke(WARN, 3)
+        self.play(ShowCreation(strike), ShowCreation(box(added, WARN, 0.12)))
+        note = say("전제를 만족하는 벡터 없음", WARN, note)
+        self.wait(2.5)
 
 
 class ColumnsAreImages(GridScene):
@@ -821,4 +978,232 @@ class RankNullityTheorem(InteractiveScene):
         note.arrange(DOWN, buff=0.2, aligned_edge=LEFT).next_to(lines, DOWN, buff=0.35).align_to(lines, LEFT)
         self.play(FadeIn(note, UP))
         say("코드는 피벗 세기를 한 줄로", DONE)
+        self.wait(2)
+
+
+# ─────────────────────────────────────────────────────────────
+# 2026-10-13 추가 — 7주차(10/14 · 10/16) 복습용 세 편.
+# 진도가 밀려 CH04 가 중간고사 직전 장이 되었다. 수식보다 격자 그림으로 되짚는 자리다.
+# ─────────────────────────────────────────────────────────────
+def column_matrix(values, height=1.4):
+    """열마다 색을 달리 칠한 2×2 행렬. 첫째 열은 e1 의 상, 둘째 열은 e2 의 상."""
+    m = Matrix([[str(v) for v in row] for row in values], h_buff=0.8).set_color(INK)
+    entries = m.get_entries()
+    for k in (0, 2):
+        entries[k].set_color(X_COLOR)
+    for k in (1, 3):
+        entries[k].set_color(Y_COLOR)
+    m.set_height(height)
+    return m
+
+
+class TransformationGallery(GridScene):
+    """4.1 요약. 표준행렬의 두 열을 e1, e2 가 가는 자리로 읽는 연습.
+
+    확대 · x 축 반사 · 90° 회전 · 층밀림 · 랭크 1 다섯 행렬을 같은 격자에 차례로 적용한다.
+    매번 단위정사각형이 어디로 가는지와 행렬의 두 열(초록 = e1 의 상, 빨강 = e2 의 상)을
+    맞춰 본다. 시험에서 행렬을 보고 그림을, 그림을 보고 행렬을 쓰게 하는 자리다.
+    마지막 행렬은 역행렬이 없어 되돌리지 않고 끝낸다 — 4.2 랭크로 넘어가는 자리다.
+    참고: legacy/_2016/eola/chapter3.py (ColumnsToBasisVectors 의 틀을 여러 행렬에 반복)
+    """
+    steps = [
+        ([[2, 0], [0, 2]], "확대 · 두 열 모두 2배", True),
+        ([[1, 0], [0, -1]], "x 축 반사 · e2 가 −e2 로", True),
+        ([[0, -1], [1, 0]], "90° 회전 · e1 이 e2 자리로", True),
+        ([[1, 1], [0, 1]], "층밀림 · e2 만 기울어짐", True),
+        ([[1, 1], [0, 0]], "랭크 1 · 평면이 직선으로", False),
+    ]
+
+    def construct(self):
+        head_on_grid(self, "표준행렬 읽기", "4.1 요약 · 열 = 기저벡터의 상")
+        self.add_unit_square()
+        self.play(FadeIn(self.square))
+        legend = VGroup(caption("첫째 열 = L(e1)", 22, X_COLOR),
+                        caption("둘째 열 = L(e2)", 22, Y_COLOR))
+        legend.arrange(DOWN, buff=0.15, aligned_edge=LEFT).to_corner(DL, buff=0.5)
+        legend.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(legend)
+        self.play(FadeIn(legend, UP))
+
+        shown = None
+        for k, (m, what, undo) in enumerate(self.steps):
+            panel = column_matrix(m)
+            if shown is None:
+                corner_panel(self, panel)
+                self.play(FadeIn(panel, DOWN), run_time=0.5)
+            else:
+                panel.move_to(shown).align_to(shown, RIGHT)
+                panel.add_background_rectangle(opacity=0.85, buff=0.12)
+                self.add_foreground_mobject(panel)
+                self.play(FadeOut(shown), FadeIn(panel), run_time=0.5)
+                self.foreground_mobjects.remove(shown)
+            shown = panel
+            self.note(what, DONE)
+            # 회전만 호를 그리며 돌고, 나머지는 곧게 간다(반사에 호를 주면 뒤집히는 것이 안 보인다).
+            if k == 2:
+                self.apply_matrix(m, run_time=1.5)
+            else:
+                self.apply_matrix(m, path_arc=0, run_time=1.5)
+            self.wait(0.8)
+            if undo:
+                if k == 2:
+                    self.apply_inverse(m, run_time=0.8)
+                else:
+                    self.apply_inverse(m, path_arc=0, run_time=0.8)
+        self.note("열 둘이 같은 직선 · 랭크 1", WARN)
+        self.wait(2)
+
+
+class ReflectRotateOrder(GridScene):
+    """정리 4-3 보충. 반사와 회전은 순서를 바꾸면 다른 변환이다.
+
+    F = x 축 반사, R = 45° 회전. 회전한 다음 반사하면 FR, 반사한 다음 회전하면 RF 이고
+    (2,1) 이 가는 자리가 다르다. RF 는 예제 4-11 의 행렬과 같다.
+    CompositeTransform 이 이름 없는 A1, A2 로 보인 것을 이름 있는 두 변환으로 다시 본다.
+    """
+    F = [[1, 0], [0, -1]]
+    R = [[np.sqrt(2) / 2, -np.sqrt(2) / 2], [np.sqrt(2) / 2, np.sqrt(2) / 2]]
+
+    def construct(self):
+        head_on_grid(self, "반사와 회전의 순서", "정리 4-3 보충 · 예제 4-8")
+        self.add_unit_square()
+        self.play(FadeIn(self.square))
+        mf = Tex(R"F=\begin{bmatrix}1&0\\0&-1\end{bmatrix}").set_color(CALM)
+        mr = Tex(R"R=\frac{\sqrt2}{2}\begin{bmatrix}1&-1\\1&1\end{bmatrix}").set_color(ACCENT)
+        row = VGroup(mf, mr).arrange(DOWN, buff=0.25, aligned_edge=LEFT).set_width(3.4)
+        corner_panel(self, row)
+        self.play(FadeIn(row, DOWN))
+        x = self.vec((2, 1), DONE, R"\mathbf{x}", R"\mathbf{x}")
+        self.note("x 축 반사 F · 45° 회전 R", GREY_B)
+        self.wait(0.6)
+
+        # 회전 → 반사. 먼저 한 R 이 오른쪽에 와서 FR 이다.
+        self.note("먼저 회전 · 다음 반사", ACCENT)
+        self.apply_matrix(self.R, run_time=1.2)
+        self.apply_matrix(self.F, path_arc=0, run_time=1.2)
+        fr = Tex(R"FR=\frac{\sqrt2}{2}\begin{bmatrix}1&-1\\-1&-1\end{bmatrix}").set_color(CALM)
+        fr.set_width(3.4).next_to(row, DOWN, buff=0.3).align_to(row, RIGHT)
+        fr.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(fr)
+        # 움직이는 self.plane 이 아니라 제자리의 background_plane 으로 좌표를 잡는다. 변환 뒤의 plane.c2p 는 이미 옮겨진 자리다.
+        end1 = Dot(self.background_plane.c2p(np.sqrt(2) / 2, -3 * np.sqrt(2) / 2), radius=0.1).set_color(CALM)
+        lab1 = Tex(R"FR\mathbf{x}").set_color(CALM).scale(0.8).next_to(end1, RIGHT, buff=0.1)
+        lab1.add_background_rectangle(opacity=0.8, buff=0.05)
+        self.add_foreground_mobject(end1, lab1)
+        self.play(FadeIn(fr, UP), FadeIn(end1, scale=0.5), FadeIn(lab1), run_time=0.6)
+        self.note("먼저 한 R 이 오른쪽 · FR", CALM)
+        self.wait(1.0)
+
+        total = np.array(self.F) @ np.array(self.R)
+        self.apply_inverse(total, path_arc=0, run_time=1.0)
+
+        # 반사 → 회전. 먼저 한 F 가 오른쪽에 와서 RF 다.
+        self.note("먼저 반사 · 다음 회전", CALM)
+        self.apply_matrix(self.F, path_arc=0, run_time=1.2)
+        self.apply_matrix(self.R, run_time=1.2)
+        rf = Tex(R"RF=\frac{\sqrt2}{2}\begin{bmatrix}1&1\\1&-1\end{bmatrix}").set_color(ACCENT)
+        rf.set_width(3.4).next_to(fr, DOWN, buff=0.25).align_to(fr, RIGHT)
+        rf.add_background_rectangle(opacity=0.85, buff=0.1)
+        self.add_foreground_mobject(rf)
+        end2 = Dot(self.background_plane.c2p(3 * np.sqrt(2) / 2, np.sqrt(2) / 2), radius=0.1).set_color(ACCENT)
+        lab2 = Tex(R"RF\mathbf{x}").set_color(ACCENT).scale(0.8).next_to(end2, UR, buff=0.1)
+        lab2.add_background_rectangle(opacity=0.8, buff=0.05)
+        self.add_foreground_mobject(end2, lab2)
+        self.play(FadeIn(rf, UP), FadeIn(end2, scale=0.5), FadeIn(lab2), run_time=0.6)
+        self.note("다른 자리 · FR ≠ RF", WARN)
+        self.wait(0.8)
+        tie = caption("RF 는 예제 4-11 의 행렬", 24, GREY_B)
+        overlay(tie, self, DOWN, 1.05)
+        self.play(FadeIn(tie, UP))
+        self.wait(2)
+
+
+class RowSpaceNullSpace(GridScene):
+    """정의 4-9 · 정리 4-5 보충. 행공간과 영공간은 정의역 안에서 서로 수직이다.
+
+    A = [[1,2],[-1,-2]] 의 두 행은 같은 직선 (1,2) 위에 있고, Ax = 0 의 해는 (2,−1) 방향이다.
+    두 직선은 내적이 0 이라 수직이다. A 를 적용하면 영공간 직선은 원점으로 눌리고
+    행공간 직선은 열공간 직선 (1,−1) 으로 간다. rank 1 + nullity 1 = 2.
+    ColumnSpaceNullSpace 가 3차원 축에서 보인 것을 2차원에서 다시 본다. 영공간 방향의
+    벡터는 원점으로 가므로 Vector 대신 Line + Dot 으로 둔다(RankAndKernel 과 같은 이유).
+    참고: legacy/_2016/eola/chapter6.py NameNullSpace
+    """
+    A = [[1, 2], [-1, -2]]
+
+    def construct(self):
+        head_on_grid(self, "행공간과 영공간의 직교", "정의 4-9 · 정리 4-5")
+        panel = VGroup(
+            Tex(R"A=\begin{bmatrix}1&2\\-1&-2\end{bmatrix}").set_color(INK),
+            Tex(R"\mathrm{Row}(A)=\mathrm{span}\{(1,2)\}").set_color(CALM),
+            Tex(R"\mathrm{Nul}(A)=\mathrm{span}\{(2,-1)\}").set_color(WARN),
+            Tex(R"\mathrm{Col}(A)=\mathrm{span}\{(1,-1)\}").set_color(ACCENT),
+        ).arrange(DOWN, buff=0.22, aligned_edge=LEFT).set_width(4.2)
+        corner_panel(self, panel)
+        self.play(FadeIn(panel[0], DOWN))
+
+        def through(direction, color, width=5, span=3.3):
+            d = np.array(direction, dtype=float)
+            d = d / np.linalg.norm(d)
+            line = Line(self.plane.c2p(*(-span * d)), self.plane.c2p(*(span * d)))
+            return line.set_stroke(color, width)
+
+        # 행공간 — 행벡터 (1,2) 와 그 직선
+        r1 = Arrow(self.plane.c2p(0, 0), self.plane.c2p(1, 2), buff=0, thickness=4).set_color(CALM)
+        r1_lab = Tex("(1,2)").set_color(CALM).scale(0.8).next_to(r1.get_end(), UR, buff=0.08)
+        r1_lab.add_background_rectangle(opacity=0.8, buff=0.05)
+        row_line = through((1, 2), CALM)
+        self.add_foreground_mobject(r1, r1_lab)
+        self.play(GrowArrow(r1), FadeIn(r1_lab), run_time=0.6)
+        self.note("행벡터 (1,2) · (−1,−2) 는 그 반대", CALM)
+        self.wait(0.5)
+        self.add_transformable_mobject(row_line)
+        self.bring_to_front(r1, r1_lab)
+        self.play(ShowCreation(row_line), FadeIn(panel[1], UP), run_time=0.8)
+        self.note("행공간 · 직선 하나", CALM)
+        self.wait(0.6)
+
+        # 영공간 — Ax = 0 의 해 (2,−1). 원점으로 눌리므로 선과 점으로 둔다.
+        null_line = through((2, -1), WARN)
+        k_end = self.plane.c2p(2, -1)
+        k_dot = Dot(k_end, radius=0.1).set_color(WARN)
+        k_lab = Tex("(2,-1)").set_color(WARN).scale(0.8).next_to(k_end, DR, buff=0.08)
+        k_lab.add_background_rectangle(opacity=0.8, buff=0.05)
+        self.add_transformable_mobject(null_line)
+        self.add_moving_mobject(k_dot)
+        self.add_foreground_mobject(k_lab)
+        self.play(ShowCreation(null_line), FadeIn(k_dot, scale=0.5), FadeIn(k_lab),
+                  FadeIn(panel[2], UP), run_time=0.8)
+        self.note("Ax = 0 의 해 · (2,−1) 방향", WARN)
+        self.wait(0.6)
+
+        # 두 직선의 직교 — 내적 0
+        elbow = Elbow(width=0.35, angle=angle_of_vector(self.plane.c2p(1, 2) - self.plane.c2p(0, 0)))
+        elbow.set_stroke(DONE, 3).shift(self.plane.c2p(0, 0))
+        dotp = Tex(R"(1,2)\cdot(2,-1)=2-2=0").set_color(DONE)
+        dotp.set_width(4.4)
+        overlay(dotp, self, DOWN, 1.05)
+        self.add_foreground_mobject(elbow)
+        self.play(ShowCreation(elbow), FadeIn(dotp, UP), run_time=0.7)
+        self.note("내적 0 · 서로 수직", DONE)
+        self.wait(1.2)
+
+        # A 를 적용 — 입력 쪽 두 직선은 옅은 자취로 남긴다.
+        row_ghost = row_line.copy().set_stroke(CALM, 2, opacity=0.45)
+        null_ghost = null_line.copy().set_stroke(WARN, 2, opacity=0.45)
+        self.add_foreground_mobject(row_ghost, null_ghost)
+        self.play(FadeOut(elbow), FadeOut(r1), FadeOut(r1_lab), FadeOut(k_lab), FadeOut(dotp),
+                  FadeIn(row_ghost), FadeIn(null_ghost), run_time=0.5)
+        for mob in (elbow, r1, r1_lab, k_lab, dotp):
+            self.foreground_mobjects.remove(mob)
+        self.note("A 를 적용", GREY_B)
+        self.apply_matrix(self.A, path_arc=0, run_time=2.4)
+        self.wait(0.4)
+        self.play(FadeIn(panel[3], UP), run_time=0.5)
+        self.note("영공간은 원점으로 · 행공간은 열공간으로", DONE)
+        self.wait(1.0)
+        dims = Tex(R"\mathrm{rank}(A)+\mathrm{nullity}(A)=1+1=2").set_color(DONE)
+        dims.set_width(4.8)
+        overlay(dims, self, DOWN, 1.05)
+        self.play(FadeIn(dims, UP))
+        self.note("랭크 1 + 퇴화차수 1 = 2", DONE)
         self.wait(2)

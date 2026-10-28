@@ -1,7 +1,7 @@
 """AI기초수학 — 교재 Chapter 3 벡터공간과 내적.
 
 강의자료 `AI기초수학/강의자료_restyled/CHAPTER 03_벡터공간과 내적.pptx` 의
-3.1 벡터와 벡터공간 · 3.2 벡터의 내적 · 3.3 벡터의 미분에 붙는 보조 영상 19편.
+3.1 벡터와 벡터공간 · 3.2 벡터의 내적 · 3.3 벡터의 미분에 붙는 보조 영상 22편.
 수는 교재 정의 3-1~3-22 와 예제 3-1~3-27 의 값을 그대로 쓴다.
 파일 이름은 앞 장과 같은 규칙이다(week02 = CH01, week03 = CH02, week04 = CH03).
 
@@ -1540,6 +1540,139 @@ class Jacobian(InteractiveScene):
         self.wait(1.0)
         last = caption("3 × 3 · 한 행이 한 그래디언트", 24, DONE).next_to(J, DOWN, buff=0.5)
         self.play(FadeIn(last, UP))
+        self.wait(2)
+
+
+class CosineOnUnitCircle(InteractiveScene):
+    """보충. 예제 3-25 둘째 행 x cos y 를 y 로 편미분하면 왜 -x sin y 인지 단위원에서 읽는다.
+
+    단위원 위의 점 p(y) = (cos y, sin y) 는 각이 커질 때 접선 방향으로 움직인다. 접선은 반지름과
+    수직이고, 호의 길이와 각의 변화가 같으므로 길이가 1 이다. 그 접선 (-sin y, cos y) 의 가로
+    성분이 cos y 의 변화율이다. y = 0, pi/2, pi 에서 부호를 확인한 뒤 x 를 상수로 두고 곱한다.
+    """
+
+    def construct(self):
+        head = slide_title("보충 · 단위원과 코사인의 미분")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        self.play(FadeIn(tag_under(head, "예제 3-25 · 둘째 행")))
+
+        # 왼쪽 — 식을 한 줄씩 쌓는다
+        f2 = Tex(R"F_2 = x\cos y").set_color(ACCENT)
+        pline = Tex(R"\mathbf{p}(y) = (\cos y,\ \sin y)").set_color(INK)
+        tline = Tex(R"\mathbf{p}'(y) = (-\sin y,\ \cos y)").set_color(DONE)
+        perp = Tex(R"\mathbf{p}\cdot\mathbf{p}' = -\cos y\sin y + \sin y\cos y = 0").set_color(GREY_B)
+        dline = Tex(R"\frac{d}{dy}\cos y = -\sin y").set_color(INK)
+        lines = VGroup(f2, pline, tline, perp, dline)
+        for line in lines:
+            line.scale(0.82)
+        perp.scale(0.8)
+        lines.arrange(DOWN, buff=0.3, aligned_edge=LEFT)
+        lines.to_edge(LEFT, buff=0.7).shift(0.45 * UP)
+        self.play(Write(f2), run_time=0.8)
+
+        # 오른쪽 — 단위원
+        p = plane(x_range=(-1.5, 1.5, 1), y_range=(-1.5, 1.5, 1), height=5.4)
+        p.to_edge(RIGHT, buff=0.6).shift(0.5 * DOWN)
+        origin = p.c2p(0, 0)
+        unit = get_norm(p.c2p(1, 0) - origin)
+        circle = Circle(radius=unit).move_to(origin).set_stroke(GREY_A, 2.5)
+        one = Tex("1").scale(0.65).set_color(GREY_B).next_to(p.c2p(1, 0), DR, buff=0.06)
+        self.play(FadeIn(p), ShowCreation(circle), FadeIn(one))
+
+        y = ValueTracker(0.25)
+
+        def direction(angle):
+            return np.array([np.cos(angle), np.sin(angle), 0.0])
+
+        def point():
+            return origin + unit * direction(y.get_value())
+
+        def foot():
+            return origin + unit * np.cos(y.get_value()) * RIGHT
+
+        def tangent_end():
+            return point() + unit * direction(y.get_value() + PI / 2)
+
+        def corner():
+            return point() - unit * np.sin(y.get_value()) * RIGHT
+
+        radius = always_redraw(lambda: Line(origin, point()).set_stroke(WHITE, 4))
+        dot = always_redraw(lambda: Dot(point(), radius=0.07).set_color(WHITE))
+        arc = always_redraw(lambda: Arc(0, y.get_value(), radius=0.5, arc_center=origin).set_stroke(GREY_A, 2.5))
+        y_lab = Tex("y").scale(0.75).set_color(GREY_A)
+        y_lab.add_updater(lambda m: m.move_to(origin + 0.75 * direction(y.get_value() / 2)))
+        self.play(FadeIn(radius), FadeIn(dot), FadeIn(arc), FadeIn(y_lab))
+        self.play(y.animate.set_value(50 * DEGREES), run_time=1.2)
+
+        cos_bar = always_redraw(lambda: Line(origin, foot()).set_stroke(X_COLOR, 8))
+        drop = always_redraw(lambda: Line(point(), foot()).set_stroke(GREY_B, 2))
+        cos_lab = Tex(R"\cos y").scale(0.75).set_color(X_COLOR)
+        cos_lab.add_updater(lambda m: m.next_to((origin + foot()) / 2, DOWN, buff=0.15))
+        note = caption("가로 좌표가 cos y", 24, GREY_B)
+        note.to_edge(DOWN, buff=0.55).align_to(f2, LEFT)
+        self.play(FadeIn(pline, UP), FadeIn(drop), FadeIn(cos_bar), FadeIn(cos_lab))
+        self.play(FadeIn(note, UP))
+        self.wait(0.8)
+
+        # 각이 커지면 점은 접선 방향으로 움직인다
+        tangent = always_redraw(lambda: Arrow(point(), tangent_end(), buff=0, thickness=4).set_color(DONE))
+
+        def right_angle():
+            a = y.get_value()
+            r, t = direction(a), direction(a + PI / 2)
+            q = point()
+            mark = VMobject()
+            mark.set_points_as_corners([q - 0.2 * r, q - 0.2 * r + 0.2 * t, q + 0.2 * t])
+            return mark.set_stroke(GREY_A, 2)
+
+        square = always_redraw(right_angle)
+        note2 = caption("반지름과 수직 · 길이 1", 24, GREY_B).move_to(note, LEFT)
+        self.play(FadeIn(tangent), FadeIn(square), FadeIn(tline, UP))
+        self.play(FadeOut(note), FadeIn(note2, UP), FadeIn(perp, UP))
+        self.play(y.animate.increment_value(0.35), run_time=1.2, rate_func=there_and_back)
+        self.wait(0.6)
+
+        # 접선의 가로 성분이 cos y 의 변화율이다
+        h_comp = always_redraw(lambda: Line(point(), corner()).set_stroke(WARN, 7))
+        v_comp = always_redraw(lambda: Line(corner(), tangent_end()).set_stroke(GREY_B, 2))
+        sin_lab = Tex(R"-\sin y").scale(0.75).set_color(WARN)
+
+        sin_lab.add_updater(lambda m: m.next_to(corner(), LEFT, buff=0.12))
+        dline[R"-\sin y"].set_color(WARN)
+        note3 = caption("접선의 가로 성분", 24, WARN).move_to(note, LEFT)
+        self.play(FadeIn(h_comp), FadeIn(v_comp), FadeIn(sin_lab))
+        self.play(FadeOut(note2), FadeIn(note3, UP), FadeIn(dline, UP))
+        self.wait(0.8)
+
+        # 부호 확인 — 세 각
+        rows = VGroup(
+            Tex(R"y = 0:\quad -\sin 0 = 0"),
+            Tex(R"y = \tfrac{\pi}{2}:\quad -\sin\tfrac{\pi}{2} = -1"),
+            Tex(R"y = \pi:\quad -\sin\pi = 0"),
+        )
+        for row in rows:
+            row.scale(0.62).set_color(INK)
+        rows.arrange(DOWN, buff=0.22, aligned_edge=LEFT)
+        rows.next_to(dline, RIGHT, buff=0.5).align_to(dline, UP)
+        self.play(y.animate.set_value(0.02), run_time=1.2)
+        self.play(FadeIn(rows[0], UP), run_time=0.5)
+        self.play(y.animate.set_value(PI / 2), run_time=1.8)
+        note4 = caption("π/2 에서 가장 빨리 감소", 24, WARN).move_to(note, LEFT)
+        self.play(FadeIn(rows[1], UP), FadeOut(note3), FadeIn(note4, UP), run_time=0.6)
+        self.wait(0.6)
+        self.play(y.animate.set_value(PI - 0.02), run_time=1.8)
+        self.play(FadeIn(rows[2], UP), run_time=0.5)
+        self.wait(0.6)
+        self.play(y.animate.set_value(50 * DEGREES), run_time=1.5)
+
+        # x 는 상수로 두고 곱한다
+        last = Tex(R"\frac{\partial F_2}{\partial y} = x\,(-\sin y) = -x\sin y").scale(0.85).set_color(DONE)
+        last.next_to(rows, DOWN, buff=0.45).align_to(f2, LEFT)
+        frame_box = box(last, DONE, 0.15)
+        note5 = caption("x 는 상수 취급", 24, DONE).next_to(frame_box, RIGHT, buff=0.35)
+        self.play(FadeOut(note4))
+        self.play(Write(last), FadeIn(note5, UP))
+        self.play(ShowCreation(frame_box))
         self.wait(2)
 
 

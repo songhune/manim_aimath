@@ -1,0 +1,65 @@
+[
+ {
+  "scene": "LUAsComposition",
+  "title": "LU 분해",
+  "url": "https://songhune.github.io/manim_aimath/am_06/LUAsComposition.html",
+  "slides": 9,
+  "kb": 6909
+ },
+ {
+  "scene": "ElementaryMatrixGrid",
+  "title": "기본행렬",
+  "url": "https://songhune.github.io/manim_aimath/am_06/ElementaryMatrixGrid.html",
+  "slides": 14,
+  "kb": 6697
+ },
+ {
+  "scene": "LUByRowOps",
+  "title": "행 연산과 LU 분해",
+  "url": "https://songhune.github.io/manim_aimath/am_06/LUByRowOps.html",
+  "slides": 13,
+  "kb": 1597
+ },
+ {
+  "scene": "LUSolve",
+  "title": "LU 로 연립방정식 풀기",
+  "url": "https://songhune.github.io/manim_aimath/am_06/LUSolve.html",
+  "slides": 15,
+  "kb": 2205
+ },
+ {
+  "scene": "PLUPermutation",
+  "title": "PLU 분해",
+  "url": "https://songhune.github.io/manim_aimath/am_06/PLUPermutation.html",
+  "slides": 12,
+  "kb": 1568
+ },
+ {
+  "scene": "SingularValueEllipse",
+  "title": "특잇값과 타원",
+  "url": "https://songhune.github.io/manim_aimath/am_06/SingularValueEllipse.html",
+  "slides": 13,
+  "kb": 3738
+ },
+ {
+  "scene": "SVDThreeSteps",
+  "title": "특잇값 분해의 세 단계",
+  "url": "https://songhune.github.io/manim_aimath/am_06/SVDThreeSteps.html",
+  "slides": 14,
+  "kb": 8293
+ },
+ {
+  "scene": "SvdCodeReview",
+  "title": "특잇값 분해 코드 리뷰",
+  "url": "https://songhune.github.io/manim_aimath/am_06/SvdCodeReview.html",
+  "slides": 10,
+  "kb": 1762
+ },
+ {
+  "scene": "SVDLowRank",
+  "title": "저랭크 근사",
+  "url": "https://songhune.github.io/manim_aimath/am_06/SVDLowRank.html",
+  "slides": 12,
+  "kb": 1843
+ }
+]

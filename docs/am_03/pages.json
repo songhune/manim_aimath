@@ -140,6 +140,13 @@
   "kb": 1332
  },
  {
+  "scene": "CosineOnUnitCircle",
+  "title": "보충 · 단위원과 코사인의 미분",
+  "url": "https://songhune.github.io/manim_aimath/am_03/CosineOnUnitCircle.html",
+  "slides": 15,
+  "kb": 2823
+ },
+ {
   "scene": "HessianLaplacian",
   "title": "헤시안 행렬과 라플라시안",
   "url": "https://songhune.github.io/manim_aimath/am_03/HessianLaplacian.html",

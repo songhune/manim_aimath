@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_03 (교재 Chapter 3 벡터공간과 내적) 영상 21편의 클릭 진행형 판.
+"""AM_03 (교재 Chapter 3 벡터공간과 내적) 영상 22편의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_03 --module _2026/aimath/slides_am_03.py
 
@@ -30,5 +30,6 @@ PAGES = build(globals(), [
     ("HammingManhattan", "해밍 거리와 맨하튼 거리"),
     ("Gradient", "그래디언트"),
     ("Jacobian", "자코비안 행렬"),
+    ("CosineOnUnitCircle", "보충 · 단위원과 코사인의 미분"),
     ("HessianLaplacian", "헤시안 행렬과 라플라시안"),
-], (week04,))
+], (week04,), step_at={"CosineOnUnitCircle": 1.6})   # 0.5초짜리 동작이 많아 기본값으로는 22번을 누른다

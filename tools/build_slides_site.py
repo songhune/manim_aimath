@@ -84,6 +84,7 @@ CHAPTER_TITLE = {
     "am_03": "Chapter 03 · 벡터공간과 내적",
     "am_04": "Chapter 04 · 선형변환과 랭크 정리",
     "am_05": "Chapter 05 · 고윳값과 케일리-해밀턴 정리",
+    "am_06": "Chapter 06 · 행렬 분해",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
@@ -214,6 +215,10 @@ SECTIONS = {
         ("5.1 고윳값과 고유벡터", ["EigenvectorIntro", "CharacteristicEquation", "TriangularEigen",
                            "Eigenspace", "EigenPowers", "DetTraceFromEigen"]),
         ("5.2 케일리-해밀턴 정리", ["CayleyHamiltonCollapse", "CayleyHamiltonUse"]),
+    ],
+    "am_06": [
+        ("6.1 LU 분해", ["LUAsComposition", "ElementaryMatrixGrid", "LUByRowOps", "LUSolve", "PLUPermutation"]),
+        ("6.2 특잇값 분해", ["SingularValueEllipse", "SVDThreeSteps", "SvdCodeReview", "SVDLowRank"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",
