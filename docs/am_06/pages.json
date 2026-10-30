@@ -35,11 +35,11 @@
   "kb": 1568
  },
  {
-  "scene": "SingularValueEllipse",
-  "title": "특잇값과 타원",
-  "url": "https://songhune.github.io/manim_aimath/am_06/SingularValueEllipse.html",
-  "slides": 13,
-  "kb": 3738
+  "scene": "SingularValueScaling",
+  "title": "특잇값과 행렬식",
+  "url": "https://songhune.github.io/manim_aimath/am_06/SingularValueScaling.html",
+  "slides": 17,
+  "kb": 6660
  },
  {
   "scene": "SVDThreeSteps",
@@ -61,5 +61,12 @@
   "url": "https://songhune.github.io/manim_aimath/am_06/SVDLowRank.html",
   "slides": 12,
   "kb": 1843
+ },
+ {
+  "scene": "PCAPreview",
+  "title": "주성분분석 미리 보기 (참고)",
+  "url": "https://songhune.github.io/manim_aimath/am_06/PCAPreview.html",
+  "slides": 11,
+  "kb": 2184
  }
 ]

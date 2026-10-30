@@ -218,7 +218,8 @@ SECTIONS = {
     ],
     "am_06": [
         ("6.1 LU 분해", ["LUAsComposition", "ElementaryMatrixGrid", "LUByRowOps", "LUSolve", "PLUPermutation"]),
-        ("6.2 특잇값 분해", ["SingularValueEllipse", "SVDThreeSteps", "SvdCodeReview", "SVDLowRank"]),
+        ("6.2 특잇값 분해", ["SingularValueScaling", "SVDThreeSteps", "SvdCodeReview", "SVDLowRank"]),
+        ("참고 · 주성분분석 (12.4)", ["PCAPreview"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",

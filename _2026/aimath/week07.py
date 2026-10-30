@@ -1,16 +1,18 @@
 """AI기초수학 — 교재 Chapter 6 행렬 분해.
 
 강의자료 `AI기초수학/강의자료_restyled/CHAPTER 06_행렬 분해_강의용.pptx` 의
-6.1 LU 분해 · 6.2 특잇값 분해에 붙는 보조 영상 9편.
+6.1 LU 분해 · 6.2 특잇값 분해에 붙는 보조 영상 10편(참고 1편 포함).
 파일 이름은 앞 장과 같은 규칙이다(week06 = CH05, week07 = CH06).
 
 수식보다 격자가 움직이는 그림으로 세운다(2026-10-13 요청과 같은 기준).
 - LU 분해는 변환 두 개의 합성이다. U(상삼각) 를 먼저, L(단위 하삼각) 을 다음에 적용하면 A 를 한 번에 적용한 것과 같다.
 - 기본행렬 세 유형은 평면의 반사 · 축 방향 늘림 · 층밀림이다. 역행렬도 같은 유형의 기본행렬이다.
 - 행 연산의 배수가 그대로 L 의 성분이 된다(예제 6-1). 피벗 자리에 0 이 나오면 행 교환 P 가 앞에 붙는다(예제 6-3).
-- 특잇값은 단위원이 가는 타원의 반축 길이다. AᵀA 의 고유벡터 v1, v2 가 가는 Av1, Av2 가 서로 수직이고 길이가 σ1, σ2 다(정리 6-3).
+- 특잇값은 선형변환 A 의 방향별 배율이다. det 는 넓이 배율 한 수(CH02 보충)이고, AᵀA 의 고유벡터 v1, v2 위의 정사각형은
+  직각을 지킨 채 변이 σ1, σ2 인 직사각형이 된다 — σ1σ2 = det A (정리 6-3). 2026-10-30 고침: 원·타원·w 벡터 대신 이 틀로.
 - A = UΣVᵀ 는 회전(Vᵀ) → 축 방향 늘림(Σ) → 회전(U) 세 단계다(정의 6-4).
 - 특잇값을 큰 것부터 k 개만 더한 A_k 가 저랭크 근사다. 이미지 행렬로 보인다(응용).
+- 참고: 평균을 뺀 자료 행렬의 V 가 주성분이다(12.4 미리 보기). 랭크 1 근사 = 제1 주성분에 사영.
 수는 예제 6-1 · 6-3 · 6-6 의 값을 쓰고, 2차원 그림에는 특잇값이 정수(3, 2)로 떨어지는 [[2,2],[-1,2]] 를 쓴다.
 예제 6-2(유일하지 않음) · 6-4 · 6-5 는 계산이라 풀이 슬라이드로 둔다.
 
@@ -25,7 +27,7 @@
 from manim_imports_ext import *
 
 from _2026.aimath.week04 import (
-    INK, ACCENT, CALM, WARN, DONE, title, caption, code, slide_title, tag_under, box,
+    INK, ACCENT, CALM, WARN, DONE, title, caption, code, slide_title, tag_under, box, plane,
 )
 from _2026.aimath.week03 import overlay, code_block, mat, augmented
 from _2026.aimath.week05 import GridScene, head_on_grid, corner_panel, X_COLOR, Y_COLOR
@@ -369,46 +371,75 @@ class PLUPermutation(InteractiveScene):
 # ─────────────────────────────────────────────────────────────
 # 6.2 특잇값 분해
 # ─────────────────────────────────────────────────────────────
-class SingularValueEllipse(GridScene):
-    """정의 6-3 · 정리 6-3. 특잇값은 단위원이 가는 타원의 반축 길이다.
+class SingularValueScaling(GridScene):
+    """정의 6-3 · 정리 6-3. 특잇값은 선형변환 A 의 방향별 배율이고, 두 배율의 곱이 행렬식이다.
 
-    A = [[2,2],[−1,2]] 에서 AᵀA = [[5,2],[2,8]] 의 고윳값은 9, 4 이고 단위 고유벡터는 (1,2)/√5, (−2,1)/√5 다.
-    A 를 적용하면 단위원은 타원이 되고, 두 고유벡터는 서로 수직인 반축 Av1, Av2 로 간다.
-    길이가 √9 = 3, √4 = 2 — 그것이 특잇값이다. 다른 방향의 벡터는 길이가 그 사이에 있다.
+    단위정사각형은 A = [[2,2],[−1,2]] 를 거쳐 넓이 |det A| = 6 인 평행사변형이 된다(CH02 보충 DeterminantGeometry · 4.1).
+    det 는 넓이 배율 한 수이고 e1, e2 의 직각은 Ae1, Ae2 에서 남지 않는다. AᵀA 의 고유벡터 v1, v2 위에 세운
+    정사각형은 직각을 지킨 채 변이 3, 2 인 직사각형이 된다 — 그 변의 길이가 특잇값이고 3 · 2 = 6 = det A 다.
+    det 는 정방행렬에만 있지만 특잇값은 m×n 행렬에도 있다(정리 6-4 로 이어진다).
     """
 
     def construct(self):
-        head_on_grid(self, "특잇값과 타원", "정의 6-3 · 정리 6-3")
-        rows = [
+        head_on_grid(self, "특잇값과 행렬식", "정의 6-3 · 정리 6-3 · CH02 보충")
+        panel = side_panel(self, [
             Tex(R"A=\begin{bmatrix}2&2\\-1&2\end{bmatrix}").set_color(ACCENT),
+            Tex(R"\det A=2\cdot2-2\cdot(-1)=6").set_color(INK),
+        ], width=3.9)
+
+        # 1. 단위정사각형 → 평행사변형. det 는 넓이 배율 한 수 (CH02 보충 · 4.1 복습)
+        self.add_unit_square()
+        self.play(FadeIn(self.square), run_time=0.5)
+        self.note("단위정사각형 · 넓이 1", GREY_B)
+        self.wait(0.6)
+        self.apply_matrix(A_SVD, path_arc=0, run_time=2.0)
+        self.note("평행사변형 · 넓이 6 = det A", ACCENT)
+        self.wait(1.0)
+        self.note("Ae1 과 Ae2 는 직각이 아님", WARN)
+        self.wait(1.0)
+
+        # 2. 되돌린다. 직각을 지키는 방향은 AᵀA 의 고유벡터 (정리 6-3)
+        self.apply_inverse(A_SVD, path_arc=0, run_time=1.2)
+        self.play(FadeOut(self.square), run_time=0.4)
+        self.transformable_mobjects.remove(self.square)
+        rows = VGroup(
             Tex(R"A^{T}A=\begin{bmatrix}5&2\\2&8\end{bmatrix},\ \lambda=9,\,4").set_color(INK),
-        ]
-        panel = side_panel(self, rows, width=4.2)
-        unit_circle(self)
+            Tex(R"\mathbf{v}_1=\tfrac{1}{\sqrt5}\begin{bmatrix}1\\2\end{bmatrix},\ "
+                R"\mathbf{v}_2=\tfrac{1}{\sqrt5}\begin{bmatrix}-2\\1\end{bmatrix}").set_color(INK),
+        ).arrange(DOWN, buff=0.22, aligned_edge=LEFT).set_width(3.9)
+        rows.next_to(panel, DOWN, buff=0.25).align_to(panel, RIGHT)
+        rows.add_background_rectangle(opacity=0.85, buff=0.12)
+        self.add_foreground_mobject(rows)
+        self.play(FadeIn(rows, DOWN), run_time=0.6)
+        self.note("AᵀA 의 고유벡터 v1 ⊥ v2", GREY_B)
         v1 = self.vec((1 / S5, 2 / S5), DONE, R"\mathbf{v}_1", R"A\mathbf{v}_1")
         v2 = self.vec((-2 / S5, 1 / S5), CALM, R"\mathbf{v}_2", R"A\mathbf{v}_2", direction="left")
-        w = self.vec((1, 0), GREY_B, R"\mathbf{w}", R"A\mathbf{w}")
-        self.note("단위원과 AᵀA 의 고유벡터 v1, v2", GREY_B)
+        o = self.plane.c2p(0, 0)
+        p1, p2 = self.plane.c2p(1 / S5, 2 / S5), self.plane.c2p(-2 / S5, 1 / S5)
+        tilted = Polygon(o, p1, p1 + p2 - o, p2).set_stroke(DONE, 3).set_fill(DONE, 0.3)
+        self.add_transformable_mobject(tilted)
+        self.bring_to_front(*self.moving_vectors)
+        self.play(FadeIn(tilted), run_time=0.5)
+        self.note("v1, v2 위의 정사각형 · 넓이 1", GREY_B)
         self.wait(0.8)
 
+        # 3. 같은 A — 직사각형. 변의 길이가 특잇값, 곱이 det
         self.apply_matrix(A_SVD, path_arc=0, run_time=2.4)
-        self.note("원이 타원으로", ACCENT)
-        self.wait(0.6)
-
-        # 수직 표시와 길이
         origin = self.background_plane.c2p(0, 0)
         elbow = Elbow(width=0.3, angle=angle_of_vector(v1.get_end() - origin)).set_stroke(DONE, 3)
         elbow.shift(origin)
         self.play(ShowCreation(elbow), run_time=0.5)
-        self.note("Av1 ⊥ Av2 · 길이 3, 2", DONE)
+        self.note("직사각형 · 변 3, 2 · 넓이 6", DONE)
         self.wait(1.0)
 
-        facts = bottom_panel(self, [
+        bottom_panel(self, [
             Tex(R"\lVert A\mathbf{v}_1\rVert=\sqrt{9}=3=\sigma_1").set_color(DONE),
             Tex(R"\lVert A\mathbf{v}_2\rVert=\sqrt{4}=2=\sigma_2").set_color(CALM),
-            Tex(R"2\le\lVert A\mathbf{w}\rVert\le 3").set_color(GREY_B),
+            Tex(R"\sigma_1\sigma_2=3\cdot2=6=\det A").set_color(INK),
         ], width=4.4)
-        self.note("특잇값 σ = √λ · 타원의 반축", DONE)
+        self.note("det A = σ1σ2 · 방향별 배율의 곱", DONE)
+        self.wait(1.5)
+        self.note("정방행렬이 아니어도 σ 는 있음", GREY_B)
         self.wait(2)
 
 
@@ -546,6 +577,97 @@ class SVDLowRank(InteractiveScene):
         shown = footnote(self, "k = 24 · 원본과 같음", DONE, shown)
         self.wait(0.8)
         shown = footnote(self, "작은 특잇값의 항은 생략 가능", DONE, shown)
+        self.wait(2)
+
+
+def sample_points(m=40, seed=6):
+    """예시 자료. 두 특성이 상관된 표본 m 개를 만들고 열 평균을 뺀다(하네스 3.8 — 값은 씬 안에서 계산)."""
+    rng = np.random.RandomState(seed)
+    along = rng.normal(0, 1.5, m)
+    across = rng.normal(0, 0.45, m)
+    d1 = np.array([2, 1]) / S5
+    d2 = np.array([-1, 2]) / S5
+    X = np.outer(along, d1) + np.outer(across, d2)
+    return X - X.mean(axis=0)
+
+
+class PCAPreview(InteractiveScene):
+    """참고 · 주성분분석(12.4) 미리 보기. 평균을 뺀 자료 행렬 X 의 특잇값 분해에서 V 의 열이 주성분이다.
+
+    표본 40 개 × 특성 2 개의 X 를 씬 안에서 만들고 np.linalg.svd 로 분해한다. v1 방향 직선이 제1 주성분이고,
+    표본을 그 직선에 사영한 것이 X 의 랭크 1 근사 σ1 u1 v1ᵀ 다 — 저랭크 근사(SVDLowRank)와 같은 식이다.
+    σ1² / (σ1² + σ2²) 가 제1 주성분이 설명하는 분산 비율. XᵀX = VΣᵀΣVᵀ 라 공분산 행렬의 고유벡터가 곧 V 의 열이다(정리 6-3).
+    본 수업 범위 밖의 참고 자료다. 12장에서 다시 다룬다.
+    """
+
+    def construct(self):
+        head = slide_title("주성분분석 미리 보기")
+        self.add(head)
+        tag = tag_under(head, "참고 · 12.4 군집화와 주성분분석 · 저랭크 근사 k = 1")
+        self.play(FadeIn(tag))
+
+        X = sample_points()
+        m = X.shape[0]
+        U, s, VT = np.linalg.svd(X, full_matrices=False)
+        v1, v2 = VT[0], VT[1]
+        if v1[0] < 0:
+            v1 = -v1
+        if v2[1] < 0:
+            v2 = -v2
+        ratio = 100 * s[0] ** 2 / (s[0] ** 2 + s[1] ** 2)
+
+        p = plane(x_range=(-4, 4, 1), y_range=(-3, 3, 1), height=5.4).move_to(LEFT * 3.0 + DOWN * 0.55)
+        self.play(FadeIn(p), run_time=0.6)
+        dots = VGroup(*[Dot(p.c2p(*xy), radius=0.06, color=ACCENT) for xy in X])
+        self.play(LaggedStartMap(FadeIn, dots, lag_ratio=0.03), run_time=1.2)
+
+        rows = VGroup(
+            Tex(R"X\in\mathbb{R}^{%d\times2},\quad \bar{\mathbf{x}}=\mathbf{0}" % m).set_color(INK),
+            Tex(R"X=U\Sigma V^{T},\quad \sigma_1=%.2f,\ \sigma_2=%.2f" % (s[0], s[1])).set_color(INK),
+            Tex(R"X_1=\sigma_1\mathbf{u}_1\mathbf{v}_1^{T}").set_color(DONE),
+            Tex(R"\frac{\sigma_1^{2}}{\sigma_1^{2}+\sigma_2^{2}}=" + "%.1f" % ratio + R"\,\%").set_color(DONE),
+            Tex(R"X^{T}X=V\,\Sigma^{T}\Sigma\,V^{T}").set_color(CALM),
+        ).arrange(DOWN, buff=0.32, aligned_edge=LEFT)
+        rows.set_width(5.6).to_edge(RIGHT, buff=0.5).shift(DOWN * 0.15)
+        code_line = code("U, Sig, VT = np.linalg.svd(X - X.mean(0))", 22)
+        code_line.set_width(min(code_line.get_width(), 5.8))
+        code_line.next_to(rows, DOWN, buff=0.35).align_to(rows, LEFT)
+        rows.add(code_line)
+        shown = footnote(self, "평균을 뺀 자료 행렬 X")
+        self.play(FadeIn(rows[0]), run_time=0.5)
+        self.wait(0.8)
+
+        # 주성분 — V 의 열
+        line1 = Line(p.c2p(*(-3.6 * v1)), p.c2p(*(3.6 * v1))).set_stroke(DONE, 3)
+        line2 = Line(p.c2p(*(-1.5 * v2)), p.c2p(*(1.5 * v2))).set_stroke(CALM, 3)
+        lab1 = Tex(R"\mathbf{v}_1").set_color(DONE).scale(0.9).next_to(line1.get_end(), UR, buff=0.1)
+        lab2 = Tex(R"\mathbf{v}_2").set_color(CALM).scale(0.9).next_to(line2.get_end(), UL, buff=0.1)
+        self.play(FadeIn(rows[1]), run_time=0.5)
+        self.play(ShowCreation(line1), FadeIn(lab1), run_time=0.8)
+        self.play(ShowCreation(line2), FadeIn(lab2), run_time=0.6)
+        shown = footnote(self, "V 의 열 v1, v2 · 주성분", DONE, shown)
+        self.wait(1.0)
+
+        # 사영 — 랭크 1 근사
+        P1 = np.outer(X @ v1, v1)
+        ghosts = dots.copy().set_opacity(0.3)
+        segs = VGroup(*[Line(p.c2p(*X[i]), p.c2p(*P1[i])).set_stroke(GREY_C, 1.5) for i in range(m)])
+        self.add(ghosts)
+        self.play(ShowCreation(segs), run_time=0.8)
+        self.play(*[d.animate.move_to(p.c2p(*P1[i])).set_color(DONE) for i, d in enumerate(dots)],
+                  FadeIn(rows[2]), run_time=1.5)
+        shown = footnote(self, "v1 에 사영 · 랭크 1 근사", DONE, shown)
+        self.wait(1.0)
+        self.play(FadeIn(rows[3]), run_time=0.5)
+        shown = footnote(self, "제1 주성분이 설명하는 분산 비율", DONE, shown)
+        self.wait(1.2)
+
+        # 공분산 행렬과의 연결 — 정리 6-3
+        self.play(FadeIn(rows[4]), run_time=0.5)
+        shown = footnote(self, "공분산 행렬의 고유벡터 = V 의 열", CALM, shown)
+        self.wait(1.2)
+        self.play(FadeIn(rows[5]), run_time=0.5)
+        shown = footnote(self, "12장에서 다시 · 특잇값 분해의 응용", GREY_B, shown)
         self.wait(2)
 
 

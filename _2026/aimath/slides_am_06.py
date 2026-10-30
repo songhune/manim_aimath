@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_06 (교재 Chapter 6 행렬 분해) 영상 9편의 클릭 진행형 판.
+"""AM_06 (교재 Chapter 6 행렬 분해) 영상 10편(참고 1편 포함)의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_06 --module _2026/aimath/slides_am_06.py
 
@@ -15,8 +15,9 @@ PAGES = build(globals(), [
     ("LUByRowOps", "행 연산과 LU 분해"),
     ("LUSolve", "LU 로 연립방정식 풀기"),
     ("PLUPermutation", "PLU 분해"),
-    ("SingularValueEllipse", "특잇값과 타원"),
+    ("SingularValueScaling", "특잇값과 행렬식"),
     ("SVDThreeSteps", "특잇값 분해의 세 단계"),
     ("SvdCodeReview", "특잇값 분해 코드 리뷰"),
     ("SVDLowRank", "저랭크 근사"),
+    ("PCAPreview", "주성분분석 미리 보기 (참고)"),
 ], (week07,))
