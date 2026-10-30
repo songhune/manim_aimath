@@ -1,0 +1,58 @@
+[
+ {
+  "scene": "SurfaceAndLevelSets",
+  "title": "그래프와 레벨집합",
+  "url": "https://songhune.github.io/manim_aimath/am_09/SurfaceAndLevelSets.html",
+  "slides": 11,
+  "kb": 5824
+ },
+ {
+  "scene": "PartialDerivativeSlice",
+  "title": "편도함수 · 단면의 기울기",
+  "url": "https://songhune.github.io/manim_aimath/am_09/PartialDerivativeSlice.html",
+  "slides": 10,
+  "kb": 3307
+ },
+ {
+  "scene": "GradientDirection",
+  "title": "방향도함수와 그래디언트",
+  "url": "https://songhune.github.io/manim_aimath/am_09/GradientDirection.html",
+  "slides": 17,
+  "kb": 2993
+ },
+ {
+  "scene": "ChainRuleCurve",
+  "title": "연쇄법칙 · 경로 위의 변화율",
+  "url": "https://songhune.github.io/manim_aimath/am_09/ChainRuleCurve.html",
+  "slides": 9,
+  "kb": 2190
+ },
+ {
+  "scene": "LagrangeTangency",
+  "title": "라그랑주 승수법 · 접하는 자리",
+  "url": "https://songhune.github.io/manim_aimath/am_09/LagrangeTangency.html",
+  "slides": 13,
+  "kb": 2436
+ },
+ {
+  "scene": "QuadraticFormBowl",
+  "title": "정부호 행렬 · 곡면의 모양",
+  "url": "https://songhune.github.io/manim_aimath/am_09/QuadraticFormBowl.html",
+  "slides": 10,
+  "kb": 3316
+ },
+ {
+  "scene": "HessianCritical",
+  "title": "헤시안 판별 · 안장점과 극소점",
+  "url": "https://songhune.github.io/manim_aimath/am_09/HessianCritical.html",
+  "slides": 10,
+  "kb": 2237
+ },
+ {
+  "scene": "GradientDescentSteps",
+  "title": "경사 하강법 · 한 걸음씩",
+  "url": "https://songhune.github.io/manim_aimath/am_09/GradientDescentSteps.html",
+  "slides": 12,
+  "kb": 2361
+ }
+]

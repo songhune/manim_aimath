@@ -85,6 +85,7 @@ CHAPTER_TITLE = {
     "am_04": "Chapter 04 · 선형변환과 랭크 정리",
     "am_05": "Chapter 05 · 고윳값과 케일리-해밀턴 정리",
     "am_06": "Chapter 06 · 행렬 분해",
+    "am_09": "Chapter 09 · 편미분과 경사 하강법",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
@@ -220,6 +221,10 @@ SECTIONS = {
         ("6.1 LU 분해", ["LUAsComposition", "ElementaryMatrixGrid", "LUByRowOps", "LUSolve", "PLUPermutation"]),
         ("6.2 특잇값 분해", ["SingularValueScaling", "SVDThreeSteps", "SvdCodeReview", "SVDLowRank"]),
         ("참고 · 주성분분석 (12.4)", ["PCAPreview"]),
+    ],
+    "am_09": [
+        ("9.1 편미분", ["SurfaceAndLevelSets", "PartialDerivativeSlice", "GradientDirection", "ChainRuleCurve"]),
+        ("9.2 경사 하강법", ["LagrangeTangency", "QuadraticFormBowl", "HessianCritical", "GradientDescentSteps"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",
