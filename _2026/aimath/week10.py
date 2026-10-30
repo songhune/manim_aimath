@@ -5,14 +5,14 @@
 10주차(2026-11-04 · 11-06) 수업. CH07 미분 · CH08 적분은 다루지 않고 CH06 다음에 바로 이 장을 한다(2026-10-30 결정).
 
 수식보다 곡면과 등고선이 움직이는 그림으로 세운다.
-- 다변수함수의 그래프는 곡면이고, 레벨집합 f = k 는 곡면을 높이 k 로 자른 자리를 바닥에 내린 선이다(정의 9-2 · 9-3 · 예제 9-3).
+- 다변수함수의 그래프는 곡면이고, 레벨집합 f = k 는 곡면의 높이 k 단면을 바닥에 내린 선이다(정의 9-2 · 9-3 · 예제 9-3).
 - 편도함수는 변수 하나만 남기고 자른 단면 곡선의 기울기다(정의 9-6).
 - 방향도함수 D_u f = ∇f · u 는 그래디언트를 u 에 사영한 길이이고, u 가 ∇f 방향일 때 가장 크다(정리 9-3 · 9-6 · 예제 9-9).
 - 연쇄법칙 1: 경로 위에서 f 가 일정하면 ∇f ⊥ 속도, dz/dt = 0 (정리 9-4 · 예제 9-10).
 - 라그랑주 승수법: f 의 레벨집합(원)이 제약 g = 0(타원)에 접하는 곳에서 ∇f = λ∇g (정리 9-7 · 예제 9-13).
 - 정부호: z = xᵀAx 의 곡면이 그릇(양의 정부호) · 뒤집힌 그릇(음의 정부호) · 안장(부정부호) (정의 9-10 · 정리 9-9 · 예제 9-16).
 - 헤시안 판별: f = x² + 2xy + y³ 의 임계점 둘, (0,0) 은 안장점, (-2/3, 2/3) 은 극소점 (정리 9-10 · 예제 9-18).
-- 경사 하강법: x_{k+1} = x_k − η∇f(x_k). η 가 크면 튄다 (9.2 · 응용).
+- 경사 하강법: x_{k+1} = x_k − η∇f(x_k). η 가 크면 발산한다 (9.2 · 응용).
 값은 예제 9-3 · 9-9 · 9-10 · 9-13 · 9-16 · 9-18 의 것을 그대로 쓴다. 방향도함수 편은 점 (2, 1) 을 새로 골랐다
 (예제 9-12 의 (1, 2) 는 ∇f = (2, 12) 라 화면에 들어가지 않는다).
 
@@ -132,7 +132,7 @@ def contour_group(p, func, x_range, y_range, levels, color=GREY_C, width=1.5, n=
 # 9.1 편미분
 # ─────────────────────────────────────────────────────────────
 class SurfaceAndLevelSets(InteractiveScene):
-    """정의 9-2 · 9-3 · 예제 9-3. 그래프는 곡면, 레벨집합은 높이 k 로 자른 자리를 바닥에 내린 선이다.
+    """정의 9-2 · 9-3 · 예제 9-3. 그래프는 곡면, 레벨집합은 높이 k 단면을 바닥에 내린 선이다.
 
     f(x, y) = √(25 − x² − y²) 는 반지름 5 의 반구다. f = k 는 x² + y² = 25 − k² 인 원이고,
     k = 1, 2, 3, 4, 5 에서 반지름은 √24, √21, 4, 3, 0 이다. 위에서 내려다보면 동심원이 된다.
@@ -160,7 +160,7 @@ class SurfaceAndLevelSets(InteractiveScene):
         self.wait(0.8)
 
         self.play(FadeIn(panel[1]), run_time=0.5)
-        shown = note3d(self, "높이 k 로 자른 자리 · 레벨집합", DONE, shown)
+        shown = note3d(self, "레벨집합 f = k · 높이 k 의 단면", DONE, shown)
         rows = VGroup()
         rings, floors = VGroup(), VGroup()
         for k in self.ks:
@@ -320,7 +320,7 @@ class GradientDirection(InteractiveScene):
         v_group = VGroup(v_lab, value).arrange(RIGHT, buff=0.15).next_to(panel, DOWN, buff=0.4).align_to(panel, LEFT)
         value.add_updater(lambda m: m.next_to(v_lab, RIGHT, buff=0.15))
         self.add(proj, u_arrow, v_group)
-        shown = footnote(self, "u 를 돌리면 값이 변함", CALM, shown)
+        shown = footnote(self, "u 에 따른 D_u f 의 값", CALM, shown)
         self.play(theta.animate.set_value(np.arctan2(gy, gx)), run_time=2.0)
         self.play(FadeIn(panel[5]), run_time=0.5)
         shown = footnote(self, "∇f 방향에서 최대 · 값 |∇f|", DONE, shown)
@@ -360,7 +360,7 @@ class ChainRuleCurve(InteractiveScene):
         self.play(FadeIn(rings), FadeIn(panel[0]), run_time=0.6)
         shown = footnote(self, "레벨집합 · 원")
         self.play(ShowCreation(path), FadeIn(panel[1]), run_time=0.9)
-        shown = footnote(self, "경로 · 단위원 위를 돎", DONE, shown)
+        shown = footnote(self, "경로 · 단위원", DONE, shown)
         self.wait(0.5)
 
         t = ValueTracker(0.0)
@@ -394,11 +394,11 @@ class LagrangeTangency(InteractiveScene):
     """정리 9-7 · 예제 9-13. 제약 g = 0 위에서 f 의 최댓값 · 최솟값은 f 의 레벨집합이 제약 곡선에 접하는 곳이다.
 
     f = x² + y² 의 레벨집합은 원, g = 3x² + 4y² − 5 = 0 은 타원. 원을 키우면 (0, ±√5/2) 에서 처음 닿고(최솟값 5/4),
-    (±√(5/3), 0) 에서 마지막으로 닿는다(최댓값 5/3). 접점에서 ∇f = λ∇g 이고 λ = 1/4, 1/3 이다.
+    (±√(5/3), 0) 이 마지막 접점이다(최댓값 5/3). 접점에서 ∇f = λ∇g 이고 λ = 1/4, 1/3 이다.
     """
 
     def construct(self):
-        head = slide_title("라그랑주 승수법 · 접하는 자리")
+        head = slide_title("라그랑주 승수법 · 접점 조건")
         self.add(head)
         self.play(FadeIn(tag_under(head, "정리 9-7 · 예제 9-13")))
         p = plane(x_range=(-2, 2, 1), y_range=(-1.5, 1.5, 0.5), height=4.6).move_to(LEFT * 3.1 + DOWN * 0.5)
@@ -422,7 +422,7 @@ class LagrangeTangency(InteractiveScene):
         r_lab = Tex(R"x^{2}+y^{2}=r^{2}").set_color(ACCENT).scale(0.8)
         r_lab.add_updater(lambda m: m.next_to(circle, DOWN, buff=0.1).shift(RIGHT * 0.2))
         self.add(circle, r_lab)
-        shown = footnote(self, "f 의 레벨집합 · 원을 키움", ACCENT, shown)
+        shown = footnote(self, "f 의 레벨집합 · 반지름 r 증가", ACCENT, shown)
         rmin, rmax = np.sqrt(5 / 4), np.sqrt(5 / 3)
         self.play(r.animate.set_value(rmin), run_time=2.0)
         pts_min = [p.c2p(0, rmin), p.c2p(0, -rmin)]
@@ -430,7 +430,7 @@ class LagrangeTangency(InteractiveScene):
         gf = arrow(p, (0, rmin + 0.35), CALM, start=(0, rmin))
         gg = arrow(p, (0, rmin + 0.7), DONE, start=(0, rmin)).set_stroke(opacity=0.6)
         self.play(FadeIn(dots_min), run_time=0.4)
-        shown = footnote(self, "처음 닿는 곳 · 최솟값 5/4", CALM, shown)
+        shown = footnote(self, "첫 접점 · 최솟값 5/4", CALM, shown)
         self.play(GrowArrow(gg), GrowArrow(gf), FadeIn(panel[2]), FadeIn(panel[3]), run_time=0.8)
         shown = footnote(self, "접점에서 ∇f ∥ ∇g · λ = 1/4", CALM, shown)
         self.play(FadeIn(panel[4]), run_time=0.5)
@@ -442,12 +442,12 @@ class LagrangeTangency(InteractiveScene):
         gf2 = arrow(p, (rmax + 0.35, 0), WARN, start=(rmax, 0))
         gg2 = arrow(p, (rmax + 0.7, 0), DONE, start=(rmax, 0)).set_stroke(opacity=0.6)
         self.play(FadeIn(dots_max), run_time=0.4)
-        shown = footnote(self, "마지막으로 닿는 곳 · 최댓값 5/3", WARN, shown)
+        shown = footnote(self, "마지막 접점 · 최댓값 5/3", WARN, shown)
         self.play(GrowArrow(gg2), GrowArrow(gf2), FadeIn(panel[5]), run_time=0.8)
         shown = footnote(self, "∇f = λ∇g · λ = 1/3", WARN, shown)
         self.wait(1.0)
         self.play(r.animate.set_value(rmax + 0.4), run_time=1.0)
-        shown = footnote(self, "더 키우면 타원과 떨어짐", GREY_B, shown)
+        shown = footnote(self, "r > √(5/3) · 공통점 없음", GREY_B, shown)
         self.wait(2)
 
 
@@ -553,16 +553,16 @@ class HessianCritical(InteractiveScene):
 
 
 class GradientDescentSteps(InteractiveScene):
-    """9.2 · 응용. 경사 하강법 x_{k+1} = x_k − η∇f(x_k) 는 −∇f 쪽으로 한 걸음씩 간다.
+    """9.2 · 응용. 경사 하강법 x_{k+1} = x_k − η∇f(x_k) 는 −∇f 방향으로 step 마다 이동한다.
 
     f = x² + 4y², ∇f = (2x, 8y). x_0 = (4, 2). η = 0.1 이면 x 는 0.8 배, y 는 0.2 배씩 줄어 (0, 0) 으로 간다.
-    η = 0.3 이면 y 는 −1.4 배가 되어 튄다. 정리 9-6 의 '가장 빨리 감소하는 방향' 이 −∇f 다. 값은 씬 안에서 계산한다.
+    η = 0.3 이면 y 는 −1.4 배가 되어 발산한다. 정리 9-6 의 '가장 빨리 감소하는 방향' 이 −∇f 다. 값은 씬 안에서 계산한다.
     """
     x0 = np.array([4.0, 2.0])
     steps = 8
 
     def construct(self):
-        head = slide_title("경사 하강법 · 한 걸음씩")
+        head = slide_title("경사 하강법 · step")
         self.add(head)
         self.play(FadeIn(tag_under(head, "정리 9-6 · 응용 · f = x² + 4y²")))
         p = plane(x_range=(-1, 5, 1), y_range=(-3, 3, 1), height=5.2).move_to(LEFT * 3.1 + DOWN * 0.5)
@@ -596,15 +596,15 @@ class GradientDescentSteps(InteractiveScene):
                 x = nx
             return VGroup(trail, dot)
 
-        shown = footnote(self, "η = 0.1 · −∇f 쪽으로 한 걸음", DONE, shown)
+        shown = footnote(self, "η = 0.1 · −∇f 방향 step", DONE, shown)
         first = run(0.1, DONE, self.steps)
         self.play(FadeIn(panel[2]), run_time=0.5)
-        shown = footnote(self, "원점으로 다가감 · 최솟값", DONE, shown)
+        shown = footnote(self, "원점으로 수렴 · 최솟값", DONE, shown)
         self.wait(1.0)
         self.play(first.animate.set_opacity(0.3), run_time=0.4)
 
-        shown = footnote(self, "η = 0.3 · 걸음이 큼", WARN, shown)
+        shown = footnote(self, "η = 0.3 · step 이 큼", WARN, shown)
         run(0.3, WARN, 4)
         self.play(FadeIn(panel[3]), run_time=0.5)
-        shown = footnote(self, "y 방향이 튐 · η 는 작게", WARN, shown)
+        shown = footnote(self, "y 방향 발산 · η 는 작게", WARN, shown)
         self.wait(2)

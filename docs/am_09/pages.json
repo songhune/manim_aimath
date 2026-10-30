@@ -29,7 +29,7 @@
  },
  {
   "scene": "LagrangeTangency",
-  "title": "라그랑주 승수법 · 접하는 자리",
+  "title": "라그랑주 승수법 · 접점 조건",
   "url": "https://songhune.github.io/manim_aimath/am_09/LagrangeTangency.html",
   "slides": 13,
   "kb": 2436
@@ -50,7 +50,7 @@
  },
  {
   "scene": "GradientDescentSteps",
-  "title": "경사 하강법 · 한 걸음씩",
+  "title": "경사 하강법 · step",
   "url": "https://songhune.github.io/manim_aimath/am_09/GradientDescentSteps.html",
   "slides": 12,
   "kb": 2361

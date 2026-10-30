@@ -14,8 +14,8 @@ PAGES = build(globals(), [
     ("PartialDerivativeSlice", "편도함수 · 단면의 기울기"),
     ("GradientDirection", "방향도함수와 그래디언트"),
     ("ChainRuleCurve", "연쇄법칙 · 경로 위의 변화율"),
-    ("LagrangeTangency", "라그랑주 승수법 · 접하는 자리"),
+    ("LagrangeTangency", "라그랑주 승수법 · 접점 조건"),
     ("QuadraticFormBowl", "정부호 행렬 · 곡면의 모양"),
     ("HessianCritical", "헤시안 판별 · 안장점과 극소점"),
-    ("GradientDescentSteps", "경사 하강법 · 한 걸음씩"),
+    ("GradientDescentSteps", "경사 하강법 · step"),
 ], (week10,))
