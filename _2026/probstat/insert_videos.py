@@ -151,6 +151,17 @@ PS1_06_INSERT = [
 ]
 PS1_06_ANCHORS = {name: after + 1 for after, names in PS1_06_INSERT for name in names}
 
+# PS1_08 (Chapter 8, week08.py, 2026-11-03) 삽입표. 원본은 도구/레이아웃_정리_PS1_08.py 로 정리한 55장(표 장 6 포함).
+# 16차(11/6) 는 8.1–8.4 = 원본 1–28, 17차(11/10) 는 8.5–8.8 = 원본 29–55 (날짜는 가정).
+# 사용자 결정(2026-11-03): 영상은 꼭 필요한 개념 4편뿐이고 모두 그 개념 장 **앞**에 둔다. 예제 영상은 없다.
+PS1_08_INSERT = [
+    (11, ["SampleMeanAsRandomVariable"]),     # 12 = 8.4 정규모집단의 표본평균 (x̄ 는 확률변수, σ/√n)
+    (13, ["CentralLimitTheorem"]),            # 14 = 정리 8.2 중심극한정리
+    (28, ["ChiSquareFromVariance"]),          # 29 = 8.5 (n−1)S²/σ² · 정리 8.4
+    (33, ["TDistributionTails"]),             # 34 = 8.6 t 분포 도입
+]
+PS1_08_ANCHORS = {name: after + 1 for after, names in PS1_08_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -349,6 +360,21 @@ JOBS = [
         place="before",
         insert=PS1_06_INSERT,
         anchors=PS1_06_ANCHORS,
+    ),
+    dict(
+        # PS1_08 (week08.py, 2026-11-03). 개념 영상 4편, 모두 개념 장 앞.
+        src="PS1_08_restyled.pptx",
+        dst="PS1_08_restyled_영상.pptx",
+        place="before",
+        insert=PS1_08_INSERT,
+        anchors=PS1_08_ANCHORS,
+    ),
+    dict(
+        src="PS1_08_restyled_한글.pptx",
+        dst="PS1_08_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_08_INSERT,
+        anchors=PS1_08_ANCHORS,
     ),
 ]
 

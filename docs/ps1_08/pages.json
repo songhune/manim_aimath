@@ -1,0 +1,30 @@
+[
+ {
+  "scene": "SampleMeanAsRandomVariable",
+  "title": "Sampling Distribution of the Mean",
+  "url": "https://songhune.github.io/manim_aimath/ps1_08/SampleMeanAsRandomVariable.html",
+  "slides": 10,
+  "kb": 4396
+ },
+ {
+  "scene": "CentralLimitTheorem",
+  "title": "Central Limit Theorem",
+  "url": "https://songhune.github.io/manim_aimath/ps1_08/CentralLimitTheorem.html",
+  "slides": 9,
+  "kb": 2224
+ },
+ {
+  "scene": "ChiSquareFromVariance",
+  "title": "Sampling Distribution of S²",
+  "url": "https://songhune.github.io/manim_aimath/ps1_08/ChiSquareFromVariance.html",
+  "slides": 6,
+  "kb": 2977
+ },
+ {
+  "scene": "TDistributionTails",
+  "title": "t-Distribution",
+  "url": "https://songhune.github.io/manim_aimath/ps1_08/TDistributionTails.html",
+  "slides": 5,
+  "kb": 2765
+ }
+]
