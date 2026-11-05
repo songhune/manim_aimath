@@ -20,7 +20,7 @@ from _2026.probstat import week07b
 
 # (씬 이름, 화면 제목). 덱 순서.
 PAGES = [
-    ("DiscreteTransformation", "Transformation of a Discrete Variable"),
+    ("DiscreteTransformation", "Example 7.1"),
     ("JacobianStretch", "Jacobian of a Transformation"),
     ("Example73Linear", "Example 7.3"),
     ("Example74Jacobian2D", "Example 7.4"),

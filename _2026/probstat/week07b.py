@@ -17,7 +17,7 @@
 
 덱 삽입 자리 (원본 PS1_07_restyled.pptx 23장 기준. 레이아웃 정리 뒤의 번호는 insert_videos.py 의 PS1_07_INSERT 가 정본이다.
 네 편 모두 "N 앞" = 그 개념 슬라이드 바로 앞):
-    DiscreteTransformation           3 앞    정리 7.1 — 이산형 일대일 변환, g(y) = f(w(y)), 기하분포 막대가 y = x² 자리로
+    DiscreteTransformation           3 앞    예제 7.1 (= 정리 7.1 의 이산형 일대일 변환, 제목은 "Example 7.1" — 2026-11-06), g(y) = f(w(y)), 기하분포 막대가 y = x² 자리로
     JacobianStretch                  8 앞    정리 7.3 — 연속형, y = 2x − 3 으로 축이 2 배 늘고 높이가 반이 됨, |J| = 1/2
     NotOneToOne                     13 앞    일대일이 아닌 변환 — y = x² (−1 < x < 2), 0 < y < 1 에 역상 둘, g = f(−√y)|J₁| + f(√y)|J₂|
     MomentGeneratingFunction        17 앞    정의 7.1 · 7.2 — M_X(t) = E(e^{tX}), 이항 b(x; 4, 1/2) 의 무게 e^{tx}, M'(0) = μ, 곱셈 성질
@@ -76,7 +76,7 @@ class DiscreteTransformation(InteractiveScene):
     일대일이라 막대의 높이(확률)는 그대로이고 자리만 바뀐다. g(y) = f(w(y)), w(y) = √y."""
 
     def construct(self):
-        head = slide_title("Transformation of a Discrete Variable")
+        head = slide_title("Example 7.1")   # 2026-11-06 사용자: 이 영상은 사실상 예제 7.1 이다(정리 7.1 은 수식뿐). 자리는 그대로 정리 7.1 앞
         self.play(FadeIn(head[0]), ShowCreation(head[1]))
         fx = Tex(R"f(x) = \tfrac34\left(\tfrac14\right)^{x-1},\quad x = 1, 2, 3, \ldots").scale(0.75).set_color(INK)
         fx.next_to(head[1], DOWN, buff=0.3).align_to(head[0], LEFT)

@@ -1,10 +1,10 @@
 [
  {
   "scene": "DiscreteTransformation",
-  "title": "Transformation of a Discrete Variable",
+  "title": "Example 7.1",
   "url": "https://songhune.github.io/manim_aimath/ps1_07/DiscreteTransformation.html",
   "slides": 6,
-  "kb": 1690
+  "kb": 1552
  },
  {
   "scene": "JacobianStretch",
