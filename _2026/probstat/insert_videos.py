@@ -152,7 +152,7 @@ PS1_06_INSERT = [
 PS1_06_ANCHORS = {name: after + 1 for after, names in PS1_06_INSERT for name in names}
 
 # PS1_08 (Chapter 8, week08.py, 2026-11-03) 삽입표. 원본은 도구/레이아웃_정리_PS1_08.py 로 정리한 55장(표 장 6 포함).
-# 16차(11/6) 는 8.1–8.4 = 원본 1–28, 17차(11/10) 는 8.5–8.8 = 원본 29–55 (날짜는 가정).
+# 17차(11/10) 는 8.1–8.4 = 원본 1–28, 18차(11/13) 는 8.5–8.8 = 원본 29–55 (날짜는 가정; 7장이 16차 11/6).
 # 사용자 결정(2026-11-03): 영상은 꼭 필요한 개념 4편뿐이고 모두 그 개념 장 **앞**에 둔다. 예제 영상은 없다.
 PS1_08_INSERT = [
     (11, ["SampleMeanAsRandomVariable"]),     # 12 = 8.4 정규모집단의 표본평균 (x̄ 는 확률변수, σ/√n)
@@ -163,12 +163,17 @@ PS1_08_INSERT = [
 PS1_08_ANCHORS = {name: after + 1 for after, names in PS1_08_INSERT for name in names}
 
 # PS1_07 (Chapter 7, week07b.py, 2026-11-05) 삽입표. 원본은 도구/레이아웃_정리_PS1_07.py 로 정리한 28장. 16차(11/6, 가정) 한 차시.
-# 개념 영상 4편, 모두 그 개념 장 앞. 예제 영상은 없다(사용자 결정 2026-11-03).
+# 개념 영상 4편은 그 개념 장 앞. 예제 영상 4편(적분이 있는 7.3 · 7.4 · 7.5 · 7.7, 사용자 요구 2026-11-05 저녁)은 문제 장 뒤 = 책 풀이 장 앞.
+# 한글 덱에서는 풀이_채우기 가 문제 장에 설명문을 쓰고 이어지는 장을 영상 **뒤**에 끼우므로 문제+설명문 → 영상 → (계속) → 책 풀이 차례가 된다.
 PS1_07_INSERT = [
     (2, ["DiscreteTransformation"]),          # 3 = 정리 7.1
     (8, ["JacobianStretch"]),                 # 9 = 정리 7.3
+    (11, ["Example73Linear"]),                # 11 = 예제 7.3 문제, 12 = 책 풀이
+    (13, ["Example74Jacobian2D"]),            # 13 = 예제 7.4 문제, 14 = 책 풀이
     (14, ["NotOneToOne"]),                    # 15 = 일대일이 아닌 변환
+    (18, ["Example75ChiSquare"]),             # 18 = 예제 7.5 문제, 19 = 책 풀이
     (19, ["MomentGeneratingFunction"]),       # 20 = 정의 7.1 · 7.2
+    (23, ["Example77NormalMGF"]),             # 23 = 예제 7.7 문제, 24 = 책 풀이
 ]
 PS1_07_ANCHORS = {name: after + 1 for after, names in PS1_07_INSERT for name in names}
 
@@ -387,7 +392,7 @@ JOBS = [
         anchors=PS1_08_ANCHORS,
     ),
     dict(
-        # PS1_07 (week07b.py, 2026-11-05). 개념 영상 4편, 모두 개념 장 앞.
+        # PS1_07 (week07b.py, 2026-11-05). 개념 영상 4편(개념 장 앞) + 예제 영상 4편(문제 장 뒤).
         src="PS1_07_restyled.pptx",
         dst="PS1_07_restyled_영상.pptx",
         place="before",

@@ -14,6 +14,20 @@
   "kb": 1816
  },
  {
+  "scene": "Example73Linear",
+  "title": "Example 7.3",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/Example73Linear.html",
+  "slides": 7,
+  "kb": 2598
+ },
+ {
+  "scene": "Example74Jacobian2D",
+  "title": "Example 7.4",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/Example74Jacobian2D.html",
+  "slides": 8,
+  "kb": 2685
+ },
+ {
   "scene": "NotOneToOne",
   "title": "Transformation That Is Not One-to-One",
   "url": "https://songhune.github.io/manim_aimath/ps1_07/NotOneToOne.html",
@@ -21,10 +35,24 @@
   "kb": 2006
  },
  {
+  "scene": "Example75ChiSquare",
+  "title": "Example 7.5",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/Example75ChiSquare.html",
+  "slides": 10,
+  "kb": 2797
+ },
+ {
   "scene": "MomentGeneratingFunction",
   "title": "Moment-Generating Function",
   "url": "https://songhune.github.io/manim_aimath/ps1_07/MomentGeneratingFunction.html",
   "slides": 10,
   "kb": 2769
+ },
+ {
+  "scene": "Example77NormalMGF",
+  "title": "Example 7.7",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/Example77NormalMGF.html",
+  "slides": 6,
+  "kb": 2957
  }
 ]

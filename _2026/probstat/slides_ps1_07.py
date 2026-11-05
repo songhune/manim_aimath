@@ -7,7 +7,7 @@ slides_ps1_06.py 와 같은 장치다. week07b.py 의 씬을 그대로 상속하
     python tools/build_slides_site.py --chapter ps1_07 --module _2026/probstat/slides_ps1_07.py
 
 PAGES 의 순서는 덱(insert_videos.py 의 PS1_07_INSERT)과 같다. 제목은 각 씬의 slide_title 문구다.
-이 장도 개념 영상 네 편뿐이다(2026-11-05). 7장 씬 파일은 week07b.py 다(week07.py 는 6장).
+개념 영상 네 편 + 적분이 있는 예제 영상 네 편(7.3 · 7.4 · 7.5 · 7.7, 2026-11-05 저녁)이다. 7장 씬 파일은 week07b.py 다(week07.py 는 6장).
 """
 import os
 from pathlib import Path
@@ -22,8 +22,12 @@ from _2026.probstat import week07b
 PAGES = [
     ("DiscreteTransformation", "Transformation of a Discrete Variable"),
     ("JacobianStretch", "Jacobian of a Transformation"),
+    ("Example73Linear", "Example 7.3"),
+    ("Example74Jacobian2D", "Example 7.4"),
     ("NotOneToOne", "Transformation That Is Not One-to-One"),
+    ("Example75ChiSquare", "Example 7.5"),
     ("MomentGeneratingFunction", "Moment-Generating Function"),
+    ("Example77NormalMGF", "Example 7.7"),
 ]
 
 STEP_DEFAULT = 0.3      # week07b 의 씬도 호흡 0.3–0.5, 단락 끝 0.8–3.0 (week07 과 같다)

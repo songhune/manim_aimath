@@ -3,10 +3,16 @@
 
 파일 이름이 week07b 인 까닭: week07.py 는 6장(연속형 확률분포), week08.py 는 8장(표본분포)이다. 7장은 계획서의 10주차
 자리에 들며 16차(11/6, 가정)에 8장 앞에서 다룬다(2026-11-05). 도구와 규칙은 week08.py 와 같다.
-이 장도 **개념 영상 네 편뿐**이고 예제 영상은 없다(2026-11-03 사용자 결정 — 영상은 꼭 필요한 곳에만, 자리는 그 개념
-슬라이드 **앞**). 네 편은 정지 그림으로는 안 보이는 것만 고른 것이다: 일대일 변환에서 확률 막대가 자리만 옮기는 것,
+개념 영상 네 편(2026-11-03 결정 — 자리는 그 개념 슬라이드 **앞**)에 **적분이 있는 예제 네 편**을 더했다(2026-11-05 저녁,
+사용자: "적분 관련 예제는 전부 영상으로 문제를 풀어야 될 거 같은데, 지나치게 수식 말고 풀이의 예시를 들어서 좀 자세하게 그림들을
+그려봐야 될 거 같다. 야코비안도 나오는 거 같고. 개별 하나하나는 치환적분으로 풀면 되는데 그 풀이 자체가 적분이 익숙치 않으면
+풀기 어려울 거 같다"). 이산형 예제(7.1 · 7.2 · 7.6)는 영상이 없다.
+개념 네 편은 정지 그림으로는 안 보이는 것만 고른 것이다: 일대일 변환에서 확률 막대가 자리만 옮기는 것,
 연속형에서 축이 늘어나면 넓이를 지키려고 높이가 줄어드는 것(야코비안), 일대일이 아니면 역상 둘의 밀도가 포개지는 것,
 적률생성함수가 e^{tx} 로 다시 잰 무게의 합이고 그 기울기가 평균인 것.
+예제 네 편은 그 개념을 교재 예제의 적분으로 끝까지 쓴다. 풀이 단계를 먼저 걸고(steps_panel) 하나씩 켜며, 식보다 그림이 앞선다:
+구간의 넓이가 y 축으로 옮겨 가며 띠가 두 배로 넓어지는 것(7.3), 작은 상자가 2x₁² 배로 커지는 것(7.4), 종의 양쪽이 y 축 한 곳으로
+포개지는 것(7.5), e^{tx} 로 잰 종이 옮겨 간 종인 것(7.7).
 화면 문구는 영어, 여섯 낱말까지(`ps_common.label`). 사람은 나오지 않는다.
 
 덱 삽입 자리 (원본 PS1_07_restyled.pptx 23장 기준. 레이아웃 정리 뒤의 번호는 insert_videos.py 의 PS1_07_INSERT 가 정본이다.
@@ -15,6 +21,11 @@
     JacobianStretch                  8 앞    정리 7.3 — 연속형, y = 2x − 3 으로 축이 2 배 늘고 높이가 반이 됨, |J| = 1/2
     NotOneToOne                     13 앞    일대일이 아닌 변환 — y = x² (−1 < x < 2), 0 < y < 1 에 역상 둘, g = f(−√y)|J₁| + f(√y)|J₂|
     MomentGeneratingFunction        17 앞    정의 7.1 · 7.2 — M_X(t) = E(e^{tX}), 이항 b(x; 4, 1/2) 의 무게 e^{tx}, M'(0) = μ, 곱셈 성질
+예제 영상 (레이아웃 정리 뒤 원본 28장 기준, "문제 장 뒤 = 책 풀이 장 앞"):
+    Example73Linear                 11 뒤    예제 7.3 — ∫₁³ x/12 dx = 1/3 을 x = (y+3)/2 로 치환, dx = dy/2 가 |J|, g = (y+3)/48
+    Example74Jacobian2D             13 뒤    예제 7.4 — 꼭짓점 넷 → 영역 B, 역변환, 작은 상자의 넓이 × 2y₁ → |J| = 1/(2y₁), g = 2y₂/y₁
+    Example75ChiSquare              18 뒤    예제 7.5 — 표준화, −1 < z < 1 의 양쪽이 0 < y < 1 로 포개짐, z = √u 치환, Γ(1/2) = √π → χ²(1)
+    Example77NormalMGF              23 뒤    예제 7.7 — e^{tx} 로 잰 종 = μ + σ²t 로 옮겨 간 종 × e^{μt+σ²t²/2}, 남는 종의 넓이 1
 
 참고: legacy/_2016/eola/chapter3.py (TransformManyVectors · TransformInfiniteGrid — 변환을 "격자와 점이 함께 움직이는 것"
       으로 보이고 변환 뒤의 넓이를 견준다), legacy/_2018/eop (시행 결과를 막대로 쌓는 문법). 전개만 가져오고 코드는 옮기지 않았다.
@@ -33,7 +44,7 @@ from _2026.probstat.ps_common import (
     label, note, slide_title,
 )
 from _2026.probstat.week04 import density_axes, area_under, x_marks
-from _2026.probstat.week05 import dashed
+from _2026.probstat.week05 import dashed, steps_panel
 from _2026.probstat.week06 import axis, chart
 from _2026.probstat.week07 import npdf, normal_graph
 
@@ -332,4 +343,366 @@ class MomentGeneratingFunction(InteractiveScene):
         sumnote = label("sum of normals is normal", 24, MEAN_COLOR).move_to([3.4, 0.4, 0])
         self.play(FadeIn(sumnote))
         self.play(FlashAround(prod, color=MEAN_COLOR, buff=0.1))
+        self.wait(4.0)
+
+
+# ─────────────────────────────────────────────────────────────
+# 예제 영상 (2026-11-05 저녁, 사용자 요구 — "적분 관련 예제는 전부 영상으로 … 수식 말고 풀이의 예시를 들어서 그림을")
+# 네 편 모두 "문제 장 뒤, 책 풀이 장 앞". 풀이 단계를 먼저 걸고(steps_panel) 하나씩 켠다. 수식은 치환적분 한 줄씩이고
+# 그림이 먼저다: 구간의 넓이가 옮겨 가는 것, 작은 상자가 2x₁² 배로 커지는 것, 종의 양쪽이 포개지는 것, e^{tx} 로 잰 종이
+# 옮겨 간 종인 것. 그림은 왼쪽, 단계 상자와 식은 오른쪽 한 열(x ≥ 1.6)에 쌓는다 — 첫 렌더(2026-11-06 00:03)에서 왼쪽에 둔
+# 식이 화살표·축과 겹치고 긴 줄이 화면 밖으로 나갔다.
+# ─────────────────────────────────────────────────────────────
+def _lines(texts, ref, scale=0.6, color=INK, buff=0.16, gap=0.3, left_x=None):
+    """수식 줄을 ref 아래에 왼쪽 맞춤으로 쌓는다(week05.column 과 같되 색을 줄마다 줄 수 있다)."""
+    texs = []
+    for t in texts:
+        c = color
+        if isinstance(t, tuple):
+            t, c = t
+        texs.append(Tex(t).scale(scale).set_color(c))
+    col = VGroup(*texs).arrange(DOWN, buff=buff, aligned_edge=LEFT).next_to(ref, DOWN, buff=gap)
+    if left_x is not None:
+        col.align_to([left_x, 0, 0], LEFT)
+    return col
+
+
+def _strip(axes, a, b, h, color):
+    return Polygon(axes.c2p(a, 0), axes.c2p(b, 0), axes.c2p(b, h), axes.c2p(a, h)).set_fill(color, 0.9).set_stroke(WHITE, 1.5)
+
+
+COL_X = 1.6          # 오른쪽 식 열의 왼쪽 끝
+
+
+# ─────────────────────────────────────────────────────────────
+# 5. 예제 7.3 — 슬라이드 11 (문제) 뒤, 12 (풀이) 앞
+# ─────────────────────────────────────────────────────────────
+class Example73Linear(InteractiveScene):
+    """f(x) = x/12 (1 < x < 5), Y = 2X − 3. 구간 1 < x < 3 의 넓이 1/3 을 적분으로 먼저 구하고, x = (y + 3)/2 로 치환하면
+    dx = dy/2 라서 같은 넓이가 −1 < y < 3 위에 반 높이로 펼쳐진다. 폭 dx 의 띠가 폭 2dx 의 띠가 되는 그림이 야코비안이고,
+    g(y) = f((y+3)/2)·(1/2) = (y + 3)/48 이다. JacobianStretch 가 개념이면 이 편은 그 적분을 끝까지 쓴다."""
+
+    def construct(self):
+        head = slide_title("Example 7.3")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. area of an interval", "2. substitute x = (y+3)/2",
+                                         "3. dx = dy/2 is |J|", "4. write g(y)"], pos=(4.6, 2.1, 0), size=20)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+
+        ax = density_axes((0, 8, 1), (0, 0.5, 0.1), width=5.2, height=1.9).move_to([-3.6, 1.2, 0])
+        fg = ax.get_graph(lambda x: x / 12, x_range=(1, 5, 0.05)).set_stroke(ACCENT, 3)
+        fname = Tex(R"f(x) = \tfrac{x}{12},\ 1 < x < 5").scale(0.6).set_color(ACCENT).next_to(ax, UP, buff=0.05).align_to(ax, LEFT)
+        self.play(ShowCreation(ax), FadeIn(x_marks(ax, [1, 3, 5])), Write(fname))
+        self.play(ShowCreation(fg))
+        self.wait(0.5)
+
+        # 1. 구간의 넓이를 적분으로
+        self.play(focus(0))
+        a13 = area_under(ax, fg, 1, 3, WARN, 0.6)
+        self.play(FadeIn(a13))
+        l1 = _lines([R"P(1 < X < 3) = \int_1^3 \frac{x}{12}\,dx = \left[\frac{x^2}{24}\right]_1^3 = \frac13"],
+                    box, scale=0.56, color=WARN, gap=0.3, left_x=COL_X)
+        self.play(Write(l1))
+        self.wait(1.6)
+
+        # 2. 치환 — 같은 구간이 y 축에서는 두 배로
+        self.play(focus(1))
+        l2 = _lines([(R"y = 2x - 3\ \Rightarrow\ x = \frac{y+3}{2}", MEAN_COLOR),
+                     (R"1 < x < 3\ \Rightarrow\ -1 < y < 3", MEAN_COLOR)],
+                    l1, scale=0.6, gap=0.25, left_x=COL_X)
+        self.play(Write(l2[0]))
+        ay = density_axes((-2, 8, 1), (0, 0.5, 0.1), width=6.5, height=1.9).move_to([-2.95, -2.4, 0])
+        ymarks = x_marks(ay, [-1, 3, 7])
+        self.play(ShowCreation(ay), FadeIn(ymarks))
+        arrows = VGroup(Arrow(ax.c2p(1, 0) + DOWN * 0.4, ay.c2p(-1, 0.48), buff=0.05, stroke_width=2).set_color(MEAN_COLOR),
+                        Arrow(ax.c2p(3, 0) + DOWN * 0.4, ay.c2p(3, 0.48), buff=0.05, stroke_width=2).set_color(MEAN_COLOR))
+        self.play(ShowCreation(arrows), Write(l2[1]))
+        self.wait(1.4)
+
+        # 3. 폭 dx 의 띠가 폭 2dx 의 띠로 — 넓이를 지키려면 높이가 반
+        self.play(focus(2))
+        s_x = _strip(ax, 1.8, 2.2, 2 / 12, WARN)
+        dx = Tex("dx").scale(0.5).set_color(WARN).next_to(s_x, UP, buff=0.08)
+        self.play(FadeIn(s_x), FadeIn(dx))
+        self.wait(0.4)
+        s_y = _strip(ay, 0.6, 1.4, 1 / 12, MEAN_COLOR)
+        dy = Tex(R"dy = 2\,dx").scale(0.5).set_color(MEAN_COLOR).next_to(s_y, UP, buff=0.08)
+        moved = s_x.copy()
+        self.play(Transform(moved, s_y), run_time=1.4)
+        self.play(FadeIn(dy))
+        wide = label("twice as wide, half as tall", 21, MEAN_COLOR).next_to(l2, DOWN, buff=0.28).align_to(l2, LEFT)
+        jac = Tex(R"dx = \tfrac12\,dy,\qquad |J| = \tfrac12").scale(0.62).set_color(INK).next_to(wide, DOWN, buff=0.2).align_to(l2, LEFT)
+        self.play(FadeIn(wide))
+        self.play(Write(jac))
+        self.wait(1.6)
+
+        # 4. 치환한 적분을 끝까지 — 같은 1/3, 그러므로 g(y)
+        self.play(focus(3))
+        gg = ay.get_graph(lambda y: (y + 3) / 48, x_range=(-1, 7, 0.05)).set_stroke(MEAN_COLOR, 3)
+        g13 = area_under(ay, gg, -1, 3, WARN, 0.6)
+        self.play(FadeOut(moved), FadeOut(dy), FadeOut(s_x), FadeOut(dx))
+        moved_area = a13.copy()
+        self.play(Transform(moved_area, g13), run_time=1.4)
+        self.play(ShowCreation(gg))
+        l4 = _lines([R"\int_{-1}^{3} \frac{(y+3)/2}{12}\cdot\frac12\,dy = \int_{-1}^{3}\frac{y+3}{48}\,dy = \frac13",
+                     (R"g(y) = \frac{y+3}{48},\quad -1 < y < 7", MEAN_COLOR)],
+                    jac, scale=0.56, color=INK, gap=0.28, left_x=COL_X)
+        self.play(Write(l4[0]))
+        self.wait(0.6)
+        self.play(Write(l4[1]))
+        self.play(FlashAround(l4[1], color=MEAN_COLOR, buff=0.08))
+        self.wait(4.0)
+
+
+# ─────────────────────────────────────────────────────────────
+# 6. 예제 7.4 — 슬라이드 13 (문제) 뒤, 14 (풀이) 앞
+# ─────────────────────────────────────────────────────────────
+def _map74(x1, x2):
+    return x1 * x1, x1 * x2
+
+
+class Example74Jacobian2D(InteractiveScene):
+    """f(x₁, x₂) = 4x₁x₂ (단위 정사각형), Y₁ = X₁², Y₂ = X₁X₂. 꼭짓점 넷을 옮겨 영역 B(y₂² < y₁ < 1) 를 그리고,
+    역변환 x₁ = √y₁, x₂ = y₂/√y₁ 을 쓴다. 작은 상자 하나를 옮기면 넓이가 2x₁² = 2y₁ 배가 되므로 밀도는 그만큼 나눈다 —
+    그것이 |J| = 1/(2y₁) 이다. g = 2y₂/y₁, 이중적분이 1 임을 끝에 적는다."""
+
+    def construct(self):
+        head = slide_title("Example 7.4")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. move the corners", "2. invert the map",
+                                         "3. a small box scales", "4. write g(y1, y2)"], pos=(5.0, 2.1, 0), size=20)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+
+        cfg = dict(include_ticks=True, stroke_width=2, stroke_color=GREY_B)
+        axx = Axes(x_range=(0, 1.3, 0.5), y_range=(0, 1.3, 0.5), width=3.0, height=3.0, axis_config=cfg).move_to([-4.9, -0.5, 0])
+        axy = Axes(x_range=(0, 1.3, 0.5), y_range=(0, 1.3, 0.5), width=3.0, height=3.0, axis_config=cfg).move_to([-0.6, -0.5, 0])
+        nx = VGroup(Tex("x_1").scale(0.55).set_color(GREY_B).next_to(axx.c2p(1.3, 0), RIGHT, buff=0.1),
+                    Tex("x_2").scale(0.55).set_color(GREY_B).next_to(axx.c2p(0, 1.3), UP, buff=0.1))
+        ny = VGroup(Tex("y_1").scale(0.55).set_color(GREY_B).next_to(axy.c2p(1.3, 0), RIGHT, buff=0.1),
+                    Tex("y_2").scale(0.55).set_color(GREY_B).next_to(axy.c2p(0, 1.3), UP, buff=0.1))
+        sq = Polygon(axx.c2p(0, 0), axx.c2p(1, 0), axx.c2p(1, 1), axx.c2p(0, 1)).set_fill(ACCENT, 0.3).set_stroke(ACCENT, 2)
+        fname = Tex(R"f = 4x_1x_2\ \text{on the unit square}").scale(0.52).set_color(ACCENT).next_to(axx, UP, buff=0.35).align_to(axx, LEFT)
+        rule = Tex(R"y_1 = x_1^2,\quad y_2 = x_1x_2").scale(0.6).set_color(MEAN_COLOR).next_to(axy, UP, buff=0.35).align_to(axy, LEFT)
+        ones = VGroup(*[Tex("1").scale(0.5).set_color(GREY_B).next_to(a.c2p(*p), d, buff=0.1)
+                        for a in (axx, axy) for p, d in (((1, 0), DOWN), ((0, 1), LEFT))])
+        self.play(ShowCreation(axx), FadeIn(nx), FadeIn(ones[:2]), Write(fname))
+        self.play(FadeIn(sq))
+        self.play(ShowCreation(axy), FadeIn(ny), FadeIn(ones[2:]), Write(rule))
+        self.wait(0.6)
+
+        # 1. 꼭짓점 넷을 옮긴다 — 위 변 x₂ = 1 은 곡선 y₁ = y₂² 으로
+        self.play(focus(0))
+        corners = [(0, 0), (1, 0), (1, 1), (0, 1)]
+        dots = VGroup(*[Dot(axx.c2p(*c), radius=0.07).set_fill(WARN, 1) for c in corners])
+        self.play(FadeIn(dots))
+        imgs = VGroup(*[Dot(axy.c2p(*_map74(*c)), radius=0.07).set_fill(WARN, 1) for c in corners])
+        tags = VGroup(*[Tex(t).scale(0.42).set_color(WARN) for t in ("(0,0)", "(1,0)", "(1,1)", "(0,1)")])
+        for tg, c, d in zip(tags, corners, (DL, DR, UR, UL)):
+            tg.next_to(axx.c2p(*c), d, buff=0.08)
+        self.play(FadeIn(tags))
+        self.play(*[Transform(d.copy(), i) for d, i in zip(dots, imgs)], run_time=1.6)
+        collapse = Tex(R"(0,1)\to(0,0)").scale(0.42).set_color(WARN).next_to(axy.c2p(0, 0), DL, buff=0.08)
+        self.play(FadeIn(collapse))
+        self.wait(0.5)
+        top = Line(axx.c2p(0, 1), axx.c2p(1, 1)).set_stroke(CALM, 6)
+        curve = ParametricCurve(lambda s: axy.c2p(s * s, s), t_range=(0, 1, 0.02)).set_stroke(CALM, 4)
+        ctag = Tex(R"x_2 = 1\ \Rightarrow\ y_1 = y_2^2").scale(0.52).set_color(CALM).next_to(axy, DOWN, buff=0.5).align_to(axy, LEFT)
+        self.play(ShowCreation(top))
+        self.play(ShowCreation(curve), FadeIn(ctag))
+        pts = [axy.c2p(s * s, s) for s in np.linspace(0, 1, 40)] + [axy.c2p(1, 0)]
+        region = Polygon(*pts).set_fill(MEAN_COLOR, 0.3).set_stroke(MEAN_COLOR, 2)
+        btag = Tex(R"B:\ 0 < y_2 < 1,\ y_2^2 < y_1 < 1").scale(0.52).set_color(MEAN_COLOR).next_to(ctag, DOWN, buff=0.12).align_to(ctag, LEFT)
+        self.play(FadeIn(region), FadeIn(btag))
+        self.wait(1.6)
+
+        # 2. 역변환
+        self.play(focus(1))
+        inv = Tex(R"x_1 = \sqrt{y_1},\qquad x_2 = \frac{y_2}{\sqrt{y_1}}").scale(0.6).set_color(INK)
+        inv.next_to(box, DOWN, buff=0.3).align_to([2.4, 0, 0], LEFT)
+        self.play(Write(inv))
+        self.wait(1.2)
+
+        # 3. 작은 상자 하나를 옮기면 넓이가 2x₁² 배
+        self.play(focus(2))
+        c1, c2, s = 0.55, 0.55, 0.16
+        bx = [(c1, c2), (c1 + s, c2), (c1 + s, c2 + s), (c1, c2 + s)]
+        small = Polygon(*[axx.c2p(*p) for p in bx]).set_fill(WARN, 0.8).set_stroke(WHITE, 1.5)
+        image = Polygon(*[axy.c2p(*_map74(*p)) for p in bx]).set_fill(WARN, 0.8).set_stroke(WHITE, 1.5)
+        self.play(FadeIn(small))
+        self.play(Transform(small.copy(), image), run_time=1.4)
+        l3 = _lines([(R"\text{area}\times 2x_1^2 = \text{area}\times 2y_1", WARN),
+                     R"|J| = \left|\frac{\partial(x_1,x_2)}{\partial(y_1,y_2)}\right| = \frac{1}{2y_1}"],
+                    inv, scale=0.56, color=INK, gap=0.3, left_x=2.4)
+        self.play(Write(l3[0]))
+        self.wait(0.5)
+        self.play(Write(l3[1]))
+        self.wait(1.4)
+
+        # 4. g 와 넓이 1
+        self.play(focus(3))
+        g = _lines([(R"g(y_1,y_2) = 4\sqrt{y_1}\,\frac{y_2}{\sqrt{y_1}}\cdot\frac{1}{2y_1} = \frac{2y_2}{y_1}", MEAN_COLOR),
+                    R"\iint_B g\,dy_1\,dy_2 = \int_0^1 -4y_2\ln y_2\,dy_2 = 1"],
+                   l3, scale=0.52, color=INK, gap=0.3, left_x=2.4)
+        self.play(Write(g[0]))
+        self.play(FlashAround(g[0], color=MEAN_COLOR, buff=0.08))
+        self.wait(0.6)
+        self.play(Write(g[1]))
+        self.wait(4.0)
+
+
+# ─────────────────────────────────────────────────────────────
+# 7. 예제 7.5 — 슬라이드 18 (문제) 뒤, 19 (풀이) 앞
+# ─────────────────────────────────────────────────────────────
+def _chi1(y):
+    return exp(-y / 2) / sqrt(2 * math.pi * y)
+
+
+class Example75ChiSquare(InteractiveScene):
+    """Y = (X − μ)²/σ² = Z². 표준화한 종에서 −1 < z < 1 의 양쪽(0.6826)이 y 축의 0 < y < 1 한 곳으로 포개진다.
+    P(Y ≤ y) = 2∫₀^√y φ(z)dz 에 z = √u 를 넣으면 dz = du/(2√u) 라 g(y) = φ(√y)/√y = (1/√2π) y^{−1/2} e^{−y/2}.
+    Γ(1/2) = √π 이므로 감마(1/2, 2), 곧 χ²(1) 이다. NotOneToOne 의 '두 몫이 더해진다' 를 이 예제로 끝까지 쓴다."""
+
+    def construct(self):
+        head = slide_title("Example 7.5")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. standardize to Z", "2. fold z = ±√y",
+                                         "3. substitute z = √u", "4. gamma(1/2, 2) = χ²(1)"], pos=(4.8, 2.15, 0), size=19)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+
+        axz = density_axes((-3.5, 3.5, 1), (0, 0.5, 0.1), width=5.6, height=2.0).move_to([-3.6, 1.3, 0])
+        bell = normal_graph(axz, 0, 1, -3.5, 3.5, ACCENT)
+        marks = x_marks(axz, [-1, 0, 1], [R"\mu-\sigma", R"\mu", R"\mu+\sigma"])
+        xname = Tex(R"X \sim n(x;\,\mu,\sigma)").scale(0.6).set_color(ACCENT).next_to(axz, UP, buff=0.05).align_to(axz, LEFT)
+        self.play(ShowCreation(axz), FadeIn(marks), Write(xname))
+        self.play(ShowCreation(bell))
+        self.wait(0.5)
+
+        # 1. 표준화 — 같은 종, 눈금만 −1, 0, 1
+        self.play(focus(0))
+        zdef = Tex(R"Z = \frac{X-\mu}{\sigma},\qquad Y = \frac{(X-\mu)^2}{\sigma^2} = Z^2").scale(0.6).set_color(MEAN_COLOR)
+        zdef.next_to(box, DOWN, buff=0.25).align_to([COL_X, 0, 0], LEFT)
+        self.play(Write(zdef))
+        zmarks = x_marks(axz, [-1, 0, 1], ["-1", "0", "1"])
+        zname = Tex(R"Z \sim n(z;\,0,1)").scale(0.6).set_color(ACCENT).move_to(xname).align_to(xname, LEFT)
+        self.play(Transform(marks, zmarks), Transform(xname, zname))
+        self.wait(1.2)
+
+        # 2. y = 1 은 −1 < z < 1 — 두 쪽이 한 곳으로
+        self.play(focus(1))
+        left = area_under(axz, bell, -1, 0, WARN, 0.6)
+        right = area_under(axz, bell, 0, 1, CALM, 0.6)
+        self.play(FadeIn(left), FadeIn(right))
+        p1 = Tex(R"P(Y < 1) = P(-1 < Z < 1) = 0.6826").scale(0.58).set_color(INK).next_to(zdef, DOWN, buff=0.2).align_to(zdef, LEFT)
+        self.play(Write(p1))
+        axy = density_axes((0, 4, 1), (0, 1.2, 0.5), width=4.2, height=1.7).move_to([4.5, -1.5, 0])
+        gy = axy.get_graph(_chi1, x_range=(0.12, 4, 0.02)).set_stroke(MEAN_COLOR, 3)
+        half = axy.get_graph(lambda y: _chi1(y) / 2, x_range=(0.12, 1, 0.02))
+        a_half = axy.get_area_under_graph(half, x_range=(0.12, 1), fill_color=CALM, fill_opacity=0.6)
+        a_full = axy.get_area_under_graph(gy, x_range=(0.12, 1), fill_color=WARN, fill_opacity=0.35)
+        ymk = x_marks(axy, [1, 4])
+        yname = Tex(R"g(y)").scale(0.6).set_color(MEAN_COLOR).move_to(axy.c2p(3.0, 1.0))
+        self.play(ShowCreation(axy), FadeIn(ymk), FadeIn(yname))
+        self.play(Transform(right.copy(), a_half), Transform(left.copy(), a_full), run_time=1.6)
+        self.play(ShowCreation(gy))
+        fold = label("two branches, one y", 20, MEAN_COLOR).move_to(axy.c2p(2.9, 0.6))
+        self.play(FadeIn(fold))
+        self.wait(1.6)
+
+        # 3. 치환 z = √u
+        self.play(focus(2))
+        l3 = _lines([R"P(Y \le y) = 2\int_0^{\sqrt{y}}\phi(z)\,dz",
+                     (R"z = \sqrt{u},\qquad dz = \frac{du}{2\sqrt{u}}", MEAN_COLOR),
+                     R"= \int_0^{y}\frac{\phi(\sqrt{u})}{\sqrt{u}}\,du",
+                     (R"g(y) = \frac{\phi(\sqrt{y})}{\sqrt{y}} = \frac{1}{\sqrt{2\pi}}\,y^{-1/2}e^{-y/2}", MEAN_COLOR)],
+                    axz, scale=0.56, color=INK, buff=0.14, gap=0.45, left_x=-6.4)
+        for t in l3:
+            self.play(Write(t))
+            self.wait(0.4)
+        self.wait(1.2)
+
+        # 4. 감마(1/2, 2) 와 같다
+        self.play(focus(3))
+        l4 = _lines([R"\text{gamma}(\alpha=\tfrac12,\ \beta=2):\ \frac{1}{\Gamma(1/2)\sqrt{2}}\,y^{-1/2}e^{-y/2}",
+                     (R"\Gamma(\tfrac12) = \sqrt{\pi}\ \Rightarrow\ \text{same}\ \Rightarrow\ Y \sim \chi^2(1)", WARN)],
+                    ymk, scale=0.52, color=INK, buff=0.12, gap=0.25, left_x=COL_X + 0.3)
+        self.play(Write(l4[0]))
+        self.wait(0.6)
+        self.play(Write(l4[1]))
+        self.play(FlashAround(l4[1], color=WARN, buff=0.08))
+        self.wait(4.0)
+
+
+# ─────────────────────────────────────────────────────────────
+# 8. 예제 7.7 — 슬라이드 23 (문제) 뒤, 24 (풀이) 앞
+# ─────────────────────────────────────────────────────────────
+class Example77NormalMGF(InteractiveScene):
+    """M_X(t) = ∫ e^{tx} n(x; μ, σ) dx. e^{tx} 로 잰 종은 μ + σ²t 로 옮겨 간 종을 e^{μt + σ²t²/2} 배 한 것이다(완전제곱).
+    옮겨 간 종의 넓이는 1 이므로 남는 것이 M(t) 다. μ = 2, σ = 1, t = 0.5 로 그려 e^{1.125} = 3.08 이 잰 종의 넓이임을 보인다."""
+
+    def construct(self):
+        head = slide_title("Example 7.7")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. weight the bell", "2. complete the square",
+                                         "3. leftover bell has area 1", "4. read off M(t)"], pos=(4.8, 2.15, 0), size=20)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        mdef = Tex(R"M_X(t) = E\left(e^{tX}\right) = \int_{-\infty}^{\infty} e^{tx}\,n(x;\mu,\sigma)\,dx").scale(0.62).set_color(MEAN_COLOR)
+        mdef.next_to(head[1], DOWN, buff=0.25).align_to(head[0], LEFT)
+        self.play(Write(mdef))
+
+        mu, sig = 2.0, 1.0
+        ax = density_axes((-1, 7, 1), (0, 1.5, 0.5), width=6.8, height=3.0).move_to([-3.4, -1.3, 0])
+        f = normal_graph(ax, mu, sig, -1, 7, ACCENT)
+        fname = Tex(R"f(x) = n(x;\,2,\,1)").scale(0.6).set_color(ACCENT).next_to(ax, UP, buff=0.05).align_to(ax, LEFT)
+        self.play(ShowCreation(ax), FadeIn(x_marks(ax, [2], [R"\mu"])), Write(fname))
+        self.play(ShowCreation(f))
+        self.wait(0.5)
+
+        # 1. e^{tx} 로 잰 종 — 오른쪽으로 옮겨 가며 커진다
+        self.play(focus(0))
+        ttag = Tex(R"t = 0.00").scale(0.62).set_color(WARN).move_to([COL_X + 0.5, 1.15, 0])
+        self.play(FadeIn(ttag))
+        prev = ax.get_graph(lambda x: npdf(x, mu, sig), x_range=(-1, 7, 0.02)).set_stroke(WARN, 3)
+        prev_area = area_under(ax, prev, -1, 7, WARN, 0.3)
+        self.play(ShowCreation(prev), FadeIn(prev_area))
+        for t in (0.2, 0.35, 0.5):
+            g = ax.get_graph(lambda x, t=t: exp(t * x) * npdf(x, mu, sig), x_range=(-1, 7, 0.02)).set_stroke(WARN, 3)
+            ga = area_under(ax, g, -1, 7, WARN, 0.3)
+            nt = Tex(R"t = %.2f" % t).scale(0.62).set_color(WARN).move_to(ttag)
+            self.play(Transform(prev, g), Transform(prev_area, ga), Transform(ttag, nt), run_time=0.9)
+            self.wait(0.2)
+        peak_line = dashed(ax.c2p(2.5, 0), ax.c2p(2.5, 1.3), WARN)
+        peak = Tex(R"\mu+\sigma^2 t").scale(0.55).set_color(WARN).next_to(ax.c2p(2.5, 1.3), UP, buff=0.08)
+        wtag = Tex(R"e^{tx}f(x):\ \text{a taller bell at } \mu+\sigma^2 t").scale(0.56).set_color(WARN)
+        wtag.next_to(ttag, DOWN, buff=0.3).align_to([COL_X, 0, 0], LEFT)
+        atag = Tex(R"\text{area} = M(t)").scale(0.58).set_color(WARN).next_to(wtag, DOWN, buff=0.15).align_to(wtag, LEFT)
+        self.play(ShowCreation(peak_line), FadeIn(peak), Write(wtag))
+        self.play(FadeIn(atag))
+        self.wait(1.4)
+
+        # 2. 완전제곱
+        self.play(focus(1))
+        sqr = _lines([R"tx - \frac{(x-\mu)^2}{2\sigma^2}",
+                      (R"= -\frac{(x-\mu-\sigma^2 t)^2}{2\sigma^2} + \mu t + \frac{\sigma^2 t^2}{2}", MEAN_COLOR)],
+                     atag, scale=0.58, color=INK, buff=0.12, gap=0.3, left_x=COL_X)
+        self.play(Write(sqr[0]))
+        self.wait(0.4)
+        self.play(Write(sqr[1]))
+        self.wait(1.4)
+
+        # 3. 남는 종의 넓이는 1 — 잰 종(윤곽)은 두고 옮겨 간 종을 칠한다
+        self.play(focus(2))
+        unit = normal_graph(ax, mu + sig * sig * 0.5, sig, -1, 7, CALM)
+        ua = area_under(ax, unit, -1, 7, CALM, 0.5)
+        self.play(FadeOut(prev_area), ShowCreation(unit), FadeIn(ua), run_time=1.2)
+        one = Tex(R"\int n(x;\,\mu+\sigma^2 t,\,\sigma)\,dx = 1").scale(0.58).set_color(CALM).next_to(sqr, DOWN, buff=0.28).align_to(sqr, LEFT)
+        self.play(Write(one))
+        self.wait(1.4)
+
+        # 4. M(t)
+        self.play(focus(3))
+        ans = Tex(R"M_X(t) = e^{\mu t + \sigma^2 t^2/2}").scale(0.68).set_color(MEAN_COLOR).next_to(one, DOWN, buff=0.28).align_to(sqr, LEFT)
+        chk = Tex(R"t = 0.5:\ e^{1.125} = 3.08 = \text{area}").scale(0.5).set_color(GREY_B).next_to(ans, DOWN, buff=0.18).align_to(sqr, LEFT)
+        self.play(Write(ans))
+        self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.1))
+        self.play(FadeIn(chk))
         self.wait(4.0)
