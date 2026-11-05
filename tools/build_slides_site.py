@@ -291,8 +291,10 @@ SECTIONS = {
         ("6.9 Lognormal Distribution", ["LognormalFromNormal"]),
     ],
     "ps1_07": [
-        ("7.2 Transformations of Variables", ["DiscreteTransformation", "JacobianStretch", "NotOneToOne"]),
-        ("7.3 Moments and Moment-Generating Functions", ["MomentGeneratingFunction"]),
+        ("7.2 Transformations of Variables",
+         ["DiscreteTransformation", "JacobianStretch", "Example73Linear", "Example74Jacobian2D",
+          "NotOneToOne", "Example75ChiSquare"]),
+        ("7.3 Moments and Moment-Generating Functions", ["MomentGeneratingFunction", "Example77NormalMGF"]),
     ],
     "ps1_08": [
         ("8.3–8.4 Sampling Distributions and the Central Limit Theorem",
