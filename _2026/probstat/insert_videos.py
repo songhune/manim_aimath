@@ -162,6 +162,16 @@ PS1_08_INSERT = [
 ]
 PS1_08_ANCHORS = {name: after + 1 for after, names in PS1_08_INSERT for name in names}
 
+# PS1_07 (Chapter 7, week07b.py, 2026-11-05) 삽입표. 원본은 도구/레이아웃_정리_PS1_07.py 로 정리한 28장. 16차(11/6, 가정) 한 차시.
+# 개념 영상 4편, 모두 그 개념 장 앞. 예제 영상은 없다(사용자 결정 2026-11-03).
+PS1_07_INSERT = [
+    (2, ["DiscreteTransformation"]),          # 3 = 정리 7.1
+    (8, ["JacobianStretch"]),                 # 9 = 정리 7.3
+    (14, ["NotOneToOne"]),                    # 15 = 일대일이 아닌 변환
+    (19, ["MomentGeneratingFunction"]),       # 20 = 정의 7.1 · 7.2
+]
+PS1_07_ANCHORS = {name: after + 1 for after, names in PS1_07_INSERT for name in names}
+
 JOBS = [
     dict(
         src="[0901]오리엔테이션.pptx",
@@ -375,6 +385,21 @@ JOBS = [
         place="before",
         insert=PS1_08_INSERT,
         anchors=PS1_08_ANCHORS,
+    ),
+    dict(
+        # PS1_07 (week07b.py, 2026-11-05). 개념 영상 4편, 모두 개념 장 앞.
+        src="PS1_07_restyled.pptx",
+        dst="PS1_07_restyled_영상.pptx",
+        place="before",
+        insert=PS1_07_INSERT,
+        anchors=PS1_07_ANCHORS,
+    ),
+    dict(
+        src="PS1_07_restyled_한글.pptx",
+        dst="PS1_07_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_07_INSERT,
+        anchors=PS1_07_ANCHORS,
     ),
 ]
 

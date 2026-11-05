@@ -93,6 +93,7 @@ CHAPTER_TITLE = {
     "ps1_04": "Chapter 4 · Mathematical Expectation",
     "ps1_05": "Chapter 5 · Some Discrete Probability Distributions",
     "ps1_06": "Chapter 6 · Some Continuous Probability Distributions",
+    "ps1_07": "Chapter 7 · Functions of Random Variables",
     "ps1_08": "Chapter 8 · Fundamental Sampling Distributions and Data Descriptions",
 }
 
@@ -288,6 +289,10 @@ SECTIONS = {
         ("6.6 Gamma and Exponential Distributions",
          ["GammaFamily", "PoissonToExponential", "MemorylessExponential", "Example618Calls"]),
         ("6.9 Lognormal Distribution", ["LognormalFromNormal"]),
+    ],
+    "ps1_07": [
+        ("7.2 Transformations of Variables", ["DiscreteTransformation", "JacobianStretch", "NotOneToOne"]),
+        ("7.3 Moments and Moment-Generating Functions", ["MomentGeneratingFunction"]),
     ],
     "ps1_08": [
         ("8.3–8.4 Sampling Distributions and the Central Limit Theorem",

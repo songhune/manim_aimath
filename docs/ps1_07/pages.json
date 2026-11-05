@@ -1,0 +1,30 @@
+[
+ {
+  "scene": "DiscreteTransformation",
+  "title": "Transformation of a Discrete Variable",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/DiscreteTransformation.html",
+  "slides": 6,
+  "kb": 1690
+ },
+ {
+  "scene": "JacobianStretch",
+  "title": "Jacobian of a Transformation",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/JacobianStretch.html",
+  "slides": 6,
+  "kb": 1816
+ },
+ {
+  "scene": "NotOneToOne",
+  "title": "Transformation That Is Not One-to-One",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/NotOneToOne.html",
+  "slides": 8,
+  "kb": 2006
+ },
+ {
+  "scene": "MomentGeneratingFunction",
+  "title": "Moment-Generating Function",
+  "url": "https://songhune.github.io/manim_aimath/ps1_07/MomentGeneratingFunction.html",
+  "slides": 10,
+  "kb": 2769
+ }
+]
