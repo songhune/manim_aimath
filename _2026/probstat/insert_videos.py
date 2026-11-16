@@ -177,7 +177,36 @@ PS1_07_INSERT = [
 ]
 PS1_07_ANCHORS = {name: after + 1 for after, names in PS1_07_INSERT for name in names}
 
+# PS1_09 (Chapter 9, week09.py, 2026-11-16) 삽입표. 원본은 도구/레이아웃_정리_PS1_09.py 로 정리한 89장.
+# 19차(11/17) 는 9.1–9.7 = 원본 1–39, 20차(11/20) 는 9.8–9.14 = 원본 40–89 (날짜는 가정; 8장이 17 · 18차).
+# 개념 영상 7편, 모두 그 개념 장 **앞**. 9장 예제는 적분이 없어(표를 읽어 대입) 예제 영상은 두지 않는다.
+PS1_09_INSERT = [
+    (4, ["UnbiasedEstimator"]),               # 5 = 불편추정량 · 정의 9.1
+    (9, ["ConfidenceIntervalCoverage"]),      # 10 = 9.4 x̄ 의 표본분포에서 신뢰구간으로
+    (26, ["PredictionInterval"]),             # 27 = 9.6 예측구간 유도
+    (36, ["ThreeIntervals"]),                 # 37 = 신뢰구간 · 예측구간 · 허용구간의 구별
+    (53, ["PairedObservations"]),             # 54 = 9.9 쌍체 관측
+    (72, ["VarianceIntervalChiSquare"]),      # 73 = 9.12 분산의 추정
+    (79, ["LikelihoodFunction"]),             # 80 = 9.14 가능도함수
+]
+PS1_09_ANCHORS = {name: after + 1 for after, names in PS1_09_INSERT for name in names}
+
 JOBS = [
+    dict(
+        # PS1_09 (week09.py, 2026-11-16). 개념 영상 7편, 모두 개념 장 앞.
+        src="PS1_09_restyled.pptx",
+        dst="PS1_09_restyled_영상.pptx",
+        place="before",
+        insert=PS1_09_INSERT,
+        anchors=PS1_09_ANCHORS,
+    ),
+    dict(
+        src="PS1_09_restyled_한글.pptx",
+        dst="PS1_09_restyled_한글_영상.pptx",
+        place="before",
+        insert=PS1_09_INSERT,
+        anchors=PS1_09_ANCHORS,
+    ),
     dict(
         src="[0901]오리엔테이션.pptx",
         dst="[0901]오리엔테이션_영상.pptx",
@@ -578,8 +607,13 @@ def verify(job, dst, layout):
     by_hash = {}
     for f in os.listdir(VIDEOS):
         if f.endswith(".mp4"):
-            with open(os.path.join(VIDEOS, f), "rb") as fh:
-                by_hash[hashlib.sha256(fh.read()).hexdigest()] = f[:-4]
+            try:
+                with open(os.path.join(VIDEOS, f), "rb") as fh:
+                    by_hash[hashlib.sha256(fh.read()).hexdigest()] = f[:-4]
+            except OSError:
+                # Synology 가 내려받지 않은 옛 영상은 읽히지 않는다(Stale NFS file handle, 2026-11-16).
+                # 이 덱에 넣은 영상이 그 가운데 있으면 아래 대조에서 「원본 없음」으로 걸린다.
+                continue
 
     src_prs = Presentation(os.path.join(DECKS, job["src"]))
     anchors = job.get("anchors", {})
