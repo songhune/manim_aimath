@@ -95,6 +95,7 @@ CHAPTER_TITLE = {
     "ps1_06": "Chapter 6 · Some Continuous Probability Distributions",
     "ps1_07": "Chapter 7 · Functions of Random Variables",
     "ps1_08": "Chapter 8 · Fundamental Sampling Distributions and Data Descriptions",
+    "ps1_09": "Chapter 9 · One- and Two-Sample Estimation Problems",
 }
 
 
@@ -301,6 +302,14 @@ SECTIONS = {
          ["SampleMeanAsRandomVariable", "CentralLimitTheorem"]),
         ("8.5 Sampling Distribution of S²", ["ChiSquareFromVariance"]),
         ("8.6 t-Distribution", ["TDistributionTails"]),
+    ],
+    "ps1_09": [
+        ("9.3 Classical Methods of Estimation", ["UnbiasedEstimator"]),
+        ("9.4 Single Sample: Estimating the Mean", ["ConfidenceIntervalCoverage"]),
+        ("9.6–9.7 Prediction Intervals and Tolerance Limits", ["PredictionInterval", "ThreeIntervals"]),
+        ("9.9 Paired Observations", ["PairedObservations"]),
+        ("9.12 Single Sample: Estimating the Variance", ["VarianceIntervalChiSquare"]),
+        ("9.14 Maximum Likelihood Estimation", ["LikelihoodFunction"]),
     ],
 }
 

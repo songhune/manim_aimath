@@ -1,0 +1,51 @@
+[
+ {
+  "scene": "UnbiasedEstimator",
+  "title": "Unbiased Estimator",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/UnbiasedEstimator.html",
+  "slides": 7,
+  "kb": 4328
+ },
+ {
+  "scene": "ConfidenceIntervalCoverage",
+  "title": "Confidence Interval for μ",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/ConfidenceIntervalCoverage.html",
+  "slides": 6,
+  "kb": 1794
+ },
+ {
+  "scene": "PredictionInterval",
+  "title": "Prediction Interval",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/PredictionInterval.html",
+  "slides": 6,
+  "kb": 1929
+ },
+ {
+  "scene": "ThreeIntervals",
+  "title": "Confidence, Prediction, Tolerance",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/ThreeIntervals.html",
+  "slides": 5,
+  "kb": 1815
+ },
+ {
+  "scene": "PairedObservations",
+  "title": "Paired Observations",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/PairedObservations.html",
+  "slides": 6,
+  "kb": 2213
+ },
+ {
+  "scene": "VarianceIntervalChiSquare",
+  "title": "Confidence Interval for σ²",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/VarianceIntervalChiSquare.html",
+  "slides": 7,
+  "kb": 2194
+ },
+ {
+  "scene": "LikelihoodFunction",
+  "title": "Maximum Likelihood Estimation",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/LikelihoodFunction.html",
+  "slides": 7,
+  "kb": 1842
+ }
+]
