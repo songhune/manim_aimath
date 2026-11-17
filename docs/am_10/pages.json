@@ -1,5 +1,12 @@
 [
  {
+  "scene": "MontyHallSwitch",
+  "title": "몬티 홀 문제 · 문을 바꿀 확률",
+  "url": "https://songhune.github.io/manim_aimath/am_10/MontyHallSwitch.html",
+  "slides": 11,
+  "kb": 1598
+ },
+ {
   "scene": "ConditionalProbabilityCrowd",
   "title": "조건부 확률 · 표본공간의 축소",
   "url": "https://songhune.github.io/manim_aimath/am_10/ConditionalProbabilityCrowd.html",

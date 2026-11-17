@@ -1,10 +1,11 @@
 """AI기초수학 — 교재 Chapter 10 확률과 확률분포.
 
 강의자료 `AI기초수학/강의자료_restyled/CHAPTER 10_확률과 확률분포_강의용.pptx` 의
-10.1 조건부 확률과 베이즈 정리 · 10.2 이산확률분포 · 10.3 연속확률분포에 붙는 보조 영상 9편.
+10.1 조건부 확률과 베이즈 정리 · 10.2 이산확률분포 · 10.3 연속확률분포에 붙는 보조 영상 10편(몬티 홀 편은 2026-11-17 저녁 추가).
 파일 이름은 앞 장과 같은 규칙이다(week10 = CH09, week11 = CH10). 2026-11-18 수업.
 
 식보다 세는 그림과 막대가 움직이는 그림으로 세운다.
+- 몬티 홀 문제는 자동차 위치 세 경우를 나란히 놓고 그대로 · 바꿈의 이긴 줄을 센다(조건부 확률 도입).
 - 조건부 확률은 표본공간을 A 로 줄인 뒤의 비율이다(정의 10-2 · 보충 10-A). 수강생 20명은 치토로 그린다.
 - 독립은 전체에서 B 의 비율과 A 안에서 B 의 비율이 같은 것이다(정의 10-4 · 예제 10-4).
 - 베이즈 정리는 사전확률로 가른 정사각형에서 가능도 조각의 넓이 비다(정리 10-1 · 보충 10-B).
@@ -105,6 +106,94 @@ def binom_pmf(n, p, k):
 # ─────────────────────────────────────────────────────────────
 # 10.1 조건부 확률과 베이즈 정리
 # ─────────────────────────────────────────────────────────────
+class MontyHallSwitch(InteractiveScene):
+    """몬티 홀 문제(참고 · 조건부 확률 도입). 문 셋 중 하나 뒤에 자동차, 나머지 둘 뒤에 염소가 있다.
+
+    참가자(치토)는 1번 문을 고른다. 자동차 위치 세 경우(각 1/3)를 세 줄로 놓는다. 사회자는 참가자가 고르지 않은 문 가운데
+    염소가 있는 문을 연다(자동차 1번이면 2번 · 3번 가운데 하나 — 그림은 2번, 자동차 2번이면 3번, 자동차 3번이면 2번).
+    그대로 두면 한 줄에서 이기고(1/3), 남은 문으로 바꾸면 두 줄에서 이긴다(2/3). 값은 씬 안에서 센다.
+    """
+    pick = 1
+    opened = {1: 2, 2: 3, 3: 2}          # 자동차 위치 → 사회자가 여는 문
+
+    def construct(self):
+        from fractions import Fraction
+        head_of(self, "몬티 홀 문제 · 문을 바꿀 확률", "조건부 확률")
+        ys = [1.15, -0.25, -1.65]
+        xs = {1: -4.7, 2: -3.3, 3: -1.9}
+        door_w, door_h = 1.05, 1.15
+        doors, labels, players, probs = {}, {}, [], VGroup()
+        for row, (car, y) in enumerate(zip((1, 2, 3), ys)):
+            for d in (1, 2, 3):
+                what = caption("자동차" if d == car else "염소", 20, DONE if d == car else GREY_B)
+                what.move_to([xs[d], y + 0.03, 0])
+                door = Rectangle(width=door_w, height=door_h).set_fill(ACCENT, 0.55).set_stroke(WHITE, 2)
+                door.move_to([xs[d], y, 0])
+                num = Tex(str(d), font_size=34).set_color(WHITE).move_to(door.get_top() + DOWN * 0.25)
+                doors[(car, d)] = VGroup(door, num)
+                labels[(car, d)] = what
+            who = chito("front", "gold", 0.5)
+            who.move_to([xs[self.pick], y - door_h / 2 + 0.2, 0])
+            players.append(who)
+            probs.add(Tex(R"\tfrac{1}{3}", font_size=40).set_color(INK).move_to([-6.2, y, 0]))
+
+        all_doors = VGroup(*[doors[k] for k in doors])
+        self.play(FadeIn(all_doors, lag_ratio=0.05), run_time=1.0)
+        self.play(*[FadeIn(w) for w in players], run_time=0.6)
+        shown = footnote(self, "참가자 선택 · 1번 문")
+        self.wait(1.6)
+
+        # 자동차 위치 세 경우
+        self.add(*[labels[(car, car)] for car in (1, 2, 3)])
+        self.play(*[doors[(car, car)][0].animate.set_fill(ACCENT, 0.15).set_stroke(DONE, 3) for car in (1, 2, 3)],
+                  FadeIn(probs), run_time=0.9)
+        self.bring_to_front(*players)
+        shown = footnote(self, "자동차 위치 세 경우", DONE, shown)
+        self.wait(2.2)
+
+        # 사회자가 염소 문을 연다
+        self.add(*[labels[(car, self.opened[car])] for car in (1, 2, 3)])
+        self.play(*[doors[(car, self.opened[car])][0].animate.set_fill(ACCENT, 0.08).set_stroke(GREY_B, 2) for car in (1, 2, 3)],
+                  *[doors[(car, self.opened[car])][1].animate.set_opacity(0.35) for car in (1, 2, 3)], run_time=0.9)
+        shown = footnote(self, "사회자 · 염소 문 개방", GREY_B, shown)
+        self.wait(2.2)
+
+        # 그대로 둔 결과
+        col_x = {"stay": 1.6, "switch": 4.4}
+        heads = {"stay": caption("그대로", 28, CALM), "switch": caption("바꿈", 28, WARN)}
+        for key in heads:
+            heads[key].move_to([col_x[key], 2.1, 0])
+
+        def marks(key, wins):
+            out = VGroup()
+            for win, y in zip(wins, ys):
+                out.add(caption("이김" if win else "짐", 28, DONE if win else GREY_B).move_to([col_x[key], y, 0]))
+            return out
+
+        stay_wins = [car == self.pick for car in (1, 2, 3)]
+        final = {car: [d for d in (1, 2, 3) if d not in (self.pick, self.opened[car])][0] for car in (1, 2, 3)}
+        switch_wins = [final[car] == car for car in (1, 2, 3)]
+        p_stay, p_switch = Fraction(sum(stay_wins), 3), Fraction(sum(switch_wins), 3)
+        assert (p_stay, p_switch) == (Fraction(1, 3), Fraction(2, 3))
+        frac = lambda f, color: Tex(R"\frac{%d}{%d}" % (f.numerator, f.denominator), font_size=36).set_color(color)
+        stay_marks = marks("stay", stay_wins)
+        stay_frac = frac(p_stay, CALM).move_to([col_x["stay"], -2.7, 0])
+        self.play(FadeIn(heads["stay"]), FadeIn(stay_marks, lag_ratio=0.2), run_time=0.9)
+        shown = footnote(self, "그대로 · 이김 1줄", CALM, shown)
+        self.play(FadeIn(stay_frac), run_time=0.5)
+        self.wait(2.4)
+
+        # 남은 문으로 바꾼 결과
+        self.play(*[w.animate.move_to([xs[final[car]], y - door_h / 2 + 0.2, 0])
+                    for w, car, y in zip(players, (1, 2, 3), ys)], run_time=1.2)
+        switch_marks = marks("switch", switch_wins)
+        switch_frac = frac(p_switch, WARN).move_to([col_x["switch"], -2.7, 0])
+        self.play(FadeIn(heads["switch"]), FadeIn(switch_marks, lag_ratio=0.2), run_time=0.9)
+        shown = footnote(self, "바꿈 · 이김 2줄", WARN, shown)
+        self.play(FadeIn(switch_frac), run_time=0.5)
+        self.wait(3.5)
+
+
 class ConditionalProbabilityCrowd(InteractiveScene):
     """정의 10-2 · 보충 10-A. 조건부 확률은 표본공간을 A 로 줄인 뒤 B 가 차지하는 비율이다.
 

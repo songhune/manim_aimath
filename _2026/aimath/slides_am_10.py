@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AM_10 (교재 Chapter 10 확률과 확률분포) 영상 9편의 클릭 진행형 판.
+"""AM_10 (교재 Chapter 10 확률과 확률분포) 영상 10편의 클릭 진행형 판.
 
     python tools/build_slides_site.py --chapter am_10 --module _2026/aimath/slides_am_10.py
 
@@ -10,6 +10,7 @@ from _2026.aimath.slides_common import build
 from _2026.aimath import week11
 
 PAGES = build(globals(), [
+    ("MontyHallSwitch", "몬티 홀 문제 · 문을 바꿀 확률"),
     ("ConditionalProbabilityCrowd", "조건부 확률 · 표본공간의 축소"),
     ("IndependenceDiceGrid", "독립사건 · 주사위 두 개"),
     ("BayesAreaSpam", "베이즈 정리 · 스팸 필터"),

@@ -231,7 +231,7 @@ SECTIONS = {
         ("9.2 경사 하강법", ["LagrangeTangency", "QuadraticFormBowl", "HessianCritical", "GradientDescentSteps"]),
     ],
     "am_10": [
-        ("10.1 조건부 확률과 베이즈 정리", ["ConditionalProbabilityCrowd", "IndependenceDiceGrid", "BayesAreaSpam"]),
+        ("10.1 조건부 확률과 베이즈 정리", ["MontyHallSwitch", "ConditionalProbabilityCrowd", "IndependenceDiceGrid", "BayesAreaSpam"]),
         ("10.2 이산확률분포", ["ExpectationBalance", "BinomialCounting", "PoissonLimit"]),
         ("10.3 연속확률분포", ["NormalStandardize", "BinomialNormalApprox", "CentralLimitDice"]),
     ],
