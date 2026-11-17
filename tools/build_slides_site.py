@@ -86,6 +86,7 @@ CHAPTER_TITLE = {
     "am_05": "Chapter 05 · 고윳값과 케일리-해밀턴 정리",
     "am_06": "Chapter 06 · 행렬 분해",
     "am_09": "Chapter 09 · 편미분과 경사 하강법",
+    "am_10": "Chapter 10 · 확률과 확률분포",
     "bd_05": "Chapter 05 · 오픈 API를 이용한 빅데이터 크롤링",
     "ml_03": "Chapter 03 · 회귀 알고리즘과 모델 규제",
     "ps1_02": "Chapter 2 · Probability",
@@ -228,6 +229,11 @@ SECTIONS = {
     "am_09": [
         ("9.1 편미분", ["SurfaceAndLevelSets", "PartialDerivativeSlice", "GradientDirection", "ChainRuleCurve"]),
         ("9.2 경사 하강법", ["LagrangeTangency", "QuadraticFormBowl", "HessianCritical", "GradientDescentSteps"]),
+    ],
+    "am_10": [
+        ("10.1 조건부 확률과 베이즈 정리", ["ConditionalProbabilityCrowd", "IndependenceDiceGrid", "BayesAreaSpam"]),
+        ("10.2 이산확률분포", ["ExpectationBalance", "BinomialCounting", "PoissonLimit"]),
+        ("10.3 연속확률분포", ["NormalStandardize", "BinomialNormalApprox", "CentralLimitDice"]),
     ],
     "bd_05": [
         ("5.1 네이버 API를 이용한 크롤링", ["RequestUrlAssembly", "HeaderAndStatus",

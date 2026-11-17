@@ -1,0 +1,65 @@
+[
+ {
+  "scene": "ConditionalProbabilityCrowd",
+  "title": "조건부 확률 · 표본공간의 축소",
+  "url": "https://songhune.github.io/manim_aimath/am_10/ConditionalProbabilityCrowd.html",
+  "slides": 12,
+  "kb": 3298
+ },
+ {
+  "scene": "IndependenceDiceGrid",
+  "title": "독립사건 · 주사위 두 개",
+  "url": "https://songhune.github.io/manim_aimath/am_10/IndependenceDiceGrid.html",
+  "slides": 9,
+  "kb": 1996
+ },
+ {
+  "scene": "BayesAreaSpam",
+  "title": "베이즈 정리 · 스팸 필터",
+  "url": "https://songhune.github.io/manim_aimath/am_10/BayesAreaSpam.html",
+  "slides": 10,
+  "kb": 1512
+ },
+ {
+  "scene": "ExpectationBalance",
+  "title": "기댓값과 분산 · 막대의 균형점",
+  "url": "https://songhune.github.io/manim_aimath/am_10/ExpectationBalance.html",
+  "slides": 11,
+  "kb": 1693
+ },
+ {
+  "scene": "BinomialCounting",
+  "title": "이항분포 · 성공 수가 같은 결과",
+  "url": "https://songhune.github.io/manim_aimath/am_10/BinomialCounting.html",
+  "slides": 11,
+  "kb": 2439
+ },
+ {
+  "scene": "PoissonLimit",
+  "title": "이항분포와 푸아송분포",
+  "url": "https://songhune.github.io/manim_aimath/am_10/PoissonLimit.html",
+  "slides": 9,
+  "kb": 1796
+ },
+ {
+  "scene": "NormalStandardize",
+  "title": "정규분포와 표준화",
+  "url": "https://songhune.github.io/manim_aimath/am_10/NormalStandardize.html",
+  "slides": 13,
+  "kb": 1859
+ },
+ {
+  "scene": "BinomialNormalApprox",
+  "title": "이항분포의 정규분포 근사",
+  "url": "https://songhune.github.io/manim_aimath/am_10/BinomialNormalApprox.html",
+  "slides": 11,
+  "kb": 1773
+ },
+ {
+  "scene": "CentralLimitDice",
+  "title": "중심극한정리 · 주사위의 표본평균",
+  "url": "https://songhune.github.io/manim_aimath/am_10/CentralLimitDice.html",
+  "slides": 10,
+  "kb": 1913
+ }
+]
