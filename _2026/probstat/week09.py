@@ -548,3 +548,169 @@ class LikelihoodFunction(InteractiveScene):
         self.play(FadeIn(top), Write(est))
         self.play(FlashAround(est, color=MEAN_COLOR, buff=0.1))
         self.wait(3.5)
+
+
+# ─────────────────────────────────────────────────────────────
+# 예제 영상 (2026-11-20, 사용자 요청) — 문제 장 뒤, 책 풀이 장 앞
+# ─────────────────────────────────────────────────────────────
+from _2026.probstat.week05 import steps_panel
+
+EX_COL_X = 1.2          # 오른쪽 식 열의 왼쪽 끝
+
+
+def _eq(tex, ref, color=INK, scale=0.58, gap=0.3):
+    """식 한 줄을 ref 아래, 오른쪽 식 열에 왼쪽 맞춤으로 놓는다."""
+    t = Tex(tex).scale(scale).set_color(color).next_to(ref, DOWN, buff=gap)
+    t.align_to([EX_COL_X, 0, 0], LEFT)
+    return t
+
+
+# ─────────────────────────────────────────────────────────────
+# 8. 예제 9.2 — 아연 농도의 95% · 99% 신뢰구간 (문제 장 뒤)
+# ─────────────────────────────────────────────────────────────
+class Example92ZincInterval(InteractiveScene):
+    """n = 36, x̄ = 2.6, σ = 0.3. 표준오차 0.3/√36 = 0.05 를 먼저 구하고, 표준정규곡선의 가운데 넓이 0.95 를 남기는
+    z = 1.96 을 표준오차에 곱해 2.6 둘레에 구간을 놓는다. 가운데 넓이를 0.99 로 넓히면 z 가 2.575 로 늘고
+    같은 수직선 위의 구간도 2.47–2.73 으로 넓어진다."""
+
+    def construct(self):
+        head = slide_title("Example 9.2")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. standard error", "2. z from Table A.3",
+                                         "3. 95% interval", "4. 99% interval"], pos=(4.9, 2.0, 0), size=20)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        n, xbar, sig = 36, 2.6, 0.3
+        se = sig / sqrt(n)
+
+        given = Tex(R"n = 36,\quad \bar x = 2.6,\quad \sigma = 0.3").scale(0.62).set_color(GREY_B).move_to([-3.6, 2.2, 0])
+        self.play(Write(given))
+        self.wait(0.8)
+
+        # 1. 표준오차
+        self.play(focus(0))
+        e1 = _eq(R"\frac{\sigma}{\sqrt n} = \frac{0.3}{\sqrt{36}} = \frac{0.3}{6} = 0.05", box, CALM, gap=0.35)
+        self.play(Write(e1))
+        self.wait(1.4)
+
+        # 2. 표준정규곡선에서 가운데 0.95
+        self.play(focus(1))
+        ax = density_axes((-3.6, 3.6, 1), (0, 0.45, 0.1), width=5.6, height=1.9).move_to([-3.7, 0.55, 0])
+        g = normal_graph(ax, 0, 1, -3.6, 3.6, MUTED, 2.5)
+        zname = Tex("Z").scale(0.6).set_color(GREY_B).next_to(ax.c2p(3.6, 0), RIGHT, buff=0.1)
+        self.play(ShowCreation(ax), ShowCreation(g), FadeIn(zname))
+        mid95 = area_under(ax, g, -1.96, 1.96, CALM, 0.45)
+        a95 = Tex("0.95").scale(0.6).set_color(INK).move_to(ax.c2p(0, 0.14))
+        z95 = x_marks(ax, [-1.96, 1.96], ["-1.96", "1.96"], CALM)
+        tail = Tex("0.025").scale(0.45).set_color(GREY_B).next_to(ax.c2p(2.5, 0.03), UP, buff=0.12)
+        self.play(FadeIn(mid95), FadeIn(a95))
+        self.play(FadeIn(z95), FadeIn(tail))
+        e2 = _eq(R"z_{0.025} = 1.96", e1, CALM)
+        self.play(Write(e2))
+        self.wait(1.4)
+
+        # 3. 95% 구간
+        self.play(focus(2))
+        line = marked_line(2.4, 2.8, 0.05, 6.0, [-3.7, -2.6, 0], [2.4, 2.5, 2.6, 2.7, 2.8], fmt="%.1f", scale=0.5)
+        mu_name = Tex(R"\mu").scale(0.6).set_color(GREY_B).next_to(line, RIGHT, buff=0.15)
+        dot = Dot(radius=0.08).set_fill(MEAN_COLOR, 1).move_to(line.n2p(xbar))
+        xb = Tex(R"\bar x = 2.6").scale(0.55).set_color(MEAN_COLOR).next_to(dot, DOWN, buff=0.5)
+        self.play(ShowCreation(line), FadeIn(line.ps_nums), FadeIn(mu_name))
+        self.play(FadeIn(dot), FadeIn(xb))
+        e3 = _eq(R"2.6 \pm (1.96)(0.05) = 2.6 \pm 0.098", e2, CALM)
+        self.play(Write(e3))
+        s95 = span(line, xbar - 1.96 * se, xbar + 1.96 * se, 0.35, CALM)
+        self.play(GrowFromCenter(s95))
+        r3 = _eq(R"2.50 < \mu < 2.70", e3, CALM, scale=0.66, gap=0.2)
+        self.play(Write(r3))
+        self.wait(1.6)
+
+        # 4. 99% 구간 — 가운데 넓이를 넓히면 z 가 커진다
+        self.play(focus(3))
+        mid99 = area_under(ax, g, -2.575, 2.575, WARN, 0.3)
+        z99 = x_marks(ax, [-2.575, 2.575], ["-2.575", "2.575"], WARN)
+        z99.shift(DOWN * 0.3)
+        a99 = Tex("0.99").scale(0.6).set_color(WARN).move_to(ax.c2p(0, 0.3))
+        self.play(FadeIn(mid99), FadeIn(z99), FadeIn(a99), FadeOut(tail))
+        e4 = _eq(R"z_{0.005} = 2.575", r3, WARN, gap=0.35)
+        self.play(Write(e4))
+        e5 = _eq(R"2.6 \pm (2.575)(0.05) = 2.6 \pm 0.129", e4, WARN, gap=0.2)
+        self.play(Write(e5))
+        s99 = span(line, xbar - 2.575 * se, xbar + 2.575 * se, 0.75, WARN)
+        self.play(GrowFromCenter(s99))
+        r5 = _eq(R"2.47 < \mu < 2.73", e5, WARN, scale=0.66, gap=0.2)
+        self.play(Write(r5))
+        self.wait(1.2)
+        self.play(FlashAround(VGroup(r3, r5), color=MEAN_COLOR, buff=0.12))
+        self.wait(3.0)
+
+
+# ─────────────────────────────────────────────────────────────
+# 9. 예제 9.3 — 오차가 0.05 미만이 되는 표본 크기 (문제 장 뒤)
+# ─────────────────────────────────────────────────────────────
+class Example93SampleSize(InteractiveScene):
+    """예제 9.2 의 σ = 0.3, 95% 에서 오차의 한계 1.96·0.3/√n 을 n 의 곡선으로 그린다. n = 36 에서 0.098 이고,
+    곡선이 e = 0.05 선 아래로 내려가는 자리가 n = 138.3 이라 139 로 올린다. 138 과 139 의 한계값을 나란히 적는다."""
+
+    def construct(self):
+        head = slide_title("Example 9.3")
+        self.play(FadeIn(head[0]), ShowCreation(head[1]))
+        steps, box, focus = steps_panel(["1. error bound", "2. set bound to e = 0.05",
+                                         "3. solve for n", "4. round up"], pos=(4.7, 2.0, 0), size=20)
+        self.play(FadeIn(box), LaggedStartMap(FadeIn, steps, lag_ratio=0.2))
+        z, sig, e = 1.96, 0.3, 0.05
+
+        def bound(n):
+            return z * sig / sqrt(n)
+
+        given = Tex(R"\sigma = 0.3,\quad z_{0.025} = 1.96,\quad e = 0.05").scale(0.6).set_color(GREY_B).move_to([-3.4, 2.2, 0])
+        self.play(Write(given))
+        self.wait(0.8)
+
+        # 1. 오차의 한계는 n 의 함수다
+        self.play(focus(0))
+        ax = Axes(x_range=(0, 200, 20), y_range=(0, 0.2, 0.05), width=6.2, height=3.4,
+                  axis_config=dict(include_ticks=True, stroke_width=2, stroke_color=GREY_B)).move_to([-3.5, -0.75, 0])
+        xn = VGroup(*[Tex(str(v)).scale(0.45).set_color(GREY_B).next_to(ax.c2p(v, 0), DOWN, buff=0.12) for v in (40, 80, 120, 160, 200)])
+        yn = VGroup(*[Tex("%.2f" % v).scale(0.45).set_color(GREY_B).next_to(ax.c2p(0, v), LEFT, buff=0.1) for v in (0.05, 0.10, 0.15, 0.20)])
+        n_name = Tex("n").scale(0.6).set_color(GREY_B).next_to(ax.c2p(200, 0), RIGHT, buff=0.12)
+        curve = ax.get_graph(bound, x_range=(10, 200, 0.5)).set_stroke(ACCENT, 3)
+        e1 = _eq(R"\text{error} \le z_{\alpha/2}\frac{\sigma}{\sqrt n} = \frac{(1.96)(0.3)}{\sqrt n}", box, ACCENT, gap=0.35)
+        self.play(ShowCreation(ax), FadeIn(xn), FadeIn(yn), FadeIn(n_name))
+        self.play(Write(e1))
+        self.play(ShowCreation(curve), run_time=2.0)
+        p36 = Dot(radius=0.08).set_fill(MUTED, 1).move_to(ax.c2p(36, bound(36)))
+        t36 = Tex(R"n = 36:\ 0.098").scale(0.5).set_color(GREY_B).next_to(p36, UR, buff=0.08)
+        self.play(FadeIn(p36), FadeIn(t36))
+        self.wait(1.4)
+
+        # 2. 한계를 e 에 맞춘다
+        self.play(focus(1))
+        eline = dashed(ax.c2p(0, e), ax.c2p(200, e), WARN)
+        ename = Tex("e = 0.05").scale(0.5).set_color(WARN).next_to(ax.c2p(200, e), UP, buff=0.08).shift(LEFT * 0.5)
+        self.play(ShowCreation(eline), FadeIn(ename))
+        e2 = _eq(R"\frac{(1.96)(0.3)}{\sqrt n} = 0.05", e1, WARN)
+        self.play(Write(e2))
+        self.wait(1.2)
+
+        # 3. n 에 대해 푼다
+        self.play(focus(2))
+        e3 = _eq(R"\sqrt n = \frac{(1.96)(0.3)}{0.05} = 11.76", e2, INK)
+        self.play(Write(e3))
+        e4 = _eq(R"n = (11.76)^2 = 138.3", e3, INK, gap=0.2)
+        self.play(Write(e4))
+        cross = Dot(radius=0.08).set_fill(MEAN_COLOR, 1).move_to(ax.c2p(138.3, e))
+        down = dashed(ax.c2p(138.3, e), ax.c2p(138.3, 0), MEAN_COLOR)
+        t138 = Tex("138.3").scale(0.5).set_color(MEAN_COLOR).next_to(ax.c2p(138.3, 0), DOWN, buff=0.4)
+        self.play(FadeIn(cross), ShowCreation(down), FadeIn(t138))
+        self.wait(1.4)
+
+        # 4. 올림 — 138 은 한계가 0.05 를 넘는다
+        self.play(focus(3))
+        e5 = _eq(R"n = 138:\ \frac{(1.96)(0.3)}{\sqrt{138}} = 0.05005", e4, WARN, scale=0.52)
+        e6 = _eq(R"n = 139:\ \frac{(1.96)(0.3)}{\sqrt{139}} = 0.04987", e5, CALM, scale=0.52, gap=0.15)
+        self.play(Write(e5))
+        self.play(Write(e6))
+        ans = Tex(R"n = 139").scale(0.95).set_color(MEAN_COLOR).move_to(ax.c2p(120, 0.15))     # 식 열이 화면 아래까지 차서 답은 곡선 위 빈 자리에
+        self.play(Write(ans))
+        self.play(FlashAround(ans, color=MEAN_COLOR, buff=0.1))
+        self.wait(3.0)

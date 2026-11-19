@@ -14,6 +14,20 @@
   "kb": 1794
  },
  {
+  "scene": "Example92ZincInterval",
+  "title": "Example 9.2",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/Example92ZincInterval.html",
+  "slides": 6,
+  "kb": 2320
+ },
+ {
+  "scene": "Example93SampleSize",
+  "title": "Example 9.3",
+  "url": "https://songhune.github.io/manim_aimath/ps1_09/Example93SampleSize.html",
+  "slides": 5,
+  "kb": 2277
+ },
+ {
   "scene": "PredictionInterval",
   "title": "Prediction Interval",
   "url": "https://songhune.github.io/manim_aimath/ps1_09/PredictionInterval.html",

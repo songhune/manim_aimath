@@ -311,7 +311,7 @@ SECTIONS = {
     ],
     "ps1_09": [
         ("9.3 Classical Methods of Estimation", ["UnbiasedEstimator"]),
-        ("9.4 Single Sample: Estimating the Mean", ["ConfidenceIntervalCoverage"]),
+        ("9.4 Single Sample: Estimating the Mean", ["ConfidenceIntervalCoverage", "Example92ZincInterval", "Example93SampleSize"]),
         ("9.6–9.7 Prediction Intervals and Tolerance Limits", ["PredictionInterval", "ThreeIntervals"]),
         ("9.9 Paired Observations", ["PairedObservations"]),
         ("9.12 Single Sample: Estimating the Variance", ["VarianceIntervalChiSquare"]),

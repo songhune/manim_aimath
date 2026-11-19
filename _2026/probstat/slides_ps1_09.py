@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""PS1_09 (Walpole Chapter 9) 영상 7편의 클릭 진행형 판 (manim-slides + manimgl).
+"""PS1_09 (Walpole Chapter 9) 영상 9편의 클릭 진행형 판 (manim-slides + manimgl).
 
 slides_ps1_08.py 와 같은 장치다. week09.py 의 씬을 그대로 상속하고, `wait()` 가 임계값(기본 0.3초)
 이상이면 그 자리를 슬라이드 경계(`next_slide`)로 삼는다. 씬 본문은 고치지 않는다.
@@ -7,7 +7,7 @@ slides_ps1_08.py 와 같은 장치다. week09.py 의 씬을 그대로 상속하�
     python tools/build_slides_site.py --chapter ps1_09 --module _2026/probstat/slides_ps1_09.py
 
 PAGES 의 순서는 덱(insert_videos.py 의 PS1_09_INSERT)과 같다. 제목은 각 씬의 slide_title 문구다.
-이 장은 개념 영상 일곱 편이다(2026-11-16).
+이 장은 개념 영상 일곱 편과 예제 영상 두 편(9.2 · 9.3, 2026-11-20)이다.
 """
 import os
 from pathlib import Path
@@ -22,6 +22,8 @@ from _2026.probstat import week09
 PAGES = [
     ("UnbiasedEstimator", "Unbiased Estimator"),
     ("ConfidenceIntervalCoverage", "Confidence Interval for μ"),
+    ("Example92ZincInterval", "Example 9.2"),
+    ("Example93SampleSize", "Example 9.3"),
     ("PredictionInterval", "Prediction Interval"),
     ("ThreeIntervals", "Confidence, Prediction, Tolerance"),
     ("PairedObservations", "Paired Observations"),
